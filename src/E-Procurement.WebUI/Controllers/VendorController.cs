@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using E_Procurement.Data.Entity;
 using E_Procurement.Repository.VendoRepo;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,7 +21,9 @@ namespace E_Procurement.WebUI.Controllers
         }
         public IActionResult Index()
         {
+            
             return View();
         }
+
     }
 }

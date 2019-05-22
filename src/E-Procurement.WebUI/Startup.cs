@@ -14,6 +14,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System.Threading.Tasks;
+using E_Procurement.WebUI.Models.Service;
 
 namespace E_Procurement.WebUI
 {
@@ -35,7 +37,7 @@ namespace E_Procurement.WebUI
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
-
+            
             services.AddDbContext<EProcurementContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
@@ -44,24 +46,28 @@ namespace E_Procurement.WebUI
                 .AddUserManager<UserManager<User>>()
                 .AddRoleManager<RoleManager<Role>>()
                 .AddSignInManager<SignInManager<User>>()
-                .AddDefaultUI(UIFramework.Bootstrap4)
+               // .AddDefaultUI()
                 .AddEntityFrameworkStores<EProcurementContext>();
-
+            services.Configure<IdentityOptions>(option =>
+            {
+                
+            });
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddAutoMapper(typeof(Startup).Assembly);
+            
             var builder = new ContainerBuilder();
             builder.Populate(services);
-           
+
             builder.RegisterModule<AutofacRepoModule>();
             ApplicationContainer = builder.Build();
-
             // Create the IServiceProvider based on the container.
             return new AutofacServiceProvider(ApplicationContainer);
+         
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime appLifetime)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime appLifetime, IServiceProvider services)
         {
             if (env.IsDevelopment())
             {
@@ -83,11 +89,33 @@ namespace E_Procurement.WebUI
 
             app.UseMvc(routes =>
             {
+                //routes.MapRoute(
+                //    name: "default",
+                //    template: "{controller=Account}/{action=Login}");
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+
+           CreateUserRoles(services).Wait();
             appLifetime.ApplicationStopped.Register(() => ApplicationContainer.Dispose());
+        
+        }
+        private async Task CreateUserRoles(IServiceProvider serviceProvider)
+        {
+            var RoleManager = serviceProvider.GetRequiredService<RoleManager<Role>>();
+            var UserManager = serviceProvider.GetRequiredService<UserManager<User>>();
+
+            var user = new User() { Email = "admin@gmail.com", UserName = "admin" };
+            var result = await UserManager.CreateAsync(user, "Pa$$word123");
+
+            //var roleCheck = await RoleManager.RoleExistsAsync("Admin");
+            //if (!roleCheck)
+            //{
+            //    //create the roles and seed them to the database  
+            //   await RoleManager.CreateAsync(new Role("Admin"));
+            //}
+            // await UserManager.AddToRoleAsync(user, "Admin");
 
         }
     }

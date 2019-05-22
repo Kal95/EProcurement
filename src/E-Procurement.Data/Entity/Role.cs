@@ -8,6 +8,7 @@ namespace E_Procurement.Data.Entity
     /// </summary>
     public class Role : IdentityRole<int>
     {
+
         public virtual ICollection<IdentityUserRole<int>> Users { get; set; } = new List<IdentityUserRole<int>>();
 
         ///// <summary>

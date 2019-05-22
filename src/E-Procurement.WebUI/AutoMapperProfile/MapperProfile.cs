@@ -11,6 +11,8 @@ namespace E_Procurement.WebUI.AutoMapperProfile
         public MapperProfile()
         {
             CreateMap<VendorModel, Vendor>().ReverseMap();
+            
+
         }
     }
 }
