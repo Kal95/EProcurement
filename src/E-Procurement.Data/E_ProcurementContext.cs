@@ -13,6 +13,10 @@ namespace E_Procurement.Data
         }
 
         public DbSet<Vendor> Vendors { get; set; }
+        public DbSet<Bank> Banks { get; set; }
+        public DbSet<VendorCategory> VendorCategories { get; set; }
+        public DbSet<Country> Countries { get; set; }
+        public DbSet<State> States { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
