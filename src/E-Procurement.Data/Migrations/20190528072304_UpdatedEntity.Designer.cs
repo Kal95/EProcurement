@@ -4,14 +4,16 @@ using E_Procurement.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace E_Procurement.Data.Migrations
 {
     [DbContext(typeof(EProcurementContext))]
-    partial class EProcurementContextModelSnapshot : ModelSnapshot
+    [Migration("20190528072304_UpdatedEntity")]
+    partial class UpdatedEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -250,8 +252,6 @@ namespace E_Procurement.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Category");
-
                     b.Property<string>("CreatedBy");
 
                     b.Property<DateTime>("DateCreated");
@@ -263,6 +263,8 @@ namespace E_Procurement.Data.Migrations
                     b.Property<DateTime?>("LastDateUpdated");
 
                     b.Property<string>("UpdatedBy");
+
+                    b.Property<string>("Category");
 
                     b.HasKey("Id");
 

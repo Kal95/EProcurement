@@ -7,7 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "E-Procurement.Data", "src\E
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "E-Procurement.Repository", "src\E-Procurement.Repository\E-Procurement.Repository.csproj", "{A3F30B53-B1A9-469F-B656-F284DA0E5E0F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "E-Procurement.WebUI", "src\E-Procurement.WebUI\E-Procurement.WebUI.csproj", "{BD870D39-C967-449D-B1AE-EE519249C8FB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "E-Procurement.WebUI", "src\E-Procurement.WebUI\E-Procurement.WebUI.csproj", "{BD870D39-C967-449D-B1AE-EE519249C8FB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "E-Procurement.HTTP", "E-Procurement.HTTP\E-Procurement.HTTP.csproj", "{516817A8-296A-4515-A585-B8D13C1F9235}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{BD870D39-C967-449D-B1AE-EE519249C8FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BD870D39-C967-449D-B1AE-EE519249C8FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BD870D39-C967-449D-B1AE-EE519249C8FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{516817A8-296A-4515-A585-B8D13C1F9235}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{516817A8-296A-4515-A585-B8D13C1F9235}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{516817A8-296A-4515-A585-B8D13C1F9235}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{516817A8-296A-4515-A585-B8D13C1F9235}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
