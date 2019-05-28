@@ -1,0 +1,61 @@
+﻿@model E_Procurement.WebUI.Models.PermissionModel.RolePermissionViewModel
+@{
+    ViewData["Title"] = "Role Permission";
+}
+
+<div class="row row-sm mg-t-20">
+    <div class="col-xl-12">
+        <div class="card pd-20 pd-sm-40 form-layout form-layout-4">
+            <h6 class="card-body-title">Roles Permissions</h6>
+            <p class="mg-b-20 mg-sm-b-30"> Assign Role to Permission</p>
+            <form role="form" method="post">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="row">
+                    <label class="col-sm-2 form-control-label">Username : <span class="tx-danger">*</span></label>
+                    <div class="col-sm-4 mg-t-10 mg-sm-t-0">
+                        <select asp-for="RoleId" asp-items="@ViewBag.roles"
+                                class="form-control custom-select" required>
+                            <option value="">Please select one</option>
+                        </select>
+                    </div>
+                </div><!-- row -->
+                <div class="row mg-t-20">
+                    <label class="col-sm-2 form-control-label">Permission: <span class="tx-danger">*</span></label>
+                    <div class="col-sm-4 mg-t-10 mg-sm-t-0">
+                        @*<select asp-for="RoleId" asp-items="@ViewBag.roles"
+                                    class="form-control custom-select" required>
+                                <option value="">Please select one</option>
+                            </select>*@
+                        @{
+                            var RolePermission = ViewBag.Permission as List<E_Procurement.WebUI.Models.PermissionModel.RolePermissionViewModel>;
+
+                            <table id="tblPermissionEdit" class="table table-bordered">
+
+                                @for (int i = 0; i < RolePermission.Count(); i++)
+                                    {
+                                <tbody>
+                                    <tr>
+
+                                        @Html.Hidden("RolePermission[" + @i + "].PermissionId", RolePermission[i].PermissionId)
+                                        <td>@Html.CheckBox("RolePermission[" + @i + "].SelectedPermission", RolePermission[i].SelectedPermission)</td>
+                                        <td> @Html.TextBox("RolePermission[" + @i + "].PermissionName", RolePermission[i].PermissionName, new { @readonly = "readonly", @class = "qty readonly" })</td>
+                                    </tr>
+                                </tbody>
+
+                                    }
+                            </table>
+
+                        }
+
+
+                    </div>
+                </div>
+                <div class="form-layout-footer mg-t-30">
+                    <button class="btn btn-info mg-r-5">Submit</button>
+                    <button class="btn btn-secondary">Cancel</button>
+                </div><!-- form-layout-footer -->
+            </form>
+        </div><!-- card -->
+    </div><!-- col-6 -->
+
+</div>

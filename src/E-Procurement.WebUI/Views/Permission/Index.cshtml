@@ -1,0 +1,56 @@
+﻿@model IEnumerable<E_Procurement.WebUI.Models.PermissionModel.PermissionViewModel>
+@{
+    ViewBag.Title = "Roles";
+}
+
+
+<div class="card pd-20 pd-sm-40">
+    <h6 class="card-body-title">Role</h6>
+    <p class="mg-b-20 mg-sm-b-30">Create Role</p>
+
+    <div class="right">
+        <a asp-controller="Permission" asp-action="CreatePermission" alt="Create" class="btn btn-primary"> Create Permission </a>
+    </div>
+    <div class="table-wrapper">
+        <table id="datatable1" class="table display responsive nowrap">
+            <thead>
+                <tr>
+                    <th class="wd-15p">S/N</th>
+                    <th class="wd-15p">Name</th>
+                    <th class="wd-15p">Code</th>
+                    <th class="wd-10p"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    int i = 0;
+                }
+                @foreach (var permission in Model)
+                {
+                <tr>
+                    <td>@(i = i + 1)</td>
+                    <td>@permission.Name</td>
+                    <td>@permission.Code</td>
+                    <td><a asp-controller="Permission" asp-action="EditPermission" asp-route-id="@permission.Id" alt="Edit" class="btn btn-primary btn-icon"> <div><i class="fa fa-pencil"></i></div></a>|<a asp-action="DeletePermission" asp-route-id="@permission.Id" class="btn btn-danger btn-icon"><div><i class="fa fa-trash-o"></i></div></a> </td>
+
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div><!-- table-wrapper -->
+</div><!-- card -->
+
+
+
+    @*<script>
+        $('#datatable1').DataTable({
+            responsive: true,
+            language: {
+                searchPlaceholder: 'Search...',
+                sSearch: '',
+                lengthMenu: '_MENU_ items/page',
+            }
+        });
+    </script>*@
+
+

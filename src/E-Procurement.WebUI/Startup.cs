@@ -46,12 +46,8 @@ namespace E_Procurement.WebUI
                 .AddUserManager<UserManager<User>>()
                 .AddRoleManager<RoleManager<Role>>()
                 .AddSignInManager<SignInManager<User>>()
-               // .AddDefaultUI()
                 .AddEntityFrameworkStores<EProcurementContext>();
-            services.Configure<IdentityOptions>(option =>
-            {
-                
-            });
+           
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddAutoMapper(typeof(Startup).Assembly);

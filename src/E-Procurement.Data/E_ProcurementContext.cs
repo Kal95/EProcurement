@@ -13,6 +13,8 @@ namespace E_Procurement.Data
         }
 
         public DbSet<Vendor> Vendors { get; set; }
+        public DbSet<Permission> Permissions { get; set; }
+        public DbSet<PermissionRole> PermissionRoles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

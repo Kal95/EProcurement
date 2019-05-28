@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace E_Procurement.WebUI.Controllers
 {
-    //[Authorize]
+   // [Authorize]
     public class HomeController : Controller
     {
         public IActionResult Index()
