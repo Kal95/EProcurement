@@ -6,12 +6,12 @@ namespace E_Procurement.Data.Entity
 {
     public class DNGeneration : BaseEntity.Entity
     {
-        public int POId { get; set; }
-        public string DNFilePath { get; set; }
-        public byte DNFileBlob { get; set; }
-        public string DNRecievedBy { get; set; }
-        public DateTime DNUploadedDate { get; set; }
-        public string DNUploadedBy { get; set; }
+        public int PoId { get; set; }
+        public string DnFilePath { get; set; }
+        public byte DnFileBlob { get; set; }
+        public string DnRecievedBy { get; set; }
+        public DateTime DnUploadedDate { get; set; }
+        public string DnUploadedBy { get; set; }
      
     }
 }

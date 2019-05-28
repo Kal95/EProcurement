@@ -14,16 +14,16 @@
         public int StateId { get; set; }
         public int CountryId { get; set; }
         public string WebsiteAddress { get; set; }
-        public string TINNo { get; set; }
-        public string CACNo { get; set; }
-        public string VATNo { get; set; }
+        public string TinNo { get; set; }
+        public string CacNo { get; set; }
+        public string VatNo { get; set; }
         public int BankId { get; set; }
         public string BankBranch { get; set; }
         public string AccountName { get; set; }
         public string SortCode { get; set; }
         public string AccountNo { get; set; }
-        public string AATCurrency { get; set; }
-        public decimal AATAmount { get; set; }
+        public string AatCurrency { get; set; }
+        public decimal AatAmount { get; set; }
     
     }
 }

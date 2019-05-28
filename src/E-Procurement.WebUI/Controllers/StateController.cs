@@ -58,7 +58,7 @@ namespace E_Procurement.WebUI.Controllers
         // POST: State/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(StateModel Model)
+        public ActionResult Create(StateModel model)
         {
             try
             {
@@ -66,8 +66,9 @@ namespace E_Procurement.WebUI.Controllers
                 string UserId = User.Identity.Name;
 
                 if (ModelState.IsValid)
-                {
-                    var status = _stateRepository.CreateState(Model.StateName, UserId, out message);
+                { 
+
+                    var status = _stateRepository.CreateState(model.StateName, UserId, out message);
 
                     ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
 
@@ -81,7 +82,7 @@ namespace E_Procurement.WebUI.Controllers
                     else
                     {
                         ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
-                        return View(Model);
+                        return View(model);
                     }
 
                     return RedirectToAction("Index", "State");
@@ -90,7 +91,7 @@ namespace E_Procurement.WebUI.Controllers
                 {
                     ViewBag.StatusCode = 2;
                   
-                    return View(Model);
+                    return View(model);
 
                 }
             }
@@ -148,7 +149,7 @@ namespace E_Procurement.WebUI.Controllers
                 {
                     string message;
 
-                    var state = _stateRepository.GetStates().Where(u => u.Id == Model.Id).FirstOrDefault();
+                    var state = _stateRepository.GetStates().FirstOrDefault(u => u.Id == Model.Id);
 
                     if (state == null) { return RedirectToAction("Index", "State"); }
 
