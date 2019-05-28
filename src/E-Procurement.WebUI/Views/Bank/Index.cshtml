@@ -1,0 +1,58 @@
+﻿@model IEnumerable<E_Procurement.WebUI.Models.BankModel.BankModel>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Banks";
+    ViewBag.FavIcon = "fa fa-street-view";
+    ViewBag.PageDesc = "Manage Banks";
+}
+
+
+
+
+<div class="main-card mb-3 card">
+
+    <div class="card-body">
+        <a class="btn btn-primary" pull-right" href="@Url.Action("Create", "Bank")"><i class="fa fa-plus"> </i>  Add Bank</a>
+        <br />
+        <hr />
+        <br />
+        <table style="width: 100%;" id="example" class="table table-hover table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>S/N</th>
+                    <th>Bank Name </th>
+                    <th>Sort Code </th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @{int rowNo = 0;}
+                @foreach (var item in Model)
+                {
+                <tr>
+                    <td>@(rowNo += 1)</td>
+                    <td>@item.BankName</td>
+                    <td>@item.SortCode</td>
+
+                    <td>
+                        @if (item.IsActive)
+                        {
+                            <label class="text-success">Active</label>
+                        }
+                        else
+                        {
+                            <label class="text-danger">Inactive</label>
+
+                        }
+                    </td>
+                    <td><a class="mb-2 mr-2 btn-icon btn-shadow btn-outline-2x btn btn-outline-alternate" href="@Url.Action("Edit", "Bank",  new { BankId = item.Id })"><span class="glyphicon btn-glyphicon glyphicon-edit img-circle text-success"></span><i class="pe-7s-edit btn-icon-wrapper"></i> Edit</a></td>
+                </tr>
+                }
+
+            </tbody>
+        </table>
+    </div>
+</div>

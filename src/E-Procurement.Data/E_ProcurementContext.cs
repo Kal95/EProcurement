@@ -13,6 +13,21 @@ namespace E_Procurement.Data
         }
 
         public DbSet<Vendor> Vendors { get; set; }
+        public DbSet<Bank> Banks { get; set; }
+        public DbSet<VendorCategory> VendorCategories { get; set; }
+        public DbSet<Country> Countries { get; set; }
+        public DbSet<State> States { get; set; }
+        public DbSet<DNGeneration> DnGenerations { get; set; }
+        public DbSet<GRNGeneration> GrnGenerations { get; set; }
+        public DbSet<POGeneration> PoGenerations { get; set; }
+        public DbSet<RFQApprovalConfig> RfqApprovalConfigs { get; set; }
+        public DbSet<RFQApprovalStatus> RfqApprovalStatuses { get; set; }
+        public DbSet<RFQApprovalTransactions> RfqApprovalTransactions { get; set; }
+        public DbSet<RFQDetails> RfqDetails { get; set; }
+        public DbSet<RFQGeneration> RfqGenerations { get; set; }
+
+
+
         public DbSet<Permission> Permissions { get; set; }
         public DbSet<PermissionRole> PermissionRoles { get; set; }
 
