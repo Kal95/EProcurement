@@ -27,7 +27,7 @@ namespace E_Procurement.HTTP
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<APIcontext>(opt => opt.UseInMemoryDatabase("ItemsList"));
+          
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 

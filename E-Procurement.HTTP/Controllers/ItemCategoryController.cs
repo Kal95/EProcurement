@@ -2,10 +2,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
+using E_Procurement.Data.Entity;
 using E_Procurement.HTTP.Models;
-using E_Procurement.HTTP.Service;
+
+using E_Procurement.Repository.ItemRepo;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,104 +19,33 @@ namespace E_Procurement.HTTP.Controllers
     public class ItemCategoryController : ControllerBase
     {
     
-        private readonly IItemCategoryService _itemCategoryService;
-        private readonly IItemCategoryService _itemService;
+        private readonly IItemCategoryRepository _itemCategoryRepository;
+        private readonly IItemCategoryRepository _itemService;
         private readonly IMapper _mapper;
 
-        public ItemCategoryController(IItemCategoryService itemCategoryService, IItemCategoryService itemService, IMapper mapper)
+        public ItemCategoryController(IItemCategoryRepository itemCategoryRepository, IItemCategoryRepository itemService, IMapper mapper)
         {
-            _itemCategoryService = itemCategoryService;
+            _itemCategoryRepository = itemCategoryRepository;
             _itemService = itemService;
             _mapper = mapper;
         }
 
-        // GET: api/ItemCategory
         [HttpGet]
-        [Route("GetItemCategories")]
-      
-        public ItemCategory GetItemCategories(int Id)
+        [Produces(typeof(List<ItemCategoryRepository>))]
+        public async Task<IActionResult> GetCategories(CancellationToken ct = default(CancellationToken))
         {
-           ItemCategory model  = new ItemCategory();
+            var Result = await _itemCategoryRepository.GetAllCategories(ct); await _itemCategoryRepository.GetAllItems(ct);
             try
             {
-                
-                var itemCategories = _itemCategoryService.GetItemCategories(Id).ItemCategories;
-                
-                if (itemCategories != null)
-                {
-                    model.Success = true;
-
-                    model.ItemCategories = itemCategories;
-
-                    model.RecordsFound = itemCategories.Count();
-
-                    
-                }
-                else if (itemCategories.Count() == 0)
-                {
-                    model.Success = true;
-
-                    model.ItemCategories = null;
-
-                    model.RecordsFound = 0;
-
-                }
-                return model;
+                return new ObjectResult(Result);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                model.Success = true;
-
-                model.ItemCategories = null;
-            
-                model.RecordsFound = 0;
-                
+                return StatusCode(500, ex);
             }
-            return model;
         }
 
-        // GET: api/Item
-        //[HttpGet]
-        //[Route("GetItems")]
-        //public Item GetItems(int Id)
-        //{
-        //    ItemCategory model = new ItemCategory();
-        //    try
-        //    {
-
-        //        var items = _itemService.GetItems(Id).ToList();
-
-        //        if (items.Count() > 0)
-        //        {
-        //            model.Success = true;
-
-        //            model.Items = items.ToList();
-
-        //            model.RecordsFound = items.Count();
-        //        }
-        //        else if (items.Count() == 0)
-        //        {
-        //            model.Success = true;
-
-        //            model.Items = null;
-
-        //            model.RecordsFound = 0;
-
-        //        }
-
-        //        return model;
-
-        //    }
-        //    catch (Exception)
-        //    {
-        //        model.Success = true;
-
-        //        model.Items = null;
-
-        //        model.RecordsFound = 0;
-        //        return model;
-        //    }
-        //}
+       
 
         // GET: api/ItemCategory/5
         [HttpGet("{id}", Name = "Get")]

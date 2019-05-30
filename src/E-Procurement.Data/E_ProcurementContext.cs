@@ -25,6 +25,8 @@ namespace E_Procurement.Data
         public DbSet<RFQApprovalTransactions> RfqApprovalTransactions { get; set; }
         public DbSet<RFQDetails> RfqDetails { get; set; }
         public DbSet<RFQGeneration> RfqGenerations { get; set; }
+        public DbSet<ItemCategory> ItemCategories { get; set; }
+        public DbSet<Item> Items { get; set; }
 
 
 
