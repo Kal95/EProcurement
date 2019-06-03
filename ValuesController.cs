@@ -4,25 +4,24 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
-namespace E_Procurement.HTTP.Controllers
+namespace E_Procurement.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class ValuesController : ControllerBase
     {
-
-        // GET api/values/GetAllItem
+        
+        // GET api/values
         [HttpGet("GetAllItem")]
         public ActionResult<IEnumerable<string>> GetAllItem()
         {
             return new string[] { "Table", "Chair", "Pen", "Biro", "Mouse", "Phone", "Chair", "Fejiro" };
         }
 
-        // GET api/values/GetAllItemCategory
         [HttpGet("GetAllItemCategory")]
         public ActionResult<IEnumerable<string>> GetAllItemCategory()
         {
-            return new string[] { "Furniture", "Electronics", "Automobile" };
+            return new string[] { "Furniture", "Electronics", "Automobile"};
         }
 
         // GET api/values/5

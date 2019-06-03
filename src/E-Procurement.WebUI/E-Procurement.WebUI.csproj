@@ -49,7 +49,6 @@
 
 
   <ItemGroup>
-    <ProjectReference Include="..\..\E-Procurement.HTTP\E-Procurement.HTTP.csproj" />
     <ProjectReference Include="..\E-Procurement.Data\E-Procurement.Data.csproj" />
     <ProjectReference Include="..\E-Procurement.Repository\E-Procurement.Repository.csproj" />
   </ItemGroup>
