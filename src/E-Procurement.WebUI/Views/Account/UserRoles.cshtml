@@ -1,0 +1,55 @@
+﻿@model IEnumerable<E_Procurement.WebUI.Models.AccountModel.UserViewModel>
+@{
+    ViewBag.Title = "User Roles";
+}
+
+
+<div class="card pd-20 pd-sm-40">
+    <h6 class="card-body-title">User Roles</h6>
+    @*<p class="mg-b-20 mg-sm-b-30">Searching, ordering and paging goodness will be immediately added to the table, as shown in this example.</p>*@
+
+    <div class="right">
+        <a asp-controller="Account" asp-action="UserRole" alt="Create" class="btn btn-primary"> Create User </a>
+    </div>
+    <div class="table-wrapper">
+        <table id="datatable1" class="table display responsive nowrap">
+            <thead>
+                <tr>
+                    <th class="wd-15p">First name</th>
+                    <th class="wd-15p">Last name</th>
+                    <th class="wd-20p">Department</th>
+                    <th class="wd-15p">Unit</th>
+                    <th class="wd-10p">Email</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in Model)
+                {
+                <tr>
+                    <td>@user.FirstName</td>
+                    <td>@user.LastName</td>
+                    <td>@user.Department</td>
+                    <td>@user.Unit</td>
+                    <td>@user.Email</td>
+                 
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div><!-- table-wrapper -->
+</div><!-- card -->
+
+
+
+    @*<script>
+        $('#datatable1').DataTable({
+            responsive: true,
+            language: {
+                searchPlaceholder: 'Search...',
+                sSearch: '',
+                lengthMenu: '_MENU_ items/page',
+            }
+        });
+    </script>*@
+
+

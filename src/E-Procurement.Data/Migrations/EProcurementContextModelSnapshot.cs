@@ -19,13 +19,13 @@ namespace E_Procurement.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("E_Procurement.Data.Entity.Bank", b =>
+            modelBuilder.Entity("E_Procurement.Data.Entity.Permission", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("BankName");
+                    b.Property<string>("Code");
 
                     b.Property<string>("CreatedBy");
 
@@ -37,22 +37,20 @@ namespace E_Procurement.Data.Migrations
 
                     b.Property<DateTime?>("LastDateUpdated");
 
-                    b.Property<string>("SortCode");
+                    b.Property<string>("Name");
 
                     b.Property<string>("UpdatedBy");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Banks");
+                    b.ToTable("Permissions");
                 });
 
-            modelBuilder.Entity("E_Procurement.Data.Entity.Country", b =>
+            modelBuilder.Entity("E_Procurement.Data.Entity.PermissionRole", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("CountryName");
 
                     b.Property<string>("CreatedBy");
 
@@ -64,40 +62,9 @@ namespace E_Procurement.Data.Migrations
 
                     b.Property<DateTime?>("LastDateUpdated");
 
-                    b.Property<string>("UpdatedBy");
+                    b.Property<int>("PermissionId");
 
-                    b.HasKey("Id");
-
-                    b.ToTable("Countries");
-                });
-
-            modelBuilder.Entity("E_Procurement.Data.Entity.DNGeneration", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("CreatedBy");
-
-                    b.Property<DateTime>("DateCreated");
-
-                    b.Property<byte>("DnFileBlob");
-
-                    b.Property<string>("DnFilePath");
-
-                    b.Property<string>("DnRecievedBy");
-
-                    b.Property<string>("DnUploadedBy");
-
-                    b.Property<DateTime>("DnUploadedDate");
-
-                    b.Property<bool>("IsActive");
-
-                    b.Property<bool>("IsDeleted");
-
-                    b.Property<DateTime?>("LastDateUpdated");
-
-                    b.Property<int>("PoId");
+                    b.Property<int>("RoleId");
 
                     b.Property<string>("UpdatedBy");
 
@@ -400,31 +367,6 @@ namespace E_Procurement.Data.Migrations
                     b.ToTable("AspNetRoles");
                 });
 
-            modelBuilder.Entity("E_Procurement.Data.Entity.State", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("CreatedBy");
-
-                    b.Property<DateTime>("DateCreated");
-
-                    b.Property<bool>("IsActive");
-
-                    b.Property<bool>("IsDeleted");
-
-                    b.Property<DateTime?>("LastDateUpdated");
-
-                    b.Property<string>("StateName");
-
-                    b.Property<string>("UpdatedBy");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("States");
-                });
-
             modelBuilder.Entity("E_Procurement.Data.Entity.User", b =>
                 {
                     b.Property<int>("Id")
@@ -493,29 +435,9 @@ namespace E_Procurement.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<decimal>("AatAmount");
-
-                    b.Property<string>("AatCurrency");
-
-                    b.Property<string>("AccountName");
-
-                    b.Property<string>("AccountNo");
-
-                    b.Property<string>("BankBranch");
-
-                    b.Property<int>("BankId");
-
-                    b.Property<string>("CacNo");
-
-                    b.Property<string>("ContactName");
-
-                    b.Property<int>("CountryId");
-
                     b.Property<string>("CreatedBy");
 
                     b.Property<DateTime>("DateCreated");
-
-                    b.Property<string>("Email");
 
                     b.Property<bool>("IsActive");
 
@@ -523,54 +445,13 @@ namespace E_Procurement.Data.Migrations
 
                     b.Property<DateTime?>("LastDateUpdated");
 
-                    b.Property<string>("PhoneNumber");
-
-                    b.Property<string>("SortCode");
-
-                    b.Property<int>("StateId");
-
-                    b.Property<string>("TinNo");
+                    b.Property<string>("Name");
 
                     b.Property<string>("UpdatedBy");
-
-                    b.Property<string>("VatNo");
-
-                    b.Property<string>("VendorAddress");
-
-                    b.Property<string>("VendorName");
-
-                    b.Property<string>("VendorStatus");
-
-                    b.Property<string>("WebsiteAddress");
 
                     b.HasKey("Id");
 
                     b.ToTable("Vendors");
-                });
-
-            modelBuilder.Entity("E_Procurement.Data.Entity.VendorCategory", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("CategoryName");
-
-                    b.Property<string>("CreatedBy");
-
-                    b.Property<DateTime>("DateCreated");
-
-                    b.Property<bool>("IsActive");
-
-                    b.Property<bool>("IsDeleted");
-
-                    b.Property<DateTime?>("LastDateUpdated");
-
-                    b.Property<string>("UpdatedBy");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("VendorCategories");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>

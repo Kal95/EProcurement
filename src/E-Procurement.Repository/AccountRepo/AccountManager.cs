@@ -36,7 +36,7 @@ namespace E_Procurement.Repository.AccountRepo
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-        public async Task<User> GetUserByIdAsync(long userId)
+        public async Task<User> GetUserByIdAsync(int userId)
         {
             return await _userManager.FindByIdAsync(userId.ToString());
         }
@@ -55,6 +55,17 @@ namespace E_Procurement.Repository.AccountRepo
         {
             return await _userManager.GetRolesAsync(user);
         }
+
+        public async Task<IEnumerable<User>> GetUsers()
+        {
+            return await _userManager.Users.ToListAsync();
+        }
+
+        public async Task<IEnumerable<Role>> GetRoles()
+        {
+            return await _roleManager.Roles.ToListAsync();
+        }
+
 
 
         public async Task<(User User, string[] Role)> GetUserAndRolesAsync(long userId)
@@ -78,17 +89,17 @@ namespace E_Procurement.Repository.AccountRepo
         }
 
 
-        public async Task<List<(User User, string[] Roles)>> GetUsersAndRolesAsync(int page, int pageSize)
+        public async Task<List<(User User, string[] )>> GetUsersAndRolesAsync()
         {
             IQueryable<User> usersQuery = _context.Users
                 .Include(u => u.Roles)
                 .OrderBy(u => u.UserName);
 
-            if (page != -1)
-                usersQuery = usersQuery.Skip((page - 1) * pageSize);
+            //if (page != -1)
+            //    usersQuery = usersQuery.Skip((page - 1) * pageSize);
 
-            if (pageSize != -1)
-                usersQuery = usersQuery.Take(pageSize);
+            //if (pageSize != -1)
+            //    usersQuery = usersQuery.Take(pageSize);
 
             var users = await usersQuery.ToListAsync();
 
@@ -133,32 +144,19 @@ namespace E_Procurement.Repository.AccountRepo
 
             return (true, new string[] { });
         }
-        public async Task<(bool Succeeded, string[] Error)> CreateUserAsync(User user, IEnumerable<string> roles, string password)
+        public async Task<bool> CreateUserAsync(User user, string password)
         {
             var result = await _userManager.CreateAsync(user, password);
             if (!result.Succeeded)
-                return (false, result.Errors.Select(e => e.Description).ToArray());
-
-
-            user = await _userManager.FindByNameAsync(user.UserName);
-
-            try
-            {
-                result = await _userManager.AddToRolesAsync(user, roles.Distinct());
-            }
-            catch
-            {
-                await DeleteUserAsync(user);
-                throw;
-            }
-
+                return (false);
+            
             if (!result.Succeeded)
             {
                 await DeleteUserAsync(user);
-                return (false, result.Errors.Select(e => e.Description).ToArray());
+                return false;
             }
 
-            return (true, new string[] { });
+            return (true);
         }
 
 
@@ -304,46 +302,52 @@ namespace E_Procurement.Repository.AccountRepo
         }
 
 
-        //public async Task<(bool Succeeded, string[] Error)> CreateRoleAsync(Role role, IEnumerable<string> claims)
-        //{
-        //    if (claims == null)
-        //        claims = new string[] { };
+        public async Task<bool> CreateRoleAsync(Role role)
+        {
+            var result = await _roleManager.CreateAsync(role);
+            if (!result.Succeeded)
+                return (false);
 
-        //    var enumerable = claims as string[] ?? claims.ToArray();
-        //    string[] invalidClaims = enumerable.Where(c => ApplicationPermissions.GetPermissionByValue(c) == null).ToArray();
-        //    if (invalidClaims.Any())
-        //        return (false, new[] { "The following claim types are invalid: " + string.Join(", ", invalidClaims) });
+           
+
+            return (true);
+        }
+        public async Task<bool> UpdateRoleAsync(Role role)
+        {
+            var result = await _roleManager.UpdateAsync(role);
+            if (!result.Succeeded)
+                return (false);
 
 
-        //    var result = await _roleManager.CreateAsync(role);
-        //    if (!result.Succeeded)
-        //        return (false, result.Errors.Select(e => e.Description).ToArray());
+
+            return (true);
+        }
+
+        public async Task<bool> AssignUserRoleAsync(string Id, List<string> roles)
+        {
+            var user = await _userManager.FindByIdAsync(Id);
+            if (user == null)
+                return false;
+           
+
+            var addRoleResult = await _userManager.AddToRolesAsync(user, roles.ToArray<string>());
+            
+            if (!addRoleResult.Succeeded)
+                return (false);
 
 
-        //    role = await _roleManager.FindByNameAsync(role.Name);
 
-        //    foreach (string claim in enumerable.Distinct())
-        //    {
-        //        result = await _roleManager.AddClaimAsync(role, new Claim(CustomClaimTypes.Permission, ApplicationPermissions.GetPermissionByValue(claim)));
-
-        //        if (!result.Succeeded)
-        //        {
-        //            await DeleteRoleAsync(role);
-        //            return (false, result.Errors.Select(e => e.Description).ToArray());
-        //        }
-        //    }
-
-        //    return (true, new string[] { });
-        //}
+            return (true);
+        }
 
         //public async Task<(bool Succeeded, string[] Error)> UpdateRoleAsync(Role role, IEnumerable<string> claims)
         //{
         //    var enumerable = claims as string[] ?? claims.ToArray();
-            
+
         //        string[] invalidClaims = enumerable.Where(c => ApplicationPermissions.GetPermissionByValue(c) == null).ToArray();
         //        if (invalidClaims.Any())
         //            return (false, new[] { "The following claim types are invalid: " + string.Join(", ", invalidClaims) });
-            
+
 
 
         //    var result = await _roleManager.UpdateAsync(role);
@@ -351,7 +355,7 @@ namespace E_Procurement.Repository.AccountRepo
         //        return (false, result.Errors.Select(e => e.Description).ToArray());
 
 
-            
+
         //        var roleClaims = (await _roleManager.GetClaimsAsync(role)).Where(c => c.Type == CustomClaimTypes.Permission);
         //        var roleClaims1 = roleClaims as Claim[] ?? roleClaims.ToArray();
         //        var roleClaimValues = roleClaims1.Select(c => c.Value).ToArray();
@@ -378,7 +382,7 @@ namespace E_Procurement.Repository.AccountRepo
         //                    return (false, result.Errors.Select(e => e.Description).ToArray());
         //            }
         //        }
-            
+
 
         //    return  (true, new string[] { });
         //}
