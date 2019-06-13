@@ -7,6 +7,9 @@ using E_Procurement.WebUI.Models.VendorModel;
 using E_Procurement.WebUI.Models.CountryModel;
 using E_Procurement.WebUI.Models.BankModel;
 using E_Procurement.WebUI.Models.VendorCategoryModel;
+using E_Procurement.WebUI.Models.RfqApprovalModel;
+using E_Procurement.Repository.Dtos;
+using System.Collections.Generic;
 
 namespace E_Procurement.WebUI.AutoMapperProfile
 {
@@ -36,6 +39,14 @@ namespace E_Procurement.WebUI.AutoMapperProfile
 
             CreateMap<PermissionViewModel, Permission>().ReverseMap();
 
+            CreateMap<RFQApprovalConfigModel, RFQApprovalConfig>().ReverseMap();
+
+
+            CreateMap<RFQGenerationModel, RFQGenerationViewModel>().ReverseMap();
+
+            CreateMap<RFQDetailsModel, RFQDetailsViewModel>().ReverseMap();
+
+            CreateMap<List<RFQDetailsModel>, List<RFQDetailsViewModel>>().ReverseMap();
 
 
         }

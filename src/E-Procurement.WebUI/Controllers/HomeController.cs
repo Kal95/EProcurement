@@ -9,9 +9,15 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace E_Procurement.WebUI.Controllers
 {
-   // [Authorize]
+    [Authorize]
+   // [ValidateAntiForgeryToken]
     public class HomeController : Controller
     {
+        //[Route("Identity/Account/Login")]
+        //public IActionResult LoginRedirect(string ReturnUrl)
+        //{
+        //    return Redirect("/Account/Login?ReturnUrl=" + ReturnUrl);
+        //}
         public IActionResult Index()
         {
             return View();

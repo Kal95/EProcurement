@@ -10,14 +10,14 @@
             <p class="mg-b-20 mg-sm-b-30"> Create Permission</p>
             <form role="form" method="post">
                 <div asp-validation-summary="All" class="text-danger"></div>
-                <div class="row">
-                    <label class="col-sm-4 form-control-label">Name: <span class="tx-danger">*</span></label>
+                <div class="row mg-t-20">
+                    <label class="col-sm-2 form-control-label">Name: <span class="tx-danger">*</span></label>
                     <div class="col-sm-4 mg-t-10 mg-sm-t-0">
                         <input asp-for="Name" type="text" class="form-control" placeholder="Enter Permission Name" required>
                     </div>
                 </div><!-- row -->
-                <div class="row">
-                    <label class="col-sm-4 form-control-label">Code: <span class="tx-danger">*</span></label>
+                <div class="row mg-t-20">
+                    <label class="col-sm-2 form-control-label">Code: <span class="tx-danger">*</span></label>
                     <div class="col-sm-4 mg-t-10 mg-sm-t-0">
                         <input asp-for="Code" type="text" class="form-control" placeholder="Enter Permission Code" required>
                     </div>

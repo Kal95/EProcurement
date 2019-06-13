@@ -9,23 +9,34 @@ using E_Procurement.Repository.AccountRepo;
 using AutoMapper;
 using E_Procurement.Data.Entity;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Identity;
 
 namespace E_Procurement.WebUI.Controllers
 {
+    ///[Authorize]
     public class AccountController : Controller
     {
 
         private readonly  IAccountManager _accountManager;
         private readonly IMapper _mapper;
+        private readonly SignInManager<User> _signInManager;
+        private readonly UserManager<User> _userManager;
 
-
-        public AccountController(IAccountManager accountManager, IMapper mapper)
+        //[Route("Identity/Account/Login")]
+        //public IActionResult LoginRedirect(string ReturnUrl)
+        //{
+        //    return Redirect("/Account/Login?ReturnUrl=" + ReturnUrl);
+        //}
+        public AccountController(SignInManager<User> signInManager,
+            UserManager<User> userManager, IAccountManager accountManager, IMapper mapper)
         {
             _accountManager = accountManager;
             _mapper = mapper;
+            _signInManager = signInManager;
+            _userManager = userManager;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             return View();
         }
@@ -48,20 +59,20 @@ namespace E_Procurement.WebUI.Controllers
                         ModelState.AddModelError("", "Email/password not found");
                         return View(loginViewModel);
                     }
-                    var result = await _accountManager.CheckPasswordAsync(user, loginViewModel.Password);
-                    if (result)
-                    {
-                        //RedirectToAction("Index", "Home");
-                        return RedirectToRoute("Home");
-                    }
-                    else
-                    {
-                        ModelState.AddModelError("", "Email/password not found");
-                        return View(loginViewModel);
-                    }
+
+                var result = await _signInManager.PasswordSignInAsync(user, loginViewModel.Password, false, false);
+                if (result.Succeeded)
+                {
+                    return RedirectToAction("Index", "Home");
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Email/password not found");
+                    return View(loginViewModel);
+                }
+
                 }
                 return View(loginViewModel);
-       
         }
 
         #region"USER SECTION"
@@ -219,9 +230,7 @@ namespace E_Procurement.WebUI.Controllers
         #endregion
 
 
-
-
-            #region"ROLE SECTION"
+        #region"ROLE SECTION"
         [AllowAnonymous]
         public IActionResult CreateRole()
         {
