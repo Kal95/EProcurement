@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using E_Procurement.Data;
 using E_Procurement.Data.Entity;
+using E_Procurement.WebUI.Models.BankModel;
 
 namespace E_Procurement.Repository.BankRepo
 {
@@ -16,22 +17,22 @@ namespace E_Procurement.Repository.BankRepo
         {
             _context = context;
         }
-        public bool CreateBank(string BankName, string SortCode, string UserId, out string Message)
+        public bool CreateBank(BankModel model, out string Message)
         {
-            var confirm = _context.Banks.Where(x => x.BankName == BankName).Count();
+            var confirm = _context.Banks.Where(x => x.BankName == model.BankName).Count();
 
             Bank bank = new Bank();
 
             if (confirm == 0)
             {
 
-                bank.BankName = BankName;
+                bank.BankName = model.BankName;
 
-                bank.SortCode = SortCode;
+                bank.SortCode = model.SortCode;
 
                 bank.IsActive = true;
 
-                bank.CreatedBy = UserId;
+                bank.CreatedBy = model.CreatedBy;
 
                 bank.DateCreated = DateTime.Now;
 
@@ -52,12 +53,12 @@ namespace E_Procurement.Repository.BankRepo
 
         }
 
-        public bool UpdateBank(int Id, string BankName,string SortCode, bool IsActive, string UserId, out string Message)
+        public bool UpdateBank(BankModel model, out string Message)
         {
 
-            var confirm = _context.Banks.Where(x => x.BankName == BankName && x.SortCode == SortCode && x.BankName == BankName && x.IsActive == IsActive).Count();
+            var confirm = _context.Banks.Where(x => x.BankName == model.BankName && x.SortCode == model.SortCode && x.BankName == model.BankName && x.IsActive == model.IsActive).Count();
 
-            var oldEntry = _context.Banks.Where(u => u.Id == Id).FirstOrDefault();
+            var oldEntry = _context.Banks.Where(u => u.Id == model.Id).FirstOrDefault();
 
             if (oldEntry == null)
             {
@@ -67,13 +68,13 @@ namespace E_Procurement.Repository.BankRepo
             if (confirm == 0)
             {
 
-                oldEntry.BankName = BankName;
+                oldEntry.BankName = model.BankName;
 
-                oldEntry.SortCode = SortCode;
+                oldEntry.SortCode = model.SortCode;
 
-                oldEntry.IsActive = IsActive;
+                oldEntry.IsActive = model.IsActive;
 
-                oldEntry.UpdatedBy = UserId;
+                oldEntry.UpdatedBy = model.UpdatedBy;
 
                 oldEntry.LastDateUpdated = DateTime.Now;
 

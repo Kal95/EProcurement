@@ -4,14 +4,16 @@ using E_Procurement.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace E_Procurement.Data.Migrations
 {
     [DbContext(typeof(EProcurementContext))]
-    partial class EProcurementContextModelSnapshot : ModelSnapshot
+    [Migration("20190611103822_VendorRelationship#")]
+    partial class VendorRelationship
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -535,6 +537,8 @@ namespace E_Procurement.Data.Migrations
 
                     b.Property<string>("VendorAddress");
 
+                    b.Property<int?>("VendorCategoryId");
+
                     b.Property<string>("VendorName");
 
                     b.Property<string>("VendorStatus");
@@ -548,6 +552,8 @@ namespace E_Procurement.Data.Migrations
                     b.HasIndex("CountryId");
 
                     b.HasIndex("StateId");
+
+                    b.HasIndex("VendorCategoryId");
 
                     b.ToTable("Vendors");
                 });
@@ -583,11 +589,27 @@ namespace E_Procurement.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("VendorCategoryId");
+                    b.Property<int>("CategoryId");
+
+                    b.Property<string>("CreatedBy");
+
+                    b.Property<DateTime>("DateCreated");
+
+                    b.Property<bool>("IsActive");
+
+                    b.Property<bool>("IsDeleted");
+
+                    b.Property<DateTime?>("LastDateUpdated");
+
+                    b.Property<string>("UpdatedBy");
+
+                    b.Property<int?>("VendorCategoryId");
 
                     b.Property<int>("VendorID");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("VendorCategoryId");
 
                     b.HasIndex("VendorID");
 
@@ -709,10 +731,18 @@ namespace E_Procurement.Data.Migrations
                         .WithMany("Vendor")
                         .HasForeignKey("StateId")
                         .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("E_Procurement.Data.Entity.VendorCategory", "VendorCategory")
+                        .WithMany("Vendor")
+                        .HasForeignKey("VendorCategoryId");
                 });
 
             modelBuilder.Entity("E_Procurement.Data.Entity.VendorMapping", b =>
                 {
+                    b.HasOne("E_Procurement.Data.Entity.VendorCategory", "VendorCategory")
+                        .WithMany("VendorMapping")
+                        .HasForeignKey("VendorCategoryId");
+
                     b.HasOne("E_Procurement.Data.Entity.Vendor", "Vendor")
                         .WithMany("VendorMapping")
                         .HasForeignKey("VendorID")

@@ -59,11 +59,11 @@ namespace E_Procurement.WebUI.Controllers
             try
             {
                 string message;
-                string UserId = User.Identity.Name;
+                Model.CreatedBy = User.Identity.Name;
 
                 if (ModelState.IsValid)
                 {
-                    var status = _countryRepository.CreateCountry(Model.CountryName, UserId, out message);
+                    var status = _countryRepository.CreateCountry(Model, out message);
 
                     ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
 
@@ -145,9 +145,9 @@ namespace E_Procurement.WebUI.Controllers
 
                     if (country == null) { return RedirectToAction("Index", "Country"); }
 
-                    string UserId = User.Identity.Name;
+                    Model.UpdatedBy = User.Identity.Name;
 
-                    var status = _countryRepository.UpdateCountry(Model.Id, Model.CountryName, Model.IsActive, UserId, out message);
+                    var status = _countryRepository.UpdateCountry(Model, out message);
 
                     ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
 

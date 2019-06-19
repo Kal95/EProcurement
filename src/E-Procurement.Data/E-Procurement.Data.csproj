@@ -13,6 +13,8 @@
     <Compile Remove="Migrations\20190528073246_AddedVendorCategory.cs" />
     <Compile Remove="Migrations\20190528073246_AddedVendorCategory.Designer.cs" />
     <Compile Remove="Migrations\20190528081233_Modified-Vendor-Entity.cs" />
+    <Compile Remove="Migrations\20190613095800_UpdateVendorMapping7.cs" />
+    <Compile Remove="Migrations\20190613100046_UpdateVendorMapping8.cs" />
   </ItemGroup>
 
   <ItemGroup>

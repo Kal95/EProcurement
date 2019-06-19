@@ -8,6 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Models\RFQModel\**" />
+    <Content Remove="Models\RFQModel\**" />
+    <EmbeddedResource Remove="Models\RFQModel\**" />
+    <None Remove="Models\RFQModel\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="wwwroot\js\site.js" />
     <None Include="wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css.map" />
     <None Include="wwwroot\lib\bootstrap\dist\css\bootstrap-grid.min.css.map" />
@@ -45,12 +52,21 @@
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.3" />
+    <PackageReference Include="xunit.extensibility.core" Version="2.4.1" />
+    <PackageReference Include="xunit.extensibility.execution" Version="2.4.1" />
   </ItemGroup>
 
 
   <ItemGroup>
     <ProjectReference Include="..\E-Procurement.Data\E-Procurement.Data.csproj" />
     <ProjectReference Include="..\E-Procurement.Repository\E-Procurement.Repository.csproj" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <Folder Include="Models\BankModel\" />
+    <Folder Include="Models\CountryModel\" />
+    <Folder Include="Models\StateModel\" />
   </ItemGroup>
 
 </Project>

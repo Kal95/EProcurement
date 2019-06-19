@@ -1,10 +1,16 @@
-﻿namespace E_Procurement.Data.Entity
+﻿using System.Collections.Generic;
+
+namespace E_Procurement.Data.Entity
 {
     /// <summary>
     /// Vendor Entity
     /// </summary>
     public class Vendor: BaseEntity.Entity
     {
+        public Vendor()
+        {
+            VendorMapping = new List<VendorMapping>();
+        }
         public string VendorName { get; set; }
         public string VendorAddress { get; set; }
         public string Email { get; set; }
@@ -24,6 +30,10 @@
         public string AccountNo { get; set; }
         public string AatCurrency { get; set; }
         public decimal AatAmount { get; set; }
-    
+        public ICollection<VendorMapping> VendorMapping { get; set; }
+        //public VendorCategory VendorCategory { get; set; }
+        public Bank Bank { get; set; }
+        public Country Country { get; set; }
+        public State State { get; set; }
     }
 }

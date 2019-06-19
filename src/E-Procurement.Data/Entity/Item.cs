@@ -9,6 +9,6 @@ namespace E_Procurement.Data.Entity
     {
         public int Id { get; set; }
         public string ItemName { get; set; }
-      
+        public int ItemCategoryId { get; set; }      
     }
 }
