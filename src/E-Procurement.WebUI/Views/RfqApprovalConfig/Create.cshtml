@@ -1,0 +1,60 @@
+﻿@model E_Procurement.WebUI.Models.RfqApprovalModel.RFQApprovalConfigModel
+@{
+    ViewData["Title"] = "Permissions";
+}
+
+<div class="row row-sm mg-t-20">
+    <div class="col-xl-12">
+        <div class="card pd-20 pd-sm-40 form-layout form-layout-4">
+            <h6 class="card-body-title">RFQ Approval Config </h6>
+            <p class="mg-b-20 mg-sm-b-30"> Create </p>
+            <form role="form" method="post">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="row mg-t-20">
+                    <label class="col-sm-2 form-control-label">User: <span class="tx-danger">*</span></label>
+                    <div class="col-sm-4 mg-t-10 mg-sm-t-0">
+                        <select asp-for="UserId" asp-items="@ViewBag.users"
+                                class="form-control custom-select" required>
+                            <option value="">Please select one</option>
+                        </select>
+                    </div>
+                </div><!-- row -->
+                <div class="row mg-t-20">
+                    <label class="col-sm-2 form-control-label">Code: <span class="tx-danger">*</span></label>
+                    <div class="col-sm-4 mg-t-10 mg-sm-t-0">
+                        <select asp-for="ApprovalLevel"
+                                class="form-control custom-select" required>
+                            <option value="">Please select one</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="10">10</option>
+                        </select>
+                    </div>
+                </div><!-- row -->
+               
+                    <div class="row">
+                        <label class="col-sm-2 form-control-label"> </label>
+                        <div class="col-sm-5 mg-t-10 mg-sm-t-10">
+                            <div class="row">
+                                <input asp-for="IsFinalLevel" type="checkbox" class="col-sm-1 form-control">Final Approval
+
+                            </div>
+                        </div>
+                    </div><!-- row -->
+              
+                <div class="form-layout-footer mg-t-30">
+                    <button class="btn btn-info mg-r-5">Submit</button>
+                    <button class="btn btn-secondary">Cancel</button>
+                </div><!-- form-layout-footer -->
+            </form>
+        </div><!-- card -->
+    </div><!-- col-6 -->
+
+</div>

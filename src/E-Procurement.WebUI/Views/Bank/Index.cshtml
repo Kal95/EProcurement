@@ -30,27 +30,27 @@
             <tbody>
 
                 @{int rowNo = 0;}
-                @foreach (var item in Model)
-                {
-                <tr>
-                    <td>@(rowNo += 1)</td>
-                    <td>@item.BankName</td>
-                    <td>@item.SortCode</td>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@(rowNo += 1)</td>
+                            <td>@item.BankName</td>
+                            <td>@item.SortCode</td>
 
-                    <td>
-                        @if (item.IsActive)
-                        {
-                            <label class="text-success">Active</label>
-                        }
-                        else
-                        {
-                            <label class="text-danger">Inactive</label>
+                            <td>
+                                @if (item.IsActive)
+                                {
+                                    <label class="text-success">Active</label>
+                                }
+                                else
+                                {
+                                    <label class="text-danger">Inactive</label>
 
-                        }
-                    </td>
-                    <td><a class="mb-2 mr-2 btn-icon btn-shadow btn-outline-2x btn btn-outline-alternate" href="@Url.Action("Edit", "Bank",  new { BankId = item.Id })"><span class="glyphicon btn-glyphicon glyphicon-edit img-circle text-success"></span><i class="pe-7s-edit btn-icon-wrapper"></i> Edit</a></td>
-                </tr>
-                }
+                                }
+                            </td>
+                            <td><a class="mb-2 mr-2 btn-icon btn-shadow btn-outline-2x btn btn-outline-alternate" href="@Url.Action("Edit", "Bank",  new { BankId = item.Id })"><span class="glyphicon btn-glyphicon glyphicon-edit img-circle text-success"></span><i class="pe-7s-edit btn-icon-wrapper"></i> Edit</a></td>
+                        </tr>
+                    }
 
             </tbody>
         </table>
