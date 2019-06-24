@@ -12,9 +12,10 @@ namespace E_Procurement.Repository.RFQGenRepo
         List<RFQGeneration> GetRfqGen();
         bool CreateRfqGen(RfqGenModel model, out string Message);
         bool UpdateRfqGen(RfqGenModel model, out string Message);
-        List<Vendor> GetVendors(int CategoryId);
+        List<Vendor> GetVendors(RfqGenModel model);
         List<RfqGenModel> GetItemCategory();
         List<RfqGenModel> GetItem(int CategoryId);
+        List<Vendor> GetVendorDetails();
 
     }
 }

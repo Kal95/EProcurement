@@ -79,8 +79,9 @@ namespace E_Procurement.Repository.VendoRepo
 
         public bool UpdateVendor(VendorModel model, out string Message)
         {
-
-            var confirm = _context.Vendors.Where(x => x.VendorName == model.VendorName && x.IsActive == model.IsActive).Count();
+            var confirm4 = _context.VendorMappings.Where(u => u.VendorID == model.Id).Count();
+            var confirm5 = model.SelectedVendorCategories.Count();
+            var confirm = _context.Vendors.Where(x => x.VendorName == model.VendorName && x.IsActive == model.IsActive && confirm4 == confirm5).Count();
 
             var oldEntry = _context.Vendors.Where(u => u.Id == model.Id).FirstOrDefault();
 
@@ -118,35 +119,28 @@ namespace E_Procurement.Repository.VendoRepo
 
                 foreach (var category in model.SelectedVendorCategories)
                 {
-                    
-                   
-                    var oldEntry2 = _context.VendorMappings.Where(u => u.Id == model.MappingId).FirstOrDefault();
-                   
                     var confirm2 = _context.VendorMappings.Where(u => u.VendorID == model.Id).Count();
 
                     if (confirm2 == model.SelectedVendorCategories.Count())
                     {
-                        foreach (var category2 in _context.VendorMappings.Where(u => u.Id == model.MappingId && u.VendorCategoryId == model.VendorCategoryId))
-                        {
-                            oldEntry2.VendorCategoryId = category2.VendorCategoryId = category;
-                            oldEntry2.VendorID = category2.VendorID = model.VendorId;
+                       var oldEntry2 = _context.VendorMappings.Where(u => u.VendorID == model.Id).FirstOrDefault();
 
-                        }
+                       oldEntry2.VendorCategoryId =  category;
+                       oldEntry2.VendorID = model.Id;
+
                     }
                     else if (confirm2 != model.SelectedVendorCategories.Count())
                     {
-                        foreach (var category2 in _context.VendorMappings.Where(u => u.Id == model.MappingId && u.VendorCategoryId != model.VendorCategoryId))
+                        foreach (var category2 in _context.VendorMappings.Where(u => u.VendorID == model.Id /*&& u.VendorCategoryId != category*/))
                         {
                             _context.VendorMappings.Remove(category2);
 
                         }
-                        foreach (var category3 in model.SelectedVendorCategories)
-                        {
-                            VendorMapping mapping = new VendorMapping();
-                            mapping.VendorCategoryId = category3;
-                            mapping.VendorID = oldEntry.Id;
-                            oldEntry.VendorMapping.Add(mapping);
-                        }
+                          VendorMapping mapping = new VendorMapping();
+                          mapping.VendorCategoryId = category;
+                          mapping.VendorID = oldEntry.Id;
+                          oldEntry.VendorMapping.Add(mapping);
+                        
                     }
 
                 }

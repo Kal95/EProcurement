@@ -8,6 +8,9 @@ using E_Procurement.WebUI.Models.BankModel;
 using E_Procurement.WebUI.Models.VendorCategoryModel;
 using E_Procurement.WebUI.Models.RFQModel;
 using E_Procurement.Repository.VendoRepo;
+using E_Procurement.Repository.Dtos;
+using E_Procurement.WebUI.Models.RfqApprovalModel;
+using System.Collections.Generic;
 
 namespace E_Procurement.WebUI.AutoMapperProfile
 {

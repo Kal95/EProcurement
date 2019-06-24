@@ -31,10 +31,11 @@ namespace E_Procurement.Repository.RFQGenRepo
 
             if (confirm == 0)
             {
-                 var selected = model.SelectedItems.Zip(model.Description,( x, y) => new { X = x, Y = y });             
+                 var selected = model.SelectedItems.Zip(model.Descriptions,( x, y) => new { X = x, Y = y });             
                 foreach (var entry in selected)
                 {
                     RFQGeneration RfqGen = new RFQGeneration();
+
                     RfqGen.Reference = model.Reference;
 
                     RfqGen.ProjectId = model.ProjectId;
@@ -61,22 +62,19 @@ namespace E_Procurement.Repository.RFQGenRepo
                 
                 _context.SaveChanges();
 
-                foreach (var item in model.SelectedItems)
+                var selected2 = model.SelectedItems.Zip(model.Quantities, (x, y) => new { X = x, Y = y });
+                foreach (var entry in selected2)
                 {
                     RFQGeneration RfqGen = new RFQGeneration();
 
                     RFQDetails RfqDet = new RFQDetails();
 
-                    RfqDet.ItemId = Convert.ToInt32(item.ToString());
+                    RfqDet.ItemId = Convert.ToInt32(entry.X.ToString());
                     RfqDet.ItemName = model.ItemName;
                     RfqDet.UpdatedBy = model.CreatedBy;
                     RfqDet.VendorId = Convert.ToInt32(string.Join<int>(",", model.SelectedVendors));
                     RfqDet.RFQId = RfqGen.Id;
-                    foreach (var quantity in model.Quantity)
-                    {
-                        RfqDet.QuotedQuantity =  quantity;
-                        _context.Add(RfqDet);
-                    }
+                    RfqDet.QuotedQuantity = Convert.ToInt32(entry.Y.ToString());
 
                     _context.Add(RfqDet);
                 }
@@ -109,21 +107,20 @@ namespace E_Procurement.Repository.RFQGenRepo
 
             if (confirm == 0)
             {
-
+             var selected = model.SelectedItems.Zip(model.Descriptions, (x, y) => new { X = x, Y = y });
+             foreach (var entry in selected)
+             {
                 oldEntry.Reference = model.Reference;
 
-                foreach (var des in model.Description)
-                {
-                    oldEntry.Description = des;
-                }
-
+                oldEntry.Description = entry.Y;
+          
                 oldEntry.ProjectId = model.ProjectId;
 
                 oldEntry.RequisitionId = model.RfqId;
 
-                oldEntry.StartDate = DateTime.ParseExact(model.StartDate.ToString(), "yyyy-MM-dd", CultureInfo.InvariantCulture);
+                oldEntry.StartDate = model.StartDate;
 
-                oldEntry.EndDate = DateTime.ParseExact(model.EndDate.ToString(), "yyyy-MM-dd", CultureInfo.InvariantCulture);
+                oldEntry.EndDate = model.EndDate;
 
                 oldEntry.RFQStatus = model.RfqStatus;
 
@@ -131,80 +128,51 @@ namespace E_Procurement.Repository.RFQGenRepo
 
                 oldEntry.LastDateUpdated = DateTime.Now;
 
-                foreach (var item in model.SelectedItems)
+                 _context.Add(oldEntry);
+
+             }
+
+                var selected2 = model.SelectedItems.Zip(model.Quantities, (x, y) => new { X = x, Y = y });
+                foreach (var entry in selected2)
                 {
-
-                    RFQDetails rfq = new RFQDetails();
-
                     var confirm2 = _context.RfqDetails.Where(u => u.RFQId == model.Id).Count();
-                    var itemDetails = _context.Items.Where(u => u.Id == Convert.ToInt32(item.ToString())).FirstOrDefault();
+                    var itemDetails = _context.Items.Where(u => u.Id == Convert.ToInt32(entry.X.ToString())).FirstOrDefault();
                     if (confirm2 == model.SelectedItems.Count())
                     {
                         var oldEntry2 = _context.RfqDetails.Where(u => u.RFQId == model.Id).FirstOrDefault();
 
-                        oldEntry2.ItemId = Convert.ToInt32(item.ToString());
-                        oldEntry2.ItemName = itemDetails.ItemName;
-                        oldEntry2.RFQId = model.Id;
-                        foreach (var quantity in model.Quantity)
-                        {
-                            oldEntry2.QuotedQuantity = quantity;
-                        }
-                        
-                        oldEntry2.UpdatedBy = model.UpdatedBy;
-                        oldEntry2.VendorId = Convert.ToInt32(string.Join<int>(",", model.SelectedVendors));
-                    }
-                    else if (confirm2 < model.SelectedItems.Count())
-                    {
-                        var oldEntry5 = item.CompareTo(_context.RfqDetails.Any(u => u.RFQId != model.Id && u.ItemId != Convert.ToInt32(item.ToString())));
-                        var oldEntry1 = _context.RfqDetails.Where(u => u.RFQId == model.Id).FirstOrDefault();
-                        var oldEntry2 = _context.RfqDetails.Where(u => u.RFQId == model.Id && u.ItemId == Convert.ToInt32(item.ToString())).FirstOrDefault();
-                        var oldItem = item.ToString().Where(u => u != oldEntry2.ItemId).ToList();
+                        oldEntry2.ItemId = Convert.ToInt32(entry.X.ToString());
 
-                        foreach (var newItem in oldItem)
-                        {
-                            rfq.ItemId = newItem;
-                            rfq.ItemName = itemDetails.ItemName;
-                            foreach (var quantity in model.Quantity)
-                            {
-                                rfq.QuotedQuantity = quantity;
-                            }
-                            
-                            rfq.CreatedBy = model.CreatedBy;
-                            rfq.DateCreated = DateTime.Now;
-                            rfq.VendorId = Convert.ToInt32(string.Join<int>(",", model.SelectedVendors));
-                            rfq.RFQId = oldEntry.Id;
-                            _context.Add(rfq);
-                        }
-                        oldEntry1.ItemId = Convert.ToInt32(item.ToString());
-                        oldEntry1.ItemName = itemDetails.ItemName;
-                        oldEntry1.RFQId = model.Id;
-                        foreach (var quantity in model.Quantity)
-                        {
-                            oldEntry1.QuotedQuantity = quantity;
-                        }
-                        oldEntry1.UpdatedBy = model.UpdatedBy;
-                        oldEntry1.LastDateUpdated = DateTime.Now;
-                        oldEntry1.VendorId = Convert.ToInt32(string.Join<int>(",", model.SelectedVendors));
-                    }
-                    else if (confirm2 > model.SelectedItems.Count())
-                    {
-                        var oldEntry2 = _context.RfqDetails.Where(u => u.RFQId == model.Id && u.ItemId != Convert.ToInt32(item.ToString())).FirstOrDefault();
-                        var oldItem = item.ToString().Where(u => u != oldEntry2.ItemId).ToList();
-                        foreach (var old in oldItem)
-                        {
-                            _context.Remove(oldEntry2);
-                        }
-                        oldEntry2.ItemId = Convert.ToInt32(item.ToString());
                         oldEntry2.ItemName = itemDetails.ItemName;
+
                         oldEntry2.RFQId = model.Id;
-                        foreach (var quantity in model.Quantity)
-                        {
-                            oldEntry2.QuotedQuantity = quantity;
-                        }
+
+                        oldEntry2.QuotedQuantity = entry.Y;
+
                         oldEntry2.UpdatedBy = model.UpdatedBy;
-                        oldEntry2.LastDateUpdated = DateTime.Now;
+
                         oldEntry2.VendorId = Convert.ToInt32(string.Join<int>(",", model.SelectedVendors));
-                       
+                    }
+                    else if (confirm2 != selected2.Count())
+                    {
+                        foreach (var category2 in _context.RfqDetails.Where(u => u.RFQId == model.Id && u.ItemId != Convert.ToInt32(entry.X.ToString())))
+                        {
+                            _context.RfqDetails.Remove(category2);
+
+                        }
+
+                        RFQGeneration RfqGen = new RFQGeneration();
+
+                        RFQDetails RfqDet = new RFQDetails();
+
+                        RfqDet.ItemId = Convert.ToInt32(entry.X.ToString());
+                        RfqDet.ItemName = model.ItemName;
+                        RfqDet.UpdatedBy = model.CreatedBy;
+                        RfqDet.VendorId = Convert.ToInt32(string.Join<int>(",", model.SelectedVendors));
+                        RfqDet.RFQId = RfqGen.Id;
+                        RfqDet.QuotedQuantity = Convert.ToInt32(entry.Y.ToString());
+
+                        _context.Add(RfqDet);
                     }
 
                 }
@@ -253,16 +221,26 @@ namespace E_Procurement.Repository.RFQGenRepo
             }
         }
 
-        public List<Vendor> GetVendors(int CategoryId)
+        public List<Vendor> GetVendors(RfqGenModel model)
         {
-            var mapping = _context.VendorMappings.Where(u => u.VendorCategoryId == CategoryId).Select(u => u.VendorID).FirstOrDefault();
-            return _context.Vendors.Where(u => u.Id == mapping).ToList();
+            var mapping = _context.VendorMappings.Where(u => u.VendorCategoryId == model.CategoryId).ToList();
+            var vendor = _context.Vendors.OrderByDescending(u => u.Id).ToList();
+          
+            var vendorList = vendor.Where(a => mapping.Any(b => b.VendorID == a.Id));
+            return vendorList.ToList();
         }
 
         public List<RFQGeneration> GetRfqGen()
         {
+
             return _context.RfqGenerations.OrderByDescending(u => u.Id).ToList();
         }
-        
+        public List<Vendor> GetVendorDetails()
+        {
+           var mapping =  _context.VendorMappings.Select(u => u.VendorID).FirstOrDefault();
+            
+            return _context.Vendors.Where(u => u.Id == mapping).ToList();
+        }
+
     }
 }
