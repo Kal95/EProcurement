@@ -6,7 +6,9 @@ using AutoMapper;
 using E_Procurement.Data.Entity;
 using E_Procurement.Repository.AccountRepo;
 using E_Procurement.Repository.ApprovalRepo;
+using E_Procurement.Repository.Dtos;
 using E_Procurement.WebUI.Models.RfqApprovalModel;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -23,6 +25,7 @@ namespace E_Procurement.WebUI.Controllers
             _RfqApprovalRepository = RfqApprovalRepository;
             _accountManager = accountManager;
             _mapper = mapper;
+          
         }
         public async Task<IActionResult> Index()
         {
@@ -60,13 +63,50 @@ namespace E_Procurement.WebUI.Controllers
             //RFQGenerationViewModel RfqApproval = _mapper.Map<RFQGenerationViewModel>(RfqApprovalDetails);
 
             //RfqApproval.RFQDetails = rqfDetails;
+            if (RfqApprovalDetails == null)
+                return View();
 
             return View(RfqApprovalDetails);
         }
 
 
+        public async Task<IActionResult> PendingApproval()
+        {
+            var RfqApprovalList = await _RfqApprovalRepository.GetRFQPendingApprovalAsync();
+
+            List<RFQGenerationViewModel> RfqApproval = _mapper.Map<List<RFQGenerationViewModel>>(RfqApprovalList);
+
+            return View(RfqApproval);
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> RfqApprovalDetails(RFQGenerationModel rfqApproval)
+        {
+
+            try
+            {
+                if (rfqApproval.RFQStatus == null)
+                {
+                    var approval = await _RfqApprovalRepository.CreateRFQApprovalAsync(rfqApproval);
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+
+                    var approval = await _RfqApprovalRepository.CreateRFQApprovalAsync(rfqApproval);
+                    return RedirectToAction("PendingApproval");
+                }
+
+            }
+            catch(Exception ex)
+            {
+                return View();
+            }
+
+        }
 
 
 
+        }
     }
-}

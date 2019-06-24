@@ -14,8 +14,9 @@ namespace E_Procurement.Repository.Dtos
             public DateTime StartDate { get; set; }
             public DateTime EndDate { get; set; }
             public string RFQStatus { get; set; }
-            public string VendorName { get; set; }
-            public string VendorAddress { get; set; }
+            public int VendorId { get; set; }
+        public string VendorName { get; set; }
+        public string VendorAddress { get; set; }
             public string VendorStatus { get; set; }
             public string ContactName { get; set; }
             public List<RFQDetailsModel> RFQDetails { get; set; }

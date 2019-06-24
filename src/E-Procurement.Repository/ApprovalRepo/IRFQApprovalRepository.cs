@@ -11,7 +11,11 @@ namespace E_Procurement.Repository.ApprovalRepo
    public  interface IRfqApprovalRepository : IDependencyRegister
     {
         Task<IEnumerable<RFQGenerationModel>> GetRFQApprovalDueAsync();
+        Task<IEnumerable<RFQGenerationModel>> GetRFQPendingApprovalAsync();
         Task<RFQGenerationModel> GetRFQDetailsAsync(int RFQId);
+
+        Task<bool> CreateRFQApprovalAsync(RFQGenerationModel rFQApproval);
+        Task<bool> CreateRFQPendingApprovalAsync(RFQGenerationModel rFQApproval);
 
 
     }
