@@ -3,13 +3,11 @@ using E_Procurement.Data.Entity;
 using E_Procurement.WebUI.Models.AccountModel;
 using E_Procurement.WebUI.Models.PermissionModel;
 using E_Procurement.WebUI.Models.StateModel;
-using E_Procurement.WebUI.Models.VendorModel;
 using E_Procurement.WebUI.Models.CountryModel;
 using E_Procurement.WebUI.Models.BankModel;
 using E_Procurement.WebUI.Models.VendorCategoryModel;
-using E_Procurement.WebUI.Models.RfqApprovalModel;
-using E_Procurement.Repository.Dtos;
-using System.Collections.Generic;
+using E_Procurement.WebUI.Models.RFQModel;
+using E_Procurement.Repository.VendoRepo;
 
 namespace E_Procurement.WebUI.AutoMapperProfile
 {
@@ -29,6 +27,7 @@ namespace E_Procurement.WebUI.AutoMapperProfile
 
             CreateMap<VendorCategoryModel, VendorCategory>().ReverseMap();
 
+            CreateMap<RfqGenModel, RFQGeneration>().ReverseMap();
 
 
             CreateMap<UserViewModel, User>().ReverseMap();

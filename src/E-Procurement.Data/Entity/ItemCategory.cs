@@ -10,9 +10,7 @@ namespace E_Procurement.Data.Entity
             public int Id { get; set; }
             
             public string CategoryName  { get; set; }
-            
-
-            public ICollection<Item> Items { get; set; } = new HashSet<Item>();
+         
            
       
 

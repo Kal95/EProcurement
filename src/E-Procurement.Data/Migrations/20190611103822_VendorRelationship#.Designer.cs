@@ -4,14 +4,16 @@ using E_Procurement.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace E_Procurement.Data.Migrations
 {
     [DbContext(typeof(EProcurementContext))]
-    partial class EProcurementContextModelSnapshot : ModelSnapshot
+    [Migration("20190611103822_VendorRelationship#")]
+    partial class VendorRelationship
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -64,9 +66,9 @@ namespace E_Procurement.Data.Migrations
 
                     b.Property<DateTime?>("LastDateUpdated");
 
-                    b.Property<int>("PermissionId");
+                    b.Property<string>("UpdatedBy");
 
-                    b.Property<int>("RoleId");
+                    b.HasKey("Id");
 
                     b.ToTable("Countries");
                 });
@@ -104,35 +106,6 @@ namespace E_Procurement.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("DnGenerations");
-                });
-
-            modelBuilder.Entity("E_Procurement.Data.Entity.EmailSentLog", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("CreatedBy");
-
-                    b.Property<DateTime>("DateCreated");
-
-                    b.Property<string>("EmailContent");
-
-                    b.Property<bool>("IsActive");
-
-                    b.Property<bool>("IsDeleted");
-
-                    b.Property<DateTime?>("LastDateUpdated");
-
-                    b.Property<string>("RecipientEmail");
-
-                    b.Property<string>("Status");
-
-                    b.Property<string>("UpdatedBy");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("EmailSentLogs");
                 });
 
             modelBuilder.Entity("E_Procurement.Data.Entity.GRNGeneration", b =>
@@ -231,60 +204,6 @@ namespace E_Procurement.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("PoGenerations");
-                });
-
-            modelBuilder.Entity("E_Procurement.Data.Entity.Permission", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Code");
-
-                    b.Property<string>("CreatedBy");
-
-                    b.Property<DateTime>("DateCreated");
-
-                    b.Property<bool>("IsActive");
-
-                    b.Property<bool>("IsDeleted");
-
-                    b.Property<DateTime?>("LastDateUpdated");
-
-                    b.Property<string>("Name");
-
-                    b.Property<string>("UpdatedBy");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Permissions");
-                });
-
-            modelBuilder.Entity("E_Procurement.Data.Entity.PermissionRole", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("CreatedBy");
-
-                    b.Property<DateTime>("DateCreated");
-
-                    b.Property<bool>("IsActive");
-
-                    b.Property<bool>("IsDeleted");
-
-                    b.Property<DateTime?>("LastDateUpdated");
-
-                    b.Property<int>("PermissionId");
-
-                    b.Property<int>("RoleId");
-
-                    b.Property<string>("UpdatedBy");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("PermissionRoles");
                 });
 
             modelBuilder.Entity("E_Procurement.Data.Entity.RFQApprovalConfig", b =>
@@ -604,7 +523,9 @@ namespace E_Procurement.Data.Migrations
 
                     b.Property<DateTime?>("LastDateUpdated");
 
-                    b.Property<string>("Name");
+                    b.Property<string>("PhoneNumber");
+
+                    b.Property<string>("SortCode");
 
                     b.Property<int>("StateId");
 
@@ -615,6 +536,8 @@ namespace E_Procurement.Data.Migrations
                     b.Property<string>("VatNo");
 
                     b.Property<string>("VendorAddress");
+
+                    b.Property<int?>("VendorCategoryId");
 
                     b.Property<string>("VendorName");
 
@@ -630,7 +553,67 @@ namespace E_Procurement.Data.Migrations
 
                     b.HasIndex("StateId");
 
+                    b.HasIndex("VendorCategoryId");
+
                     b.ToTable("Vendors");
+                });
+
+            modelBuilder.Entity("E_Procurement.Data.Entity.VendorCategory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("CategoryName");
+
+                    b.Property<string>("CreatedBy");
+
+                    b.Property<DateTime>("DateCreated");
+
+                    b.Property<bool>("IsActive");
+
+                    b.Property<bool>("IsDeleted");
+
+                    b.Property<DateTime?>("LastDateUpdated");
+
+                    b.Property<string>("UpdatedBy");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("VendorCategories");
+                });
+
+            modelBuilder.Entity("E_Procurement.Data.Entity.VendorMapping", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("CategoryId");
+
+                    b.Property<string>("CreatedBy");
+
+                    b.Property<DateTime>("DateCreated");
+
+                    b.Property<bool>("IsActive");
+
+                    b.Property<bool>("IsDeleted");
+
+                    b.Property<DateTime?>("LastDateUpdated");
+
+                    b.Property<string>("UpdatedBy");
+
+                    b.Property<int?>("VendorCategoryId");
+
+                    b.Property<int>("VendorID");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("VendorCategoryId");
+
+                    b.HasIndex("VendorID");
+
+                    b.ToTable("VendorMappings");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -748,10 +731,18 @@ namespace E_Procurement.Data.Migrations
                         .WithMany("Vendor")
                         .HasForeignKey("StateId")
                         .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("E_Procurement.Data.Entity.VendorCategory", "VendorCategory")
+                        .WithMany("Vendor")
+                        .HasForeignKey("VendorCategoryId");
                 });
 
             modelBuilder.Entity("E_Procurement.Data.Entity.VendorMapping", b =>
                 {
+                    b.HasOne("E_Procurement.Data.Entity.VendorCategory", "VendorCategory")
+                        .WithMany("VendorMapping")
+                        .HasForeignKey("VendorCategoryId");
+
                     b.HasOne("E_Procurement.Data.Entity.Vendor", "Vendor")
                         .WithMany("VendorMapping")
                         .HasForeignKey("VendorID")

@@ -4,12 +4,14 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace E_Procurement.WebUI.Models.VendorCategoryModel
+namespace E_Procurement.WebUI.Models.BankModel
 {
-    public class VendorCategoryModel
+    public class BankModel
     {
         [Required]
-        public string CategoryName { get; set; }
+        public string BankName { get; set; }
+        [Required]
+        public string SortCode { get; set; }
         public int Id { get; set; }
         public bool IsActive { get; set; }
         public string CreatedBy { get; set; }

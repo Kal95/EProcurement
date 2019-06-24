@@ -8,5 +8,6 @@ namespace E_Procurement.Data.Entity
     {
         public string BankName { get; set; }
         public string SortCode { get; set; }
+        public ICollection<Vendor> Vendor { get; set; }
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using E_Procurement.Data;
 using E_Procurement.Data.Entity;
+using E_Procurement.WebUI.Models.CountryModel;
 
 namespace E_Procurement.Repository.CountryRepo
 {
@@ -16,20 +17,20 @@ namespace E_Procurement.Repository.CountryRepo
         {
             _context = context;
         }
-        public bool CreateCountry(string CountryName, string UserId, out string Message)
+        public bool CreateCountry(CountryModel model, out string Message)
         {
-            var confirm = _context.Countries.Where(x => x.CountryName == CountryName).Count();
+            var confirm = _context.Countries.Where(x => x.CountryName == model.CountryName).Count();
 
             Country country = new Country();
 
             if (confirm == 0)
             {
 
-                country.CountryName = CountryName;
+                country.CountryName = model.CountryName;
 
                 country.IsActive = true;
 
-                country.CreatedBy = UserId;
+                country.CreatedBy = model.CreatedBy;
 
                 country.DateCreated = DateTime.Now;
 
@@ -50,12 +51,12 @@ namespace E_Procurement.Repository.CountryRepo
 
         }
 
-        public bool UpdateCountry(int Id, string CountryName, bool IsActive, string UserId, out string Message)
+        public bool UpdateCountry(CountryModel model, out string Message)
         {
 
-            var confirm = _context.Countries.Where(x => x.CountryName == CountryName && x.IsActive == IsActive).Count();
+            var confirm = _context.Countries.Where(x => x.CountryName == model.CountryName && x.IsActive == model.IsActive).Count();
 
-            var oldEntry = _context.Countries.Where(u => u.Id == Id).FirstOrDefault();
+            var oldEntry = _context.Countries.Where(u => u.Id == model.Id).FirstOrDefault();
 
             if (oldEntry == null)
             {
@@ -65,11 +66,11 @@ namespace E_Procurement.Repository.CountryRepo
             if (confirm == 0)
             {
 
-                oldEntry.CountryName = CountryName;
+                oldEntry.CountryName = model.CountryName;
 
-                oldEntry.IsActive = IsActive;
+                oldEntry.IsActive = model.IsActive;
 
-                oldEntry.UpdatedBy = UserId;
+                oldEntry.UpdatedBy = model.UpdatedBy;
 
                 oldEntry.LastDateUpdated = DateTime.Now;
 
