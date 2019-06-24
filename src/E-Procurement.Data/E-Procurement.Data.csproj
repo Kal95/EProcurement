@@ -6,15 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Migrations\20190527152221_EntitiesUpdate.cs" />
-    <Compile Remove="Migrations\20190527154121_NewEntityUpdate.cs" />
-    <Compile Remove="Migrations\20190527154514_Update.cs" />
-    <Compile Remove="Migrations\20190528072304_UpdatedEntity.cs" />
+    <Compile Remove="Migrations\20190524144905_PrmssionEntity.cs" />
     <Compile Remove="Migrations\20190528073246_AddedVendorCategory.cs" />
     <Compile Remove="Migrations\20190528073246_AddedVendorCategory.Designer.cs" />
-    <Compile Remove="Migrations\20190528081233_Modified-Vendor-Entity.cs" />
-    <Compile Remove="Migrations\20190613095800_UpdateVendorMapping7.cs" />
-    <Compile Remove="Migrations\20190613100046_UpdateVendorMapping8.cs" />
+    <Compile Remove="Migrations\20190620122853_EmailLog.cs" />
   </ItemGroup>
 
   <ItemGroup>

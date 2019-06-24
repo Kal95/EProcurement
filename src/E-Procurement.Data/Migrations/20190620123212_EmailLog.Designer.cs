@@ -4,14 +4,16 @@ using E_Procurement.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace E_Procurement.Data.Migrations
 {
     [DbContext(typeof(EProcurementContext))]
-    partial class EProcurementContextModelSnapshot : ModelSnapshot
+    [Migration("20190620123212_EmailLog")]
+    partial class EmailLog
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -64,9 +66,9 @@ namespace E_Procurement.Data.Migrations
 
                     b.Property<DateTime?>("LastDateUpdated");
 
-                    b.Property<int>("PermissionId");
+                    b.Property<string>("UpdatedBy");
 
-                    b.Property<int>("RoleId");
+                    b.HasKey("Id");
 
                     b.ToTable("Countries");
                 });
@@ -176,11 +178,13 @@ namespace E_Procurement.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("ItemCategoryId");
+                    b.Property<int?>("ItemCategoryId");
 
                     b.Property<string>("ItemName");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ItemCategoryId");
 
                     b.ToTable("Items");
                 });
@@ -604,7 +608,9 @@ namespace E_Procurement.Data.Migrations
 
                     b.Property<DateTime?>("LastDateUpdated");
 
-                    b.Property<string>("Name");
+                    b.Property<string>("PhoneNumber");
+
+                    b.Property<string>("SortCode");
 
                     b.Property<int>("StateId");
 
@@ -624,13 +630,32 @@ namespace E_Procurement.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BankId");
-
-                    b.HasIndex("CountryId");
-
-                    b.HasIndex("StateId");
-
                     b.ToTable("Vendors");
+                });
+
+            modelBuilder.Entity("E_Procurement.Data.Entity.VendorCategory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("CategoryName");
+
+                    b.Property<string>("CreatedBy");
+
+                    b.Property<DateTime>("DateCreated");
+
+                    b.Property<bool>("IsActive");
+
+                    b.Property<bool>("IsDeleted");
+
+                    b.Property<DateTime?>("LastDateUpdated");
+
+                    b.Property<string>("UpdatedBy");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("VendorCategories");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -732,30 +757,11 @@ namespace E_Procurement.Data.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("E_Procurement.Data.Entity.Vendor", b =>
+            modelBuilder.Entity("E_Procurement.Data.Entity.Item", b =>
                 {
-                    b.HasOne("E_Procurement.Data.Entity.Bank", "Bank")
-                        .WithMany("Vendor")
-                        .HasForeignKey("BankId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("E_Procurement.Data.Entity.Country", "Country")
-                        .WithMany("Vendor")
-                        .HasForeignKey("CountryId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("E_Procurement.Data.Entity.State", "State")
-                        .WithMany("Vendor")
-                        .HasForeignKey("StateId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("E_Procurement.Data.Entity.VendorMapping", b =>
-                {
-                    b.HasOne("E_Procurement.Data.Entity.Vendor", "Vendor")
-                        .WithMany("VendorMapping")
-                        .HasForeignKey("VendorID")
-                        .OnDelete(DeleteBehavior.Cascade);
+                    b.HasOne("E_Procurement.Data.Entity.ItemCategory")
+                        .WithMany("Items")
+                        .HasForeignKey("ItemCategoryId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>

@@ -75,7 +75,7 @@ namespace E_Procurement.WebUI
             services.AddAutoMapper(typeof(Startup).Assembly);
 
             services.Configure<EmailSettings>(Configuration.GetSection("EmailSettings"));
-            services.AddSingleton<ISMTPService, SMTPService>();
+            //services.AddSingleton<ISMTPService, SMTPService>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 
@@ -95,7 +95,9 @@ namespace E_Procurement.WebUI
             var builder = new ContainerBuilder();
             builder.Populate(services);
 
+           // builder.RegisterType<EmailSettings>().AsSelf().SingleInstance();
             builder.RegisterModule<AutofacRepoModule>();
+
             ApplicationContainer = builder.Build();
             // Create the IServiceProvider based on the container.
             return new AutofacServiceProvider(ApplicationContainer);

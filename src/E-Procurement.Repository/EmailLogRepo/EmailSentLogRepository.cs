@@ -30,6 +30,19 @@ namespace E_Procurement.Repository.EmailLogRepo
             return false;
         }
 
+        public async Task<bool> LogEmailTransactionAsync(EmailSentLog emailLog)
+        {
+            if (emailLog != null)
+            {
+
+                await _context.AddAsync(emailLog);
+                //await _context.SaveChangesAsync();
+                return true;
+            }
+
+            return false;
+        }
+
         public async  Task<bool> UpdateEmailAsync(EmailSentLog emailLog)
         {
             if (emailLog != null)
