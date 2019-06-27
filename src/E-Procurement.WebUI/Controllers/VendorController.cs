@@ -204,13 +204,7 @@ namespace E_Procurement.WebUI.Controllers
                 Model.VendorStatus = vendor.VendorStatus;
                 Model.WebsiteAddress = vendor.WebsiteAddress;
                 Model.VatNo = vendor.VatNo;
-                foreach (var category in _vendorRepository.GetMapping().Where(u => u.VendorID == VendorId))
-                {
-                    Model.VendorCategoryId = category.VendorCategoryId;
-                    Model.VendorId = category.VendorID;
-                    Model.MappingId = category.Id;
-                }
-
+               
                 LoadPredefinedInfo(Model);
 
                 return View(Model);
@@ -252,7 +246,7 @@ namespace E_Procurement.WebUI.Controllers
                     else
                     {
                         ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
-                        return View(Model);
+                        return RedirectToAction("Index", "Vendor");
                     }
 
                     return RedirectToAction("Index", "Vendor");

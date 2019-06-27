@@ -6,6 +6,8 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using E_Procurement.Data;
 using E_Procurement.Data.Entity;
+using E_Procurement.Repository.Interface;
+using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 
 namespace E_Procurement.Repository.VendoRepo
@@ -13,18 +15,21 @@ namespace E_Procurement.Repository.VendoRepo
     public class VendorRepository : IVendorRepository
     {
         private readonly EProcurementContext _context;
+        private readonly ISMTPService _emailSender;
+        private readonly IHttpContextAccessor _contextAccessor;
 
-
-        public VendorRepository(EProcurementContext context)
+        public VendorRepository(EProcurementContext context, ISMTPService emailSender, IHttpContextAccessor contextAccessor)
         {
             _context = context;
+            _emailSender = emailSender;
+            _contextAccessor = contextAccessor;
         }
         public bool CreateVendor(VendorModel model, out string Message)
         {
             var confirm = _context.Vendors.Where(x => x.VendorName == model.VendorName).Count();
 
             Vendor vendor = new Vendor();
-          
+
 
             if (confirm == 0)
             {
@@ -57,11 +62,20 @@ namespace E_Procurement.Repository.VendoRepo
                 foreach (var category in model.SelectedVendorCategories)
                 {
                     VendorMapping mapping = new VendorMapping();
-                    mapping.VendorCategoryId =  Convert.ToInt32(category.ToString());
+                    mapping.VendorCategoryId = Convert.ToInt32(category.ToString());
                     mapping.VendorID = vendor.Id;
                     vendor.VendorMapping.Add(mapping);
-                }                
-               
+                }
+                var subject = "SIGNUP NOTIFICATION";
+
+                var message = "</br><b> Dear </b>" + model.ContactName.ToString();
+                message += "</br><b> Your company: </b>" + model.VendorName;
+                message += "</br>has been registered successful on Cyberspace E-procurement Portal.</br>";
+                message += "</br>Kindly, log in and validate the required documents.";
+                message += "</br>Regards";
+
+                _emailSender.SendEmailAsync(vendor.Email, subject, message);
+
                 _context.SaveChanges();
 
                 Message = "Vendor created successfully";
@@ -79,8 +93,9 @@ namespace E_Procurement.Repository.VendoRepo
 
         public bool UpdateVendor(VendorModel model, out string Message)
         {
-
-            var confirm = _context.Vendors.Where(x => x.VendorName == model.VendorName && x.IsActive == model.IsActive).Count();
+            var confirm4 = _context.VendorMappings.Where(u => u.VendorID == model.Id).Count();
+            var confirm5 = model.SelectedVendorCategories.Count();
+            var confirm = _context.Vendors.Where(x => x.VendorName == model.VendorName && x.IsActive == model.IsActive && confirm4 == confirm5).Count();
 
             var oldEntry = _context.Vendors.Where(u => u.Id == model.Id).FirstOrDefault();
 
@@ -114,39 +129,32 @@ namespace E_Procurement.Repository.VendoRepo
                 oldEntry.UpdatedBy = model.UpdatedBy;
                 oldEntry.LastDateUpdated = DateTime.Now;
                 oldEntry.IsActive = model.IsActive;
-                
+
 
                 foreach (var category in model.SelectedVendorCategories)
                 {
-                    
-                   
-                    var oldEntry2 = _context.VendorMappings.Where(u => u.Id == model.MappingId).FirstOrDefault();
-                   
                     var confirm2 = _context.VendorMappings.Where(u => u.VendorID == model.Id).Count();
 
                     if (confirm2 == model.SelectedVendorCategories.Count())
                     {
-                        foreach (var category2 in _context.VendorMappings.Where(u => u.Id == model.MappingId && u.VendorCategoryId == model.VendorCategoryId))
-                        {
-                            oldEntry2.VendorCategoryId = category2.VendorCategoryId = category;
-                            oldEntry2.VendorID = category2.VendorID = model.VendorId;
+                        var oldEntry2 = _context.VendorMappings.Where(u => u.VendorID == model.Id).FirstOrDefault();
 
-                        }
+                        oldEntry2.VendorCategoryId = category;
+                        oldEntry2.VendorID = model.Id;
+
                     }
                     else if (confirm2 != model.SelectedVendorCategories.Count())
                     {
-                        foreach (var category2 in _context.VendorMappings.Where(u => u.Id == model.MappingId && u.VendorCategoryId != model.VendorCategoryId))
+                        foreach (var category2 in _context.VendorMappings.Where(u => u.VendorID == model.Id /*&& u.VendorCategoryId != category*/))
                         {
                             _context.VendorMappings.Remove(category2);
 
                         }
-                        foreach (var category3 in model.SelectedVendorCategories)
-                        {
-                            VendorMapping mapping = new VendorMapping();
-                            mapping.VendorCategoryId = category3;
-                            mapping.VendorID = oldEntry.Id;
-                            oldEntry.VendorMapping.Add(mapping);
-                        }
+                        VendorMapping mapping = new VendorMapping();
+                        mapping.VendorCategoryId = category;
+                        mapping.VendorID = oldEntry.Id;
+                        oldEntry.VendorMapping.Add(mapping);
+
                     }
 
                 }

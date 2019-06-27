@@ -11,6 +11,7 @@ namespace E_Procurement.WebUI.Models.RFQModel
 {
     public class RfqGenModel
     {
+        public List<RFQGeneration> Rfqs { get; set; }
         public int Id { get; set; }
         public string Reference { get; set; }
         //public string Description { get; set; }
@@ -22,11 +23,12 @@ namespace E_Procurement.WebUI.Models.RFQModel
         public string CreatedBy { get; set; }
         public bool IsActive { get; set; }
         public string UpdatedBy { get; set; }
-        //public int  Quantity { get; set; }
-        public List<string> Description { get; set; }
-        public List<int> Quantity { get; set; }
-
-
+        public int  Quantity { get; set; }
+        public string Description { get; set; }
+        public List<string> Descriptions { get; set; }
+        public List<int> Quantities { get; set; }
+        //public List<string> VendorName { get; set; }
+       
 
 
         [Required(ErrorMessage = "You must select at least one Vendor")]

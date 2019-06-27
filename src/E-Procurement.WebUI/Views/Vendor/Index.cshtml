@@ -11,16 +11,23 @@
 
     <div class="card-body">
         <a class="btn btn-primary" pull-right" href="@Url.Action("Create", "Vendor")"><i class="fa fa-plus"> </i>  Add Vendor</a>
+       
+        <i class="fa fa-search" pull-left">
+            <input type="text" id="myInput" style="width:200px; height:30px" onkeyup="myFunction()" placeholder="Search..">
+        </i>
+          
+       
+        
         <br />
         <hr />
         <br />
-        <table style="width: 100%;" id="example" class="table table-hover table-striped table-bordered">
+        <table style="width:initial" id="myTable" class="table table-hover table-striped table-bordered">
             <thead>
                 <tr>
                     <th>S/N</th>
                     <th>Vendor Name </th>
                     <th>Address</th>
-                    <th>Website </th>
+                    @*<th>Website </th>*@
                     @*<th>VAT No. </th>
                     <th>TIN No. </th>
                     <th>AAT Amount </th>
@@ -46,8 +53,8 @@
                         <td>@(rowNo += 1)</td>
                         <td>@item.VendorName</td>
                         <td>@item.VendorAddress</td>
-                        <td>@item.WebsiteAddress</td>
-                       
+                        @*<td>@item.WebsiteAddress</td>*@
+
                         @*<td>@item.VatNo</td>
                         <td>@item.TinNo</td>
                         <td>@item.AatAmount</td>
@@ -72,7 +79,7 @@
 
                             }
                         </td>
-                        <td><a class="mb-2 mr-2 btn-icon btn-shadow btn-outline-2x btn btn-outline-alternate" href="@Url.Action("Edit", "Vendor",  new { VendorId = item.Id })"><span class="glyphicon btn-glyphicon glyphicon-edit img-circle text-success"></span><i class="pe-7s-edit btn-icon-wrapper"></i> Edit</a></td>
+                        <td><a class="btn btn-orange" href="@Url.Action("Edit", "Vendor",  new { VendorId = item.Id })"><span class="fa fa-pencil"></span><i class="pe-7s-edit btn-icon-wrapper"></i> Edit</a></td>
                     </tr>
                 }
 
@@ -80,3 +87,26 @@
         </table>
     </div>
 </div>
+<script>
+    function myFunction() {
+        // Declare variables
+        var input, filter, table, tr, td, i, txtValue;
+        input = document.getElementById("myInput");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("myTable");
+        tr = table.getElementsByTagName("tr");
+
+        // Loop through all table rows, and hide those who don't match the search query
+        for (i = 0; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[1];
+            if (td) {
+                txtValue = td.textContent || td.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+    }
+</script>

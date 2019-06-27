@@ -28,8 +28,9 @@ namespace E_Procurement.WebUI.Controllers
             try
             {
                 var model = _rfqGenRepository.GetRfqGen().ToList();
-
+                
                 List<RfqGenModel> smodel = _mapper.Map<List<RfqGenModel>>(model);
+
                 return View(smodel);
             }
             catch (Exception)
@@ -54,21 +55,21 @@ namespace E_Procurement.WebUI.Controllers
 
             var Item = _rfqGenRepository.GetItem(CategoryId).ToList();
 
-            var Vendor = _rfqGenRepository.GetVendors(CategoryId).ToList();
+            var Vendor = _rfqGenRepository.GetVendors(Model).ToList();
 
-           
+
             Model.ItemCategoryList = ItemCategory.Select(x => new SelectListItem
             {
-            Value = x.Id.ToString(),
-            Text = x.CategoryName
-             });
+                Value = x.Id.ToString(),
+                Text = x.CategoryName
+            });
 
 
             Model.ItemList = Item.Select(x => new SelectListItem
-             {
+            {
 
-            Value = x.Id.ToString(),
-            Text = x.ItemName
+                Value = x.Id.ToString(),
+                Text = x.ItemName
             });
 
             Model.VendorList = Vendor.Select(x => new SelectListItem
@@ -80,18 +81,18 @@ namespace E_Procurement.WebUI.Controllers
 
 
             //Model.VendorList = Vendor;
-        
+
         }
 
 
 
 
 
-    
+
         // GET: Rfq/Create
         public ActionResult Create()
         {
-            
+
             try
             {
                 RfqGenModel Model = new RfqGenModel();
@@ -102,7 +103,7 @@ namespace E_Procurement.WebUI.Controllers
             }
             catch (Exception)
             {
-              
+
                 return View("Error");
             }
         }
@@ -117,12 +118,7 @@ namespace E_Procurement.WebUI.Controllers
                 Model.Reference = GenerateRfqReference();
                 string message;
                 string UserId = User.Identity.Name;
-                //var participantList = Model.SelectMany(a => a
-                //                                     .SelectMany(b => b, c=> c
-                //                                                       .SelectMany(r => r.Matches)))
-                //                    .Where(m => m.Home.ParticipantId.IsNotNull() ||
-                //                                m.Away.ParticipantId.IsNotNull())
-                //                    .ToList();
+
                 if (ModelState.IsValid)
                 {
                     Model.CreatedBy = UserId;
@@ -163,5 +159,95 @@ namespace E_Procurement.WebUI.Controllers
                 return View("Error");
             }
         }
+
+        public ActionResult Edit(int RfqId)
+        {
+
+            RfqGenModel Model = new RfqGenModel();
+
+            try
+            {
+                var rfq = _rfqGenRepository.GetRfqGen().Where(u => u.Id == RfqId).FirstOrDefault();
+
+                if (rfq == null)
+                {
+                    return RedirectToAction("Index", "RfqGen");
+                }
+
+                Model.Reference = rfq.Reference;
+
+                Model.ProjectId = rfq.ProjectId;
+
+                Model.RequisitionId = rfq.RequisitionId;
+
+                Model.StartDate = rfq.StartDate;
+
+                Model.EndDate = rfq.EndDate;
+
+                Model.RfqStatus = rfq.RFQStatus;
+
+                LoadPredefinedInfo(Model);
+
+                return View(Model);
+
+            }
+            catch (Exception)
+            {
+
+                return View("Error");
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(RfqGenModel Model)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    string message;
+
+                    var rfq = _rfqGenRepository.GetRfqGen().Where(u => u.Id == Model.Id).FirstOrDefault();
+
+                    if (rfq == null) { return RedirectToAction("Index", "RfqGen"); }
+
+                    Model.UpdatedBy = User.Identity.Name;
+
+                    var status = _rfqGenRepository.UpdateRfqGen(Model, out message);
+
+                    ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
+
+                    if (status == true)
+                    {
+
+                        ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
+                    }
+
+                    else
+                    {
+                        ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
+                        return View(Model);
+                    }
+
+                    return RedirectToAction("Index", "RfqGen");
+                }
+                else
+                {
+                    ViewBag.StatusCode = 2;
+
+                    ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
+
+                    return View(Model);
+                }
+            }
+            catch (Exception)
+            {
+
+                return View("Error");
+            }
+
+        }
     }
+
 }

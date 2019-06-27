@@ -1,0 +1,73 @@
+﻿@model IEnumerable<E_Procurement.WebUI.Models.RFQModel.RfqGenModel>
+
+<div class="card pd-20 pd-sm-40">
+
+    @*<p class="mg-b-20 mg-sm-b-30">Searching, ordering and paging goodness will be immediately added to the table, as shown in this example.</p>*@
+    <div class="card-body">
+        <a class="btn btn-primary" pull-right" href="@Url.Action("Create", "RfqGen")"><i class="fa fa-plus"> </i>  Add RFQ</a>
+
+        <i class="fa fa-search" pull-left">
+            <input type="text" id="myInput" style="width:200px; height:30px" onkeyup="myFunction()" placeholder="Search..">
+        </i>
+
+        <div class="table-wrapper">
+            <table id="datatable1" class="table table-hover table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th class="wd-5p">S/N</th>
+                        <th class="wd-15p">Reference</th>
+                        @*<th class="wd-15p">Quantity</th>*@
+                        <th class="wd-15p">Status</th>
+                        <th class="wd-20p">Description</th>
+                        <th class="wd-15p">Start Date</th>
+                        <th class="wd-10p">End Date</th>
+                        <th class="wd-10p"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int i = 0;
+                    }
+
+                    @foreach (var user in Model)
+                    {
+
+                        <tr>
+                            <td>@(i = i + 1)</td>
+                            <td>@user.Reference</td>
+                            @*<td>@user.Quantity</td>*@
+                            <td>
+                                @if (user.IsActive)
+                                {
+                                    <label class="text-success">Active</label>
+                                }
+                                else
+                                {
+                                    <label class="text-danger">Inactive</label>
+
+                                }
+                            </td>
+                            <td>@user.Description</td>
+                            <td>@user.StartDate</td>
+                            <td>@user.EndDate</td>
+                            <td><a class="btn btn-orange" href="@Url.Action("Edit", "RfqGen",  new { VendorId = user.Id })"><span class="fa fa-pencil"></span><i class="pe-7s-edit btn-icon-wrapper"></i> Edit</a></td>
+
+                        </tr>
+
+                    }
+                </tbody>
+            </table>
+        </div><!-- table-wrapper -->
+    </div><!-- card -->
+    <script>
+        $('#datatable1').DataTable({
+            responsive: true,
+            language: {
+                searchPlaceholder: 'Search...',
+                sSearch: '',
+                lengthMenu: '_MENU_ items/page',
+            }
+        });
+    </script>
+
+
