@@ -70,14 +70,14 @@
 
                                         <td>
                                             <div class="input-field">
-                                                @Html.TextAreaFor(model => model.Description, new { htmlAttributes = new { id = "Descriptions", @class = "form-control", @type = "text", required = "required" } })
-                                                @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+                                                @Html.TextAreaFor(model => model.Descriptions, new { htmlAttributes = new { id = "Descriptions", @class = "form-control", @type = "text", required = "required" } })
+                                                @Html.ValidationMessageFor(model => model.Descriptions, "", new { @class = "text-danger" })
                                             </div>
                                         </td>
                                         <td>
                                             <div class="input-field">
-                                                @Html.TextBoxFor(model => model.Quantity, new { htmlAttributes = new { id = "Quantities", @style = "width:10px;", @class = "form-control", @type = "text", required = "required" } })
-                                                @Html.ValidationMessageFor(model => model.Quantity, "", new { @class = "text-danger" })
+                                                @Html.TextBoxFor(model => model.Quantities, new { htmlAttributes = new { id = "Quantities", @style = "width:10px;", @class = "form-control", @type = "text", required = "required" } })
+                                                @Html.ValidationMessageFor(model => model.Quantities, "", new { @class = "text-danger" })
                                             </div>
                                         </td>
                                     </tr>
