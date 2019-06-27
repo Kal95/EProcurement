@@ -75,6 +75,14 @@ namespace E_Procurement.WebUI.Controllers
                 return View(loginViewModel);
         }
 
+
+        [HttpPost]
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
+            return RedirectToAction("Login", "Account");
+        }
+
         #region"USER SECTION"
         [AllowAnonymous]
         public IActionResult CreateUser()

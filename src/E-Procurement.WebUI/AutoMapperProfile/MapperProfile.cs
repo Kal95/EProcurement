@@ -8,11 +8,13 @@ using E_Procurement.WebUI.Models.BankModel;
 using E_Procurement.WebUI.Models.VendorCategoryModel;
 using E_Procurement.WebUI.Models.RFQModel;
 using E_Procurement.Repository.VendoRepo;
+using E_Procurement.WebUI.Models.RfqApprovalModel;
+using E_Procurement.Repository.Dtos;
+using System.Collections.Generic;
 
 namespace E_Procurement.WebUI.AutoMapperProfile
 {
     public class MapperProfile:Profile
-
     {
 
         public MapperProfile()
@@ -28,7 +30,6 @@ namespace E_Procurement.WebUI.AutoMapperProfile
             CreateMap<VendorCategoryModel, VendorCategory>().ReverseMap();
 
             CreateMap<RfqGenModel, RFQGeneration>().ReverseMap();
-
 
             CreateMap<UserViewModel, User>().ReverseMap();
 

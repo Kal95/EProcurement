@@ -12,6 +12,7 @@ using System.Transactions;
 using E_Procurement.Repository.Interface;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
+using System.Numerics;
 
 namespace E_Procurement.Repository.RfqApprovalConfigRepository
 {
@@ -74,7 +75,7 @@ namespace E_Procurement.Repository.RfqApprovalConfigRepository
                     message += "</br>Regards";
 
                     _context.Update<RFQGeneration>(rfq);
-                    await _emailSender.SendEmailAsync(rfqLevel.Email, subject, message);
+                    await _emailSender.SendEmailAsync(rfqLevel.Email, subject, message,"");
 
                     //await _context.SaveChangesAsync();
                     transaction.Commit();
@@ -100,57 +101,61 @@ namespace E_Procurement.Repository.RfqApprovalConfigRepository
         {
             try
             {
+                var currentUser = _contextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                //var currentUser = _contextAccessor.HttpContext.User.Identity;
 
                 // create a transaction scope
-
                 using (var transaction = await _context.Database.BeginTransactionAsync(System.Data.IsolationLevel.ReadUncommitted))
                 {
                     var currentLevel = _context.RfqApprovalStatuses.Where(x => x.RFQId == rFQApproval.RFQId).Max(l=>l.CurrentApprovalLevel);
-                    var rfqLevel = _context.RfqApprovalConfigs.Where(x => x.ApprovalLevel == currentLevel+1).First();
+                    var rfqLevel = _context.RfqApprovalConfigs.Where(x => x.ApprovalLevel == currentLevel + 1).First();                    
                     var rfq = _context.RfqGenerations.Where(x => x.Id == rFQApproval.RFQId).First();
-
+                    string approvalEmail = "";
                     //add to approval transactions
                     RFQApprovalTransactions rfqTransaction = new RFQApprovalTransactions
                     {
-                        ApprovalLevel = rfqLevel.ApprovalLevel,
+                       // ApprovalLevel = rfqLevel.ApprovalLevel,
                         RFQId = rFQApproval.RFQId,
-                        VendorId = rFQApproval.VendorId
+                        VendorId = rFQApproval.VendorId,
+                        ApprovalLevel = rfqLevel.ApprovalLevel,
+                        ApprovedBy = currentUser,
                     };
 
-                    await _context.AddAsync(rfqTransaction);
+                    approvalEmail = rfqLevel.Email;
 
                     // add to approval status
                     RFQApprovalStatus rfqstatus = new RFQApprovalStatus
-                    {
-                        CurrentApprovalLevel = currentLevel,
-                        RFQId = rFQApproval.RFQId
+                    {                        
+                        RFQId = rFQApproval.RFQId,
+                        CurrentApprovalLevel = rfqLevel.ApprovalLevel
                     };
-
+                    await _context.AddAsync(rfqTransaction);
                     await _context.AddAsync(rfqstatus);
 
-
-                    // update rfq generation
-                    rfq.RFQStatus = "Approved";
-                    //send mail to approval
-                    var subject = "RFQ APPROVAL NOTIFICATION";
-
-                    var message = "A new RFQ has been sent for your approval.</br>";
-                    message += "</br><b>RFQ Number  : </b>" + rfq.Id.ToString();
-                    message += "</br><b>Vendor  : </b>" + rFQApproval.VendorName;
-                    message += "</br>Kindly, log on to the Application and approve accordingly.";
-                    message += "</br>Regards";
-
+                    // check if approval is the final
                     if (rfqLevel.IsFinalLevel)
                     {
-                        //generate po
+                       
+                        rfq.RFQStatus = "Approved";
+                        rfqTransaction.ApprovalStatus = "Approved";
                         _context.Update<RFQGeneration>(rfq);
+                        await _context.SaveChangesAsync();
+                        //approvalEmail = "";
+                        // email 
                     }
+                    else
+                    {
+                        //send mail to approval
+                        var subject = "RFQ APPROVAL NOTIFICATION";
 
-
-
-
-                    await _emailSender.SendEmailAsync(rfqLevel.Email, subject, message);
-
+                        var message = "A new RFQ has been sent for your approval.</br>";
+                        message += "</br><b>RFQ Number  : </b>" + rfq.Id.ToString();
+                        message += "</br><b>Vendor  : </b>" + rFQApproval.VendorName;
+                        message += "</br>Kindly, log on to the Application and approve accordingly.";
+                        message += "</br>Regards";
+                        await _emailSender.SendEmailAsync(approvalEmail, subject, message, "");
+                    }
+                    
                     //await _context.SaveChangesAsync();
                     transaction.Commit();
 
@@ -168,19 +173,7 @@ namespace E_Procurement.Repository.RfqApprovalConfigRepository
 
         public async Task<IEnumerable<RFQGenerationModel>> GetRFQApprovalDueAsync()
         {
-            //var query1 = _context.RfqGenerations
-            //        .Join(
-            //            _context.RfqDetails,
-            //            rfq => rfq.Id,
-            //            rfqDetails => rfqDetails.RFQId,
-            //            (rfq, rfqDetails) => new
-            //            {
-            //                rfq,
-            //                rfqDetails
-            //            }
-            //            )
-            //            .Join(_context.Vendors,
-            //                rfqDetails => rfq.rfqDetails.).ToList();
+  
 
             var query = await (from rfq in _context.RfqGenerations
                          join rfqDetails in _context.RfqDetails on rfq.Id equals rfqDetails.RFQId
@@ -211,10 +204,11 @@ namespace E_Procurement.Repository.RfqApprovalConfigRepository
         public async Task<RFQGenerationModel> GetRFQDetailsAsync(int RFQId)
         {
             var Item = await _context.RfqDetails.Where(x => x.RFQId == RFQId).ToListAsync();
+            var totalAmount = Item.Sum(x => x.QuotedAmount);
             var query = await(from rfq in _context.RfqGenerations
                               join rfqDetails in _context.RfqDetails on rfq.Id equals rfqDetails.RFQId
                               join vend in _context.Vendors on rfqDetails.VendorId equals vend.Id
-                              where rfq.EndDate <= DateTime.Now && rfq.RFQStatus == null && rfq.Id== RFQId
+                              where rfq.EndDate <= DateTime.Now && rfq.Id== RFQId
                               orderby rfq.Id, rfq.EndDate descending
                               select new RFQGenerationModel()
                               {
@@ -230,7 +224,9 @@ namespace E_Procurement.Repository.RfqApprovalConfigRepository
                                   VendorName = vend.VendorName,
                                   VendorAddress = vend.VendorAddress,
                                   VendorStatus = vend.VendorStatus,
-                                  ContactName = vend.ContactName
+                                  ContactName = vend.ContactName,
+                                  VendorEmail=vend.Email,
+                                  TotalAmount = totalAmount
                               }).Distinct().FirstOrDefaultAsync();
 
             List<RFQDetailsModel> rFQDetails = new List<RFQDetailsModel>();
@@ -274,7 +270,7 @@ namespace E_Procurement.Repository.RfqApprovalConfigRepository
             //                  join transaction in _context.RfqApprovalTransactions on rfqDetails.VendorId equals transaction.Id
             //                  join approvalStatus in _context.RfqApprovalStatuses on transaction.RFQId equals approvalStatus.RFQId
             //                  join config in _context.RfqApprovalConfigs on approvalStatus.CurrentApprovalLevel equals config.ApprovalLevel
-
+           
 
             var query = await (from vend in _context.Vendors
                                join rfqDetails in _context.RfqDetails on vend.Id  equals rfqDetails.VendorId
@@ -282,7 +278,7 @@ namespace E_Procurement.Repository.RfqApprovalConfigRepository
                                join approvalStatus in _context.RfqApprovalStatuses on transaction.RFQId equals approvalStatus.RFQId
                                join config in _context.RfqApprovalConfigs on approvalStatus.CurrentApprovalLevel equals config.ApprovalLevel
                                join rfq in _context.RfqGenerations on approvalStatus.RFQId equals rfq.Id
-                               where config.UserId == int.Parse(currentUser)
+                               where config.UserId == int.Parse(currentUser) && rfq.RFQStatus == "Pending Approval"
                                orderby rfq.Id, rfq.EndDate descending
                               select new RFQGenerationModel()
                               {
@@ -304,5 +300,6 @@ namespace E_Procurement.Repository.RfqApprovalConfigRepository
 
             return query;
         }
+    
     }
 }

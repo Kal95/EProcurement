@@ -86,7 +86,7 @@ namespace E_Procurement.WebUI.Controllers
 
             try
             {
-                if (rfqApproval.RFQStatus == null)
+                if (string.IsNullOrEmpty(rfqApproval.RFQStatus))
                 {
                     var approval = await _RfqApprovalRepository.CreateRFQApprovalAsync(rfqApproval);
                     return RedirectToAction("Index");
@@ -94,7 +94,7 @@ namespace E_Procurement.WebUI.Controllers
                 else
                 {
 
-                    var approval = await _RfqApprovalRepository.CreateRFQApprovalAsync(rfqApproval);
+                    var approval = await _RfqApprovalRepository.CreateRFQPendingApprovalAsync(rfqApproval);
                     return RedirectToAction("PendingApproval");
                 }
 
