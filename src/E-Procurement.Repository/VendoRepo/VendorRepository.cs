@@ -74,7 +74,7 @@ namespace E_Procurement.Repository.VendoRepo
                 message += "</br>Kindly, log in and validate the required documents.";
                 message += "</br>Regards";
 
-                _emailSender.SendEmailAsync(vendor.Email, subject, message);
+                _emailSender.SendEmailAsync(vendor.Email, subject, message,"");
 
                 _context.SaveChanges();
 
