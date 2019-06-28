@@ -6,6 +6,7 @@ using Abp.Web.Mvc.Alerts;
 using AutoMapper;
 using E_Procurement.Data.Entity;
 using E_Procurement.Repository.RFQGenRepo;
+using E_Procurement.Repository.VendoRepo;
 using E_Procurement.WebUI.Models.RFQModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -16,12 +17,14 @@ namespace E_Procurement.WebUI.Controllers
     {
         private readonly IRfqGenRepository _rfqGenRepository;
         private readonly IMapper _mapper;
+        private readonly IVendorRepository _vendorRepository;
 
-        public RfqGenController(IRfqGenRepository rfqRepository, IMapper mapper)
+        public RfqGenController(IRfqGenRepository rfqRepository, IMapper mapper,IVendorRepository vendorRepository)
         {
             _rfqGenRepository = rfqRepository;
             _mapper = mapper;
-        }
+           _vendorRepository = vendorRepository;
+    }
         // GET: RfqGen
         public ActionResult Index()
         {
@@ -37,6 +40,38 @@ namespace E_Procurement.WebUI.Controllers
             {
                 return View("Error");
             }
+        }
+        //Get PDF
+        public /*ActionResult*/ void PrintPDF(RfqGenModel model, RfqNoteModel model2)
+        {
+            var items = _rfqGenRepository.GetItem(model.CategoryId).Where(a => model.SelectedItems.Any(b => b == a.Id.ToString())).ToList();
+
+            var selected2 = model.Descriptions.Zip(model.Quantities, (x, y) => new { X = x, Y = y.ToString() });
+            //model2.AllItemProps = items.Zip(selected2, (a, b) => new { A = a, B = b });
+
+           
+            var selectedV = model.SelectedVendors.ToList();
+            var vendors = _vendorRepository.GetVendors().ToList();
+            var vendorList = vendors.Where(a => selectedV.Any(b => b == a.Id)).ToList();
+            foreach (var entry in vendorList)
+            {
+                //var itemList = items.Where(a => model.SelectedItems.Any(b => b == a.Id.ToString())).ToList();
+                
+                model2.ContactName = entry.ContactName;
+                model2.VendorName =entry.VendorName;
+                model2.VendorAddress = entry.VendorAddress;
+                model2.ItemList =  items.Select(u => u.ItemName).ToList();
+                model2.Quantities = model.Quantities.ToList();
+                model2.Descriptions = model.Descriptions.ToList();
+              
+            }
+            //    empEntities context = new empEntities();
+            //    List<emp_table> Data = context.emp_table.ToList();
+
+            //    return new PartialViewAsPdf("_JobPrint", Data)
+            //    {
+            //        FileName = "TestPartialViewAsPdf.pdf"
+            //    };
         }
 
         private string GenerateRfqReference()
