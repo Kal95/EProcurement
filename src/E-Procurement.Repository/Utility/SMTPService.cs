@@ -31,7 +31,7 @@ namespace E_Procurement.Repository.Utility
 
 
 
-        public async Task SendEmailAsync(string email, string subject, string message)
+        public async Task SendEmailAsync(string email, string subject, string message, string attachedfiles)
         {
             try
             {
@@ -66,10 +66,22 @@ namespace E_Procurement.Repository.Utility
                 mm.DeliveryNotificationOptions = DeliveryNotificationOptions.OnFailure;
 
 
+                //attachements
+                if (!string.IsNullOrWhiteSpace(attachedfiles))
+                {
+                    foreach (string attachm in attachedfiles.Split(';'))
+                    {
+                        if (!string.IsNullOrEmpty(attachm)) mm.Attachments.Add(new Attachment(attachm));
+                    }
+                }
+
+
 
                 mm.BodyEncoding = UTF8Encoding.UTF8;
                 mm.IsBodyHtml = true;
                 mm.DeliveryNotificationOptions = DeliveryNotificationOptions.OnFailure;
+
+
 
 
                 EmailSentLog emailLog = new EmailSentLog
@@ -133,7 +145,7 @@ namespace E_Procurement.Repository.Utility
         }
 
 
-        public async Task SendEmailTransactionAsync(string email, string subject, string message)
+        public async Task SendEmailTransactionAsync(string email, string subject, string message, string attachedfiles)
         {
             try
             {
@@ -167,7 +179,14 @@ namespace E_Procurement.Repository.Utility
                 mm.BodyEncoding = UTF8Encoding.UTF8;
                 mm.DeliveryNotificationOptions = DeliveryNotificationOptions.OnFailure;
 
-
+                //attachements
+                if (!string.IsNullOrWhiteSpace(attachedfiles))
+                {
+                    foreach (string attachm in attachedfiles.Split(';'))
+                    {
+                        if (!string.IsNullOrEmpty(attachm)) mm.Attachments.Add(new Attachment(attachm));
+                    }
+                }
 
                 mm.BodyEncoding = UTF8Encoding.UTF8;
                 mm.IsBodyHtml = true;

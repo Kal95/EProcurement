@@ -9,6 +9,10 @@
     <Compile Remove="Migrations\20190524144905_PrmssionEntity.cs" />
     <Compile Remove="Migrations\20190528073246_AddedVendorCategory.cs" />
     <Compile Remove="Migrations\20190528073246_AddedVendorCategory.Designer.cs" />
+    <Compile Remove="Migrations\20190613095208_UpdateVendorMapping4.cs" />
+    <Compile Remove="Migrations\20190613095208_UpdateVendorMapping4.Designer.cs" />
+    <Compile Remove="Migrations\20190613095529_UpdateVendorMapping6.cs" />
+    <Compile Remove="Migrations\20190613095529_UpdateVendorMapping6.Designer.cs" />
     <Compile Remove="Migrations\20190620122853_EmailLog.cs" />
   </ItemGroup>
 

@@ -113,7 +113,7 @@ namespace E_Procurement.Repository.RFQGenRepo
                     message += "</br>Kindly respond promptly.";
                     message += "</br>Regards";
 
-                    _emailSender.SendEmailAsync(entry.Email, subject, message);
+                    _emailSender.SendEmailAsync(entry.Email, subject, message,"");
                 }
 
                 Message = "RFQ generated successfully";

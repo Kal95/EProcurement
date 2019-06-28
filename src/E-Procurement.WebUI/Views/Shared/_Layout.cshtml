@@ -42,6 +42,7 @@
             <div class="dropdown dropdown-profile">
                 <a href="" class="nav-link nav-link-profile" data-toggle="dropdown">
                     <!--<img src="../img/img3.jpg" class="wd-32 rounded-circle" alt="">-->
+
                     <span class="logged-name"><span class="hidden-xs-down">@UserManager.GetUserName(User)</span> <i class="fa fa-angle-down mg-l-3"></i></span>
                 </a>
                 <div class="dropdown-menu wd-200">
@@ -50,8 +51,16 @@
                         <li><a href=""><i class="icon ion-ios-gear-outline"></i> Settings</a></li>
                         <li><a href=""><i class="icon ion-ios-download-outline"></i> Downloads</a></li>
                         <li><a href=""><i class="icon ion-ios-star-outline"></i> Favorites</a></li>
-                        <li><a href=""><i class="icon ion-ios-folder-outline"></i> Collections</a></li>-->
-                        <li><a href=""><i class="icon ion-power"></i> Sign Out</a></li>
+                        <li><a href=""><i class="icon ion-ios-folder-outline"></i> Collections</a></li>-->                    
+                        <li>
+                        @*<a asp-controller="Account" asp-action="Logout"><i class="icon ion-power"></i> Sign Out</a>*@
+                        <form asp-area="" asp-controller="Account" asp-action="Logout" method="post">
+                            <button type="submit">
+                                <i class="icon ion-power"></i>
+                                <span>Logout</span>
+                            </button>
+                        </form>
+                        </li>
                     </ul>
                 </div><!-- dropdown-menu -->
             </div><!-- dropdown -->
@@ -116,11 +125,9 @@
                             <span>Vendor</span>
                         </a>
                         <ul class="nav-sub">
-                            <li class="nav-item"><a href="@Url.Action("Create", "Vendor")" class="nav-link">Registration</a></li>
-                            <li class="nav-item"><a href="@Url.Action("Index", "Vendor")" class="nav-link">Review/Selection</a></li>
                             <li class="nav-item"><a href="accordion.html" class="nav-link">Status</a></li>
                             <li class="nav-item"><a href="@Url.Action("Index", "VendorCategory")" class="nav-link">Category</a></li>
-
+                            <li class="nav-item"><a href="@Url.Action("Create", "Vendor")" class="nav-link">Registration</a></li>
 
                         </ul>
                     </li><!-- nav-item -->
@@ -131,7 +138,7 @@
                         </a>
                         <ul class="nav-sub">
                             <li class="nav-item"><a href="@Url.Action("Create", "RfqGen")" class="nav-link">Generation</a></li>
-                            <li class="nav-item"><a href="@Url.Action("Index", "RfqGen")" class="nav-link">Review/Selection</a></li>
+                            <li class="nav-item"><a href="alerts.html" class="nav-link">Review/Selection</a></li>
                             <li class="nav-item"><a href="buttons.html" class="nav-link">Registration</a></li>
 
                         </ul>
@@ -144,7 +151,7 @@
                         <ul class="nav-sub">
                             <li class="nav-item"><a asp-controller="RfqApproval" asp-action="Index" class="nav-link">List</a></li>
                             <li class="nav-item"><a asp-controller="RfqApproval" asp-action="PendingApproval" class="nav-link">Pending Approval</a></li>
-                            <li class="nav-item"><a href="buttons.html" class="nav-link">Registration</a></li>
+                            <li class="nav-item"><a  asp-controller="PO" asp-action="Index" class="nav-link">Approved RFQ</a></li>
 
                         </ul>
                     </li><!-- nav-item -->
