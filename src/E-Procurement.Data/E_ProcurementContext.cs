@@ -1,7 +1,5 @@
 ﻿using E_Procurement.Data.Entity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Design;
 using System.Threading.Tasks;
 using System.Collections;
 using System.Threading;
@@ -9,6 +7,9 @@ using System.Linq;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using System;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
 
 namespace E_Procurement.Data
 {
@@ -40,6 +41,7 @@ namespace E_Procurement.Data
         public DbSet<RFQGeneration> RfqGenerations { get; set; }
         public DbSet<ItemCategory> ItemCategories { get; set; }
         public DbSet<Item> Items { get; set; }
+        public DbSet<VendorMapping> VendorMappings { get; set; }
 
 
 
@@ -154,3 +156,4 @@ namespace E_Procurement.Data
         }
     }
 }
+  

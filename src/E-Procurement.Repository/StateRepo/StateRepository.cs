@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using E_Procurement.Data;
 using E_Procurement.Data.Entity;
+using E_Procurement.WebUI.Models.StateModel;
 
 namespace E_Procurement.Repository.StateRepo
 {
@@ -16,20 +17,20 @@ namespace E_Procurement.Repository.StateRepo
         {
             _context = context;
         }
-        public bool CreateState(string StateName, string UserId, out string Message)
+        public bool CreateState(StateModel model, out string Message)
         {
-            var confirm = _context.States.Where(x => x.StateName == StateName).Count();
+            var confirm = _context.States.Where(x => x.StateName == model.StateName).Count();
 
             State state = new State();
 
             if (confirm == 0)
             {
 
-                state.StateName = StateName;
+                state.StateName = model.StateName;
 
                 state.IsActive = true;
 
-                state.CreatedBy = UserId;
+                state.CreatedBy = model.CreatedBy;
 
                 state.DateCreated = DateTime.Now;
 
@@ -50,12 +51,12 @@ namespace E_Procurement.Repository.StateRepo
 
         }
 
-        public bool UpdateState(int Id, string StateName, bool IsActive, string UserId, out string Message)
+        public bool UpdateState(StateModel model, out string Message)
         {
 
-            var confirm = _context.States.Where(x => x.StateName == StateName && x.IsActive == IsActive).Count();
+            var confirm = _context.States.Where(x => x.StateName == model.StateName && x.IsActive == model.IsActive).Count();
 
-            var oldEntry = _context.States.Where(u => u.Id == Id).FirstOrDefault();
+            var oldEntry = _context.States.Where(u => u.Id == model.Id).FirstOrDefault();
 
             if (oldEntry == null)
             {
@@ -65,11 +66,11 @@ namespace E_Procurement.Repository.StateRepo
             if (confirm == 0)
             {
 
-                oldEntry.StateName = StateName;
+                oldEntry.StateName = model.StateName;
 
-                oldEntry.IsActive = IsActive;
+                oldEntry.IsActive = model.IsActive;
 
-                oldEntry.UpdatedBy = UserId;
+                oldEntry.UpdatedBy = model.UpdatedBy;
 
                 oldEntry.LastDateUpdated = DateTime.Now;
 

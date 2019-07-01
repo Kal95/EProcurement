@@ -1,0 +1,165 @@
+﻿@model E_Procurement.Repository.VendoRepo.VendorModel
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Vendors";
+    ViewBag.PageDesc = "Create Vendor";
+    ViewBag.FavIcon = "fa fa-street-view";
+}
+
+<!-- page section -->
+<div class="row row-sm mg-t-20">
+    <div class="col-xl-12">
+        <div class="card pd-20 pd-sm-40 form-layout form-layout-4">
+            <h6 class="card-body-title">Vendor Registration</h6>
+            <p class="mg-b-20 mg-sm-b-30">Signup</p>
+
+            <form class="form-horizontal" action="@Url.Action("Create","Vendor")" method="post">
+                @Html.AntiForgeryToken()
+                <div class="row mg-t-20">
+                    <div class="col-md-6" style="margin-top:10px">
+                        <label for="VendorName">Vendor Name:</label>
+                        @Html.EditorFor(model => model.VendorName, new { htmlAttributes = new { id = "VendorName", @class = "form-control", @type = "text", required = "required", style = "width:450px; height:40px" } })
+                        @Html.ValidationMessageFor(model => model.VendorName, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="col-md-6" style="margin-top:10px">
+                        <label for="Email">Email:</label>
+                        @Html.EditorFor(model => model.Email, new { htmlAttributes = new { id = "Email", @class = "form-control", @type = "text", required = "required", style = "width:450px; height:40px", } })
+                        @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="row mg-t-20">
+                    <div class="col-md-6" style="margin-top:10px">
+                        <label for="VendorAddress">Vendor Address:</label>
+                        @Html.EditorFor(model => model.VendorAddress, new { htmlAttributes = new { id = "VendorAddress", @class = "form-control", @type = "text", required = "required", style = "width:450px; height:40px", } })
+                        @Html.ValidationMessageFor(model => model.VendorAddress, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="col-md-6" style="margin-top:10px">
+                        <label for="WebsiteAddress">Website:</label>
+                        @Html.EditorFor(model => model.WebsiteAddress, new { htmlAttributes = new { id = "WebsiteAddress", @class = "form-control", @type = "text", required = "required", style = "width:450px; height:40px", } })
+                        @Html.ValidationMessageFor(model => model.WebsiteAddress, "", new { @class = "text-danger" })
+
+                    </div>
+                </div>
+                <div class="row mg-t-20">
+                    <div class="col-md-6" style="margin-top:10px">
+                        <label for="ContactName">Contact Person:</label>
+                        @Html.EditorFor(model => model.ContactName, new { htmlAttributes = new { id = "ContactName", @class = "form-control", @type = "text", required = "required", style = "width:450px; height:40px" } })
+                        @Html.ValidationMessageFor(model => model.ContactName, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="col-md-6" style="margin-top:10px">
+                        <label for="PhoneNumber">Phone Number:</label>
+                        @Html.EditorFor(model => model.PhoneNumber, new { htmlAttributes = new { id = "PhoneNumber", @class = "form-control", @type = "tel", required = "required", style = "width:450px; height:40px" } })
+                        @Html.ValidationMessageFor(model => model.PhoneNumber, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="row mg-t-20">
+                    <div class="col-md-6" style="margin-top:10px">
+                        <label for="CountryId">Country:</label>
+                        @Html.DropDownListFor(model => model.CountryId, Model.CountryList, "-- Select Country --", htmlAttributes: new { id = "Country", style = "width:450px; height:40px", @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.CountryId, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="col-md-6" style="margin-top:10px">
+                        <label for="StateId">State:</label>
+                        @Html.DropDownListFor(model => model.StateId, Model.StateList, "-- Select State --", htmlAttributes: new { id = "State", style = "width:450px; height:40px", @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.StateId, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="row mg-t-20">
+                    <div class="col-md-6" style="margin-top:10px">
+                        <label for="BankId">Bank:</label>
+                        @Html.DropDownListFor(model => model.BankId, Model.BankList, "-- Select Bank --", htmlAttributes: new { id = "Bank", @class = "form-control", style = "width:450px; height:40px" })
+                        @Html.ValidationMessageFor(model => model.BankId, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="col-md-6" style="margin-top:10px">
+                        <label for="BankBranch">Branch:</label>
+                        @Html.EditorFor(model => model.BankBranch, new { htmlAttributes = new { id = "BankBranch", @class = "form-control", @type = "text", required = "required", style = "width:450px; height:40px" } })
+                        @Html.ValidationMessageFor(model => model.BankBranch, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="row mg-t-20">
+                    <div class="col-md-6" style="margin-top:10px">
+                        <label for="AccountName">Account Name:</label>
+                        @Html.EditorFor(model => model.AccountName, new { htmlAttributes = new { id = "AccountName", @class = "form-control", @type = "text", required = "required", style = "width:450px; height:40px" } })
+                        @Html.ValidationMessageFor(model => model.AccountName, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="col-md-6" style="margin-top:10px">
+                        <label for="AccountNo">Account Number:</label>
+                        @Html.EditorFor(model => model.AccountNo, new { htmlAttributes = new { id = "AccountNo", @class = "form-control", @type = "text", required = "required", style = "width:450px; height:40px" } })
+                        @Html.ValidationMessageFor(model => model.AccountNo, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="row mg-t-20">
+                    <div class="col-md-6" style="margin-top:10px">
+                        <label for="TinNo">Tin Number:</label>
+                        @Html.EditorFor(model => model.TinNo, new { htmlAttributes = new { id = "Tin", @class = "form-control", @type = "text", required = "required", style = "width:450px; height:40px" } })
+                        @Html.ValidationMessageFor(model => model.TinNo, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="col-md-6" style="margin-top:10px">
+                        <label for="CacNo">CAC Number:</label>
+                        @Html.EditorFor(model => model.CacNo, new { htmlAttributes = new { id = "Cac", @class = "form-control", @type = "text", required = "required", style = "width:450px; height:40px" } })
+                        @Html.ValidationMessageFor(model => model.CacNo, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="row mg-t-20">
+                    <div class="col-md-6" style="margin-top:10px">
+                        <label for="VatNo">VAT Number:</label>
+                        @Html.EditorFor(model => model.VatNo, new { htmlAttributes = new { id = "Vat", @class = "form-control", @type = "text", required = "required", style = "width:450px; height:40px" } })
+                        @Html.ValidationMessageFor(model => model.VatNo, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="col-md-6" style="margin-top:10px">
+                        <label for="SortCode">Sort Code:</label>
+                        @Html.EditorFor(model => model.SortCode, new { htmlAttributes = new { id = "SortCode", @class = "form-control", @type = "text", required = "required", style = "width:450px; height:40px" } })
+                        @Html.ValidationMessageFor(model => model.SortCode, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="row mg-t-20">
+                    <div class="col-md-6" style="margin-top:10px">
+                        <label for="AatCurrency">AAT Currency:</label>
+                        @Html.EditorFor(model => model.AatCurrency, new { htmlAttributes = new { id = "AatCurrency", @class = "form-control", @type = "text", required = "required", style = "width:450px; height:40px" } })
+                        @Html.ValidationMessageFor(model => model.AatCurrency, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="col-md-6" style="margin-top:10px">
+                        <label for="AatAmount">AAT Amount:</label>
+                        @Html.EditorFor(model => model.AatAmount, new { htmlAttributes = new { id = "AatAmount", @class = "form-control", @type = "text", required = "required", style = "width:450px; height:40px" } })
+                        @Html.ValidationMessageFor(model => model.AatAmount, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="row mg-t-20">
+                    <div class="col-md-6" style="margin-top:10px">
+                        <label for="AatAmount">Select Categories:</label>
+
+                        @foreach (var category in Model.VendorCategoryList)
+                        {
+                            <div class="form-horizontal" style="width:450px; height:20px; margin-top:5px">
+                                <input type="checkbox" @Model.VendorCategoryList value="@category.Value" checked="checked" name="SelectedVendorCategories" id="@category.Value" />
+                                <label for="@category.Text">@category.Text</label>
+                                <input type="hidden" id="@category.Value" />
+                            </div>
+
+                        }
+
+                    </div>
+                </div>
+
+                <br />
+                <!-- Button -->
+                <div class="form-group">
+                    <label class="col-md-8 control-label"></label>
+                    <div class="col-md-4">
+
+                        <button type="submit" class="btn btn-info mg-r-5"><span class="glyphicon glyphicon-send"></span>  Submit</button>
+                       
+                        <a href="@Url.Action("Index","Vendor")" class="btn btn-secondary"><span class="glyphicon glyphicon-remove"></span> Back</a>
+                    </div>
+
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+    <!-- ./bootstrap forms -->
+

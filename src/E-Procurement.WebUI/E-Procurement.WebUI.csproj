@@ -8,8 +8,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="Views\Account\AddRole.cshtml" />
-    <Content Remove="Views\Account\UserEdit.cshtml" />
+    <Compile Remove="Models\RFQModel\**" />
+    <Content Remove="Models\RFQModel\**" />
+    <EmbeddedResource Remove="Models\RFQModel\**" />
+    <None Remove="Models\RFQModel\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Service\Interface\IViewRenderService.cs" />
+    <Compile Remove="Service\ViewRenderService.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -51,12 +58,23 @@
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.3" />
+    <PackageReference Include="xunit.extensibility.core" Version="2.4.1" />
+    <PackageReference Include="xunit.extensibility.execution" Version="2.4.1" />
   </ItemGroup>
 
 
   <ItemGroup>
     <ProjectReference Include="..\E-Procurement.Data\E-Procurement.Data.csproj" />
     <ProjectReference Include="..\E-Procurement.Repository\E-Procurement.Repository.csproj" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <Folder Include="Models\BankModel\" />
+    <Folder Include="Models\CountryModel\" />
+    <Folder Include="Models\StateModel\" />
+    <Folder Include="Service\Interface\" />
+    <Folder Include="wwwroot\Uploads\" />
   </ItemGroup>
 
 </Project>

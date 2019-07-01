@@ -63,12 +63,12 @@ namespace E_Procurement.WebUI.Controllers
             try
             {
                 string message;
-                string UserId = User.Identity.Name;
+                model.CreatedBy = User.Identity.Name;
 
                 if (ModelState.IsValid)
                 { 
 
-                    var status = _stateRepository.CreateState(model.StateName, UserId, out message);
+                    var status = _stateRepository.CreateState(model, out message);
 
                     ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
 
@@ -153,9 +153,9 @@ namespace E_Procurement.WebUI.Controllers
 
                     if (state == null) { return RedirectToAction("Index", "State"); }
 
-                    string UserId = User.Identity.Name;
+                    Model.UpdatedBy = User.Identity.Name;
 
-                    var status = _stateRepository.UpdateState(Model.Id, Model.StateName, Model.IsActive, UserId, out message);
+                    var status = _stateRepository.UpdateState(Model, out message);
 
                     ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
 

@@ -40,8 +40,8 @@
             <div class="row mg-t-20">
                 <label class="col-sm-2 form-control-label"> <b>Duration : </b></label>
                 <div class="col-sm-4 mg-t-10 mg-sm-t-0">
-                    From @Html.DisplayFor(model => model.StartDate)
-                    to  @Html.DisplayFor(model => model.EndDate)
+                    From @Model.StartDate.ToString("dd MMM yyyy")
+                    to  @Model.EndDate.ToString("dd MMM yyyy")
                 </div>
             </div><!-- row -->
             <div class="row mg-t-20">
@@ -52,19 +52,19 @@
             </div><!-- row -->
 
             <div class="row mg-t-20">
-                <label class="col-sm-2 form-control-label"><b>Vendor : </b></label>
+                <label class="col-sm-2 form-control-label"><b> Vendor : </b></label>
                 <div class="col-sm-4 mg-t-10 mg-sm-t-0">
                     From @Html.DisplayFor(model => model.VendorName)
                 </div>
             </div><!-- row -->
             <div class="row mg-t-20">
-                <label class="col-sm-2 form-control-label"><b>Address : </b></label>
+                <label class="col-sm-2 form-control-label"><b> Address : </b></label>
                 <div class="col-sm-4 mg-t-10 mg-sm-t-0">
                     @Html.DisplayFor(model => model.VendorAddress)
                 </div>
             </div><!-- row -->
             <div class="row mg-t-20">
-                <label class="col-sm-2 form-control-label"><b>Contact : </b></label>
+                <label class="col-sm-2 form-control-label"><b> Contact : </b></label>
                 <div class="col-sm-4 mg-t-10 mg-sm-t-0">
                     From @Html.DisplayFor(model => model.ContactName)
                 </div>
@@ -77,7 +77,7 @@
             </div><!-- row -->
         </div><!-- card -->
     </div><!-- col-6 -->
-
+    
 </div>
 
 
@@ -96,7 +96,6 @@
                     <th class="wd-5p">Item</th>
                     <th class="wd-5p">Quantity</th>
                     <th class="wd-5p">QuotedAmount</th>
-                    <th class="wd-5p">AgreedAmount</th>
 
                 </tr>
             </thead>
@@ -116,13 +115,21 @@
                         <td>@approvalConfig.ItemName</td>
                         <td>@approvalConfig.QuotedQuantity</td>
                         <td>@approvalConfig.QuotedAmount</td>
-                        <td><input type="text" /></td>
                     </tr>
                 }
             </tbody>
         </table>
         <form role="form" method="post">
             <div asp-validation-summary="All" class="text-danger"></div>
+            <input asp-for="RFQId" type="hidden" />
+            <input asp-for="RFQStatus" type="hidden" />
+            <input asp-for="VendorId" type="hidden" />
+            <div class="row mg-t-20">
+                <label class="col-sm-2 form-control-label"><b> Comments : </b></label>
+                <div class="col-sm-4 mg-t-10 mg-sm-t-0">
+                    <input asp-for="Comments" type="text" class="form-control" placeholder="Add your comments.">
+                </div>
+            </div><!-- row -->
             <div class="form-layout-footer mg-t-30">
                 <button class="btn btn-info mg-r-5">Send For Approval</button>
                 <button class="btn btn-secondary">Cancel</button>

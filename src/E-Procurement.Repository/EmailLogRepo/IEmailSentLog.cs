@@ -10,6 +10,7 @@ namespace E_Procurement.Repository.EmailLogRepo
    public interface IEmailSentLog : IDependencyRegister
     {
         Task<bool> LogEmailAsync(EmailSentLog emailLog);
+        Task<bool> LogEmailTransactionAsync(EmailSentLog emailLog);
 
         Task<bool> UpdateEmailAsync(EmailSentLog emailLog);
 

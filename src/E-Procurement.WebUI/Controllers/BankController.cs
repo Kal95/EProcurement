@@ -58,11 +58,11 @@ namespace E_Procurement.WebUI.Controllers
             try
             {
                 string message;
-                string UserId = User.Identity.Name;
+                Model.CreatedBy = User.Identity.Name;
 
                 if (ModelState.IsValid)
                 {
-                    var status = _bankRepository.CreateBank(Model.BankName, Model.SortCode, UserId, out message);
+                    var status = _bankRepository.CreateBank(Model, out message);
 
                     ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
 
@@ -146,9 +146,9 @@ namespace E_Procurement.WebUI.Controllers
 
                     if (bank == null) { return RedirectToAction("Index", "Bank"); }
 
-                    string UserId = User.Identity.Name;
+                    Model.UpdatedBy = User.Identity.Name;
 
-                    var status = _bankRepository.UpdateBank(Model.Id, Model.BankName, Model.SortCode, Model.IsActive, UserId, out message);
+                    var status = _bankRepository.UpdateBank(Model, out message);
 
                     ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
 

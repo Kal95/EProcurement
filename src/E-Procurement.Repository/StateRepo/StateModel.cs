@@ -4,15 +4,17 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace E_Procurement.WebUI.Models.BankModel
+namespace E_Procurement.WebUI.Models.StateModel
 {
-    public class BankModel
+    public class StateModel
     {
         [Required]
-        public string BankName { get; set; }
-        [Required]
-        public string SortCode { get; set; }
+        public string StateName { get; set; }
         public int Id { get; set; }
         public bool IsActive { get; set; }
+        public string CreatedBy{ get; set; }
+        public string UpdatedBy { get; set; }
+
     }
+
 }
