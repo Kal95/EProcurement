@@ -5,7 +5,9 @@ using System.Threading.Tasks;
 using Abp.Web.Mvc.Alerts;
 using AutoMapper;
 using E_Procurement.Data.Entity;
+using E_Procurement.Repository.Dtos;
 using E_Procurement.Repository.RFQGenRepo;
+using E_Procurement.Repository.VendoRepo;
 using E_Procurement.WebUI.Models.RFQModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -16,12 +18,14 @@ namespace E_Procurement.WebUI.Controllers
     {
         private readonly IRfqGenRepository _rfqGenRepository;
         private readonly IMapper _mapper;
+        private readonly IVendorRepository _vendorRepository;
 
-        public RfqGenController(IRfqGenRepository rfqRepository, IMapper mapper)
+        public RfqGenController(IRfqGenRepository rfqRepository, IMapper mapper,IVendorRepository vendorRepository)
         {
             _rfqGenRepository = rfqRepository;
             _mapper = mapper;
-        }
+           _vendorRepository = vendorRepository;
+    }
         // GET: RfqGen
         public ActionResult Index()
         {
@@ -38,6 +42,7 @@ namespace E_Procurement.WebUI.Controllers
                 return View("Error");
             }
         }
+       
 
         private string GenerateRfqReference()
         {
@@ -83,12 +88,7 @@ namespace E_Procurement.WebUI.Controllers
             //Model.VendorList = Vendor;
 
         }
-
-
-
-
-
-
+        
         // GET: Rfq/Create
         public ActionResult Create()
         {
@@ -104,7 +104,7 @@ namespace E_Procurement.WebUI.Controllers
             catch (Exception)
             {
 
-                return View("Error");
+                return View();
             }
         }
 

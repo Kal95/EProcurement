@@ -8,7 +8,7 @@ namespace E_Procurement.Repository.Interface
 {
     public interface IConvertViewToPDF : IDependencyRegister
     {
-        Task<bool> CreateRFQPDF(RFQGenerationModel rfqGenerationModel);
+        Task<bool> CreateRFQPDF(RFQGenerationModel rfqGenerationModel, string emailMessage);
         Task<bool> CreatePOPDF(RFQGenerationModel rfqGenerationModel);
     }
 }

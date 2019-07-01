@@ -20,7 +20,7 @@
                 <div class="row mg-t-20">
                     <div class="col-md-6" style="margin-top:10px">
                         <label for="VendorName">Category:</label>
-                        @Html.DropDownListFor(model => model.CategoryId, Model.ItemCategoryList, "-- Select Category --", htmlAttributes: new { id = "ItemCategory", @class = "form-control", style = "width:450px; height:40px", onchange = "document.forms[0].submit();" })
+                        @Html.DropDownListFor(model => model.CategoryId, Model.ItemCategoryList, "-- Select Category --", htmlAttributes: new { id = "ItemCategory", @class = "form-control", style = "width:450px; height:40px", onchange = "document.forms[1].submit();" })
                         @Html.ValidationMessageFor(model => model.CategoryId, "", new { @class = "text-danger" })
                     </div>
                     <div class="col-md-6" style="margin-top:10px">
