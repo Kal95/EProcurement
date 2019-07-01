@@ -87,18 +87,32 @@ namespace E_Procurement.Repository.RfqApprovalConfigRepository
                               }).Distinct().FirstOrDefaultAsync();
 
             List<RFQDetailsModel> rFQDetails = new List<RFQDetailsModel>();
-               foreach (var item in Item)
-                {
-                rFQDetails.Add(new RFQDetailsModel { RFQId = item.RFQId,
-                                                                VendorId = item.VendorId, 
-                                                                ItemId = item.ItemId,
-                                                                ItemName = item.ItemName,
-                                                                QuotedQuantity = item.QuotedQuantity,
-                                                                AgreedQuantity = item.AgreedQuantity, 
-                                                                QuotedAmount = item.QuotedAmount,
-                                                                AgreedAmount = item.AgreedAmount
-                                                              });
-                }
+               //foreach (var item in Item)
+               // {
+               // rFQDetails.Add(new RFQDetailsModel { RFQId = item.RFQId,
+               //                                                 VendorId = item.VendorId, 
+               //                                                 ItemId = item.ItemId,
+               //                                                 ItemName = item.ItemName,
+               //                                                 QuotedQuantity = item.QuotedQuantity,
+               //                                                 AgreedQuantity = item.AgreedQuantity, 
+               //                                                 QuotedAmount = item.QuotedAmount,
+               //                                                 AgreedAmount = item.AgreedAmount
+               //                                               });
+               // }
+
+            var listModel = Item.Select(x => new RFQDetailsModel
+            {
+                RFQId = x.RFQId,
+                VendorId = x.VendorId,
+                ItemId = x.ItemId,
+                ItemName = x.ItemName,
+                QuotedQuantity = x.QuotedQuantity,
+                AgreedQuantity = x.AgreedQuantity,
+                QuotedAmount = x.QuotedAmount,
+                AgreedAmount = x.AgreedAmount
+            });
+
+            rFQDetails.AddRange(listModel);
 
             query.RFQDetails = rFQDetails;
 

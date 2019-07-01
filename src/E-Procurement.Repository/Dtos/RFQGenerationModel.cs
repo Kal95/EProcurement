@@ -6,6 +6,7 @@ namespace E_Procurement.Repository.Dtos
 {
    public class RFQGenerationModel
     {
+           
             public int RFQId { get; set; }
             public int  ProjectId { get; set; }
             public int RequisitionId { get; set; }

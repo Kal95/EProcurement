@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace E_Procurement.Data.Migrations
 {
     [DbContext(typeof(EProcurementContext))]
-    [Migration("20190528073246_AddedVendorCategory")]
-    partial class AddedVendorCategory
+    [Migration("20190626133004_POStatus")]
+    partial class POStatus
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -71,6 +71,395 @@ namespace E_Procurement.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Countries");
+                });
+
+            modelBuilder.Entity("E_Procurement.Data.Entity.DNGeneration", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("CreatedBy");
+
+                    b.Property<DateTime>("DateCreated");
+
+                    b.Property<byte>("DnFileBlob");
+
+                    b.Property<string>("DnFilePath");
+
+                    b.Property<string>("DnRecievedBy");
+
+                    b.Property<string>("DnUploadedBy");
+
+                    b.Property<DateTime>("DnUploadedDate");
+
+                    b.Property<bool>("IsActive");
+
+                    b.Property<bool>("IsDeleted");
+
+                    b.Property<DateTime?>("LastDateUpdated");
+
+                    b.Property<int>("PoId");
+
+                    b.Property<string>("UpdatedBy");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("DnGenerations");
+                });
+
+            modelBuilder.Entity("E_Procurement.Data.Entity.EmailSentLog", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("CreatedBy");
+
+                    b.Property<DateTime>("DateCreated");
+
+                    b.Property<string>("EmailContent");
+
+                    b.Property<bool>("IsActive");
+
+                    b.Property<bool>("IsDeleted");
+
+                    b.Property<DateTime?>("LastDateUpdated");
+
+                    b.Property<string>("RecipientEmail");
+
+                    b.Property<string>("Status");
+
+                    b.Property<string>("UpdatedBy");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("EmailSentLogs");
+                });
+
+            modelBuilder.Entity("E_Procurement.Data.Entity.GRNGeneration", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("CreatedBy");
+
+                    b.Property<DateTime>("DateCreated");
+
+                    b.Property<byte>("GRNFileBlob");
+
+                    b.Property<string>("GRNFilePath");
+
+                    b.Property<string>("GRNNo");
+
+                    b.Property<string>("GRNUploadedBy");
+
+                    b.Property<DateTime>("GRNUploadedDate");
+
+                    b.Property<bool>("IsActive");
+
+                    b.Property<bool>("IsDeleted");
+
+                    b.Property<DateTime?>("LastDateUpdated");
+
+                    b.Property<int>("POId");
+
+                    b.Property<string>("UpdatedBy");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("GrnGenerations");
+                });
+
+            modelBuilder.Entity("E_Procurement.Data.Entity.Item", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int?>("ItemCategoryId");
+
+                    b.Property<string>("ItemName");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ItemCategoryId");
+
+                    b.ToTable("Items");
+                });
+
+            modelBuilder.Entity("E_Procurement.Data.Entity.ItemCategory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("CategoryName");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ItemCategories");
+                });
+
+            modelBuilder.Entity("E_Procurement.Data.Entity.POGeneration", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("ActualDeliveryDate");
+
+                    b.Property<decimal>("Amount");
+
+                    b.Property<string>("CreatedBy");
+
+                    b.Property<DateTime>("DateCreated");
+
+                    b.Property<DateTime>("ExpectedDeliveryDate");
+
+                    b.Property<bool>("IsActive");
+
+                    b.Property<bool>("IsDeleted");
+
+                    b.Property<DateTime?>("LastDateUpdated");
+
+                    b.Property<string>("PONumber");
+
+                    b.Property<string>("POStatus");
+
+                    b.Property<int>("RFQId");
+
+                    b.Property<string>("UpdatedBy");
+
+                    b.Property<int>("VendorId");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PoGenerations");
+                });
+
+            modelBuilder.Entity("E_Procurement.Data.Entity.Permission", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Code");
+
+                    b.Property<string>("CreatedBy");
+
+                    b.Property<DateTime>("DateCreated");
+
+                    b.Property<bool>("IsActive");
+
+                    b.Property<bool>("IsDeleted");
+
+                    b.Property<DateTime?>("LastDateUpdated");
+
+                    b.Property<string>("Name");
+
+                    b.Property<string>("UpdatedBy");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Permissions");
+                });
+
+            modelBuilder.Entity("E_Procurement.Data.Entity.PermissionRole", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("CreatedBy");
+
+                    b.Property<DateTime>("DateCreated");
+
+                    b.Property<bool>("IsActive");
+
+                    b.Property<bool>("IsDeleted");
+
+                    b.Property<DateTime?>("LastDateUpdated");
+
+                    b.Property<int>("PermissionId");
+
+                    b.Property<int>("RoleId");
+
+                    b.Property<string>("UpdatedBy");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PermissionRoles");
+                });
+
+            modelBuilder.Entity("E_Procurement.Data.Entity.RFQApprovalConfig", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("ApprovalLevel");
+
+                    b.Property<string>("CreatedBy");
+
+                    b.Property<DateTime>("DateCreated");
+
+                    b.Property<string>("Email");
+
+                    b.Property<bool>("IsActive");
+
+                    b.Property<bool>("IsDeleted");
+
+                    b.Property<bool>("IsFinalLevel");
+
+                    b.Property<DateTime?>("LastDateUpdated");
+
+                    b.Property<string>("UpdatedBy");
+
+                    b.Property<int>("UserId");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("RfqApprovalConfigs");
+                });
+
+            modelBuilder.Entity("E_Procurement.Data.Entity.RFQApprovalStatus", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("CreatedBy");
+
+                    b.Property<int>("CurrentApprovalLevel");
+
+                    b.Property<DateTime>("DateCreated");
+
+                    b.Property<bool>("IsActive");
+
+                    b.Property<bool>("IsDeleted");
+
+                    b.Property<DateTime?>("LastDateUpdated");
+
+                    b.Property<int>("RFQId");
+
+                    b.Property<string>("UpdatedBy");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("RfqApprovalStatuses");
+                });
+
+            modelBuilder.Entity("E_Procurement.Data.Entity.RFQApprovalTransactions", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("ApprovalLevel");
+
+                    b.Property<string>("ApprovalStatus");
+
+                    b.Property<string>("ApprovedBy");
+
+                    b.Property<int>("Comments");
+
+                    b.Property<string>("CreatedBy");
+
+                    b.Property<DateTime>("DateCreated");
+
+                    b.Property<bool>("IsActive");
+
+                    b.Property<bool>("IsDeleted");
+
+                    b.Property<DateTime?>("LastDateUpdated");
+
+                    b.Property<int>("RFQId");
+
+                    b.Property<string>("UpdatedBy");
+
+                    b.Property<int>("VendorId");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("RfqApprovalTransactions");
+                });
+
+            modelBuilder.Entity("E_Procurement.Data.Entity.RFQDetails", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<decimal>("AgreedAmount");
+
+                    b.Property<int>("AgreedQuantity");
+
+                    b.Property<string>("CreatedBy");
+
+                    b.Property<DateTime>("DateCreated");
+
+                    b.Property<bool>("IsActive");
+
+                    b.Property<bool>("IsDeleted");
+
+                    b.Property<int>("ItemId");
+
+                    b.Property<string>("ItemName");
+
+                    b.Property<DateTime?>("LastDateUpdated");
+
+                    b.Property<decimal>("QuotedAmount");
+
+                    b.Property<int>("QuotedQuantity");
+
+                    b.Property<int>("RFQId");
+
+                    b.Property<string>("UpdatedBy");
+
+                    b.Property<int>("VendorId");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("RfqDetails");
+                });
+
+            modelBuilder.Entity("E_Procurement.Data.Entity.RFQGeneration", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("CreatedBy");
+
+                    b.Property<DateTime>("DateCreated");
+
+                    b.Property<string>("Description");
+
+                    b.Property<DateTime>("EndDate");
+
+                    b.Property<bool>("IsActive");
+
+                    b.Property<bool>("IsDeleted");
+
+                    b.Property<DateTime?>("LastDateUpdated");
+
+                    b.Property<int>("ProjectId");
+
+                    b.Property<string>("RFQStatus");
+
+                    b.Property<string>("Reference");
+
+                    b.Property<int>("RequisitionId");
+
+                    b.Property<DateTime>("StartDate");
+
+                    b.Property<string>("UpdatedBy");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("RfqGenerations");
                 });
 
             modelBuilder.Entity("E_Procurement.Data.Entity.Role", b =>
@@ -191,9 +580,9 @@ namespace E_Procurement.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<decimal>("AATAmount");
+                    b.Property<decimal>("AatAmount");
 
-                    b.Property<string>("AATCurrency");
+                    b.Property<string>("AatCurrency");
 
                     b.Property<string>("AccountName");
 
@@ -203,7 +592,7 @@ namespace E_Procurement.Data.Migrations
 
                     b.Property<int>("BankId");
 
-                    b.Property<string>("CACNo");
+                    b.Property<string>("CacNo");
 
                     b.Property<string>("ContactName");
 
@@ -227,11 +616,11 @@ namespace E_Procurement.Data.Migrations
 
                     b.Property<int>("StateId");
 
-                    b.Property<string>("TINNo");
+                    b.Property<string>("TinNo");
 
                     b.Property<string>("UpdatedBy");
 
-                    b.Property<string>("VATNo");
+                    b.Property<string>("VatNo");
 
                     b.Property<string>("VendorAddress");
 
@@ -368,6 +757,13 @@ namespace E_Procurement.Data.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens");
+                });
+
+            modelBuilder.Entity("E_Procurement.Data.Entity.Item", b =>
+                {
+                    b.HasOne("E_Procurement.Data.Entity.ItemCategory")
+                        .WithMany("Items")
+                        .HasForeignKey("ItemCategoryId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>

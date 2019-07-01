@@ -1,0 +1,103 @@
+﻿@model IEnumerable<E_Procurement.WebUI.Models.POAcceptanceModel.POAcceptanceViewModel>
+@{
+    ViewBag.Title = "PO Details";
+}
+
+
+<div class="card pd-20 pd-sm-40">
+    <h6 class="card-body-title">Quote Details</h6>
+    <p class="mg-b-20 mg-sm-b-30"> List </p>
+
+    @*<div class="right">
+            <a asp-controller="RfqApprovalConfig" asp-action="Create" alt="Create" class="btn btn-primary"> Create Approval Config </a>
+        </div>*@
+    <div class="table-wrapper">
+        <table id="datatable1" class="table table-striped display responsive nowrap">
+            <thead>
+                <tr>
+                    <th class="wd-5p">S/N</th>
+                    @*<td>
+                            <label class="ckbox mg-b-0">
+                                <input type="checkbox"><span></span>
+                            </label>
+                        </td>*@
+                    @*<th class="wd-5p">RFQ No</th>
+                        <th class="wd-5p">Proj. ID</th>
+                        <th class="wd-5p">Req. ID</th>
+                        <th class="wd-10p">Reference</th>*@
+                    <th class="wd-15p">PO Number</th>
+                    <th class="wd-15p">Actual Delivery Date</th>
+                    <th class="wd-15p">Expected Delivery Date</th>
+                    @*<th class="wd-10p">RFQStatus</th>*@
+                    <th class="wd-25p">Amount</th>
+                    @*<th class="wd-25p">Address</th>
+                    <th class="wd-10p">Status</th>
+                    <th class="wd-25p">Contact</th>*@
+                    <th class="wd-10p"></th>
+                    rachel
+
+
+
+
+
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    int i = 0;
+                }
+                @foreach (var approvalConfig in Model)
+                {
+                    <tr>
+                        <td>@(i = i + 1)</td>
+                        @*<td>
+                                <label class="ckbox mg-b-0">
+                                    <input type="checkbox"><span></span>
+                                </label>
+                            </td>*@
+                        @*<td>@approvalConfig.RFQId</td>
+                                <td>@approvalConfig.ProjectId</td>
+                                <td>@approvalConfig.RequisitionId</td>
+                            <td>@approvalConfig.Reference</td>*@
+                        <td>@approvalConfig.PONumber</td>
+                        <td>@approvalConfig.ActualDeliveryDate.ToString("dd MMM yyyy")</td>
+                        <td>@approvalConfig.ExpectedDeliveryDate.ToString("dd MMM yyyy")</td>
+                        @*<td>@approvalConfig.RFQStatus</td>*@
+                        <td>@approvalConfig.Amount</td>
+                       
+                        <td><a asp-controller="POAcceptance" asp-action="UpdatePO" asp-route-id="@approvalConfig.Id" alt="Accept" class="btn btn-primary btn-icon"> <div><i class="fa fa-pencil"></i></div></a> </td>
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div><!-- table-wrapper -->
+</div><!-- card -->
+
+<script src="/lib/jquery/jquery.js"></script>
+<script src="/lib/datatables/jquery.dataTables.js"></script>
+<script src="/lib/datatables-responsive/dataTables.responsive.js"></script>
+<script src="../lib/select2/js/select2.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        // $.noConflict();
+        $(function () {
+            'use strict';
+
+            // for all datatable
+            $('#datatable1').DataTable({
+                responsive: true,
+                language: {
+                    searchPlaceholder: 'Search...',
+                    sSearch: '',
+                    lengthMenu: '_MENU_ items/page',
+                }
+            });
+            // Select2
+            $('.dataTables_length select').select2({ minimumResultsForSearch: Infinity });
+        });
+    });
+</script>
+
+
