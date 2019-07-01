@@ -15,6 +15,9 @@ namespace E_Procurement.Repository.Dtos
         public int AgreedQuantity { get; set; }
         public decimal QuotedAmount { get; set; }
         public decimal AgreedAmount { get; set; }
-
+        public string Description { get; set; }
+        public string ContactName { get; set; }
+        public string VendorName { get; set; }
+        public string VendorAddress { get; set; }
     }
 }

@@ -6,6 +6,7 @@ namespace E_Procurement.Repository.RFQGenRepo
 {
    public class RfqNoteModel
     {
+        public List<RfqNoteModel> RFQDetails { get; set; }
         //public List<string> AllItemProps { get; set; }
         public List<string> Descriptions { get; set; }
         public List<int> Quantities { get; set; }

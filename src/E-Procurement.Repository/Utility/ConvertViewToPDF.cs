@@ -28,12 +28,12 @@ namespace E_Procurement.Repository.Utility
         }
    
 
-        public async Task<bool> CreateRFQPDF(RFQGenerationModel rfqGenerationModel)
+        public async Task<bool> CreateRFQPDF(RFQGenerationModel rfqGenerationModel, string emailMessage)
         {
             string webRootPath = _hostingEnvironment.WebRootPath;
             //string contentRootPath = _hostingEnvironment.ContentRootPath;
 
-            var filePath = Path.Combine(webRootPath, "TicketTemplate", rfqGenerationModel.RFQId + ".pdf");
+            var filePath = Path.Combine(webRootPath, "Uploads", "RFQ_" + rfqGenerationModel.RFQId + "_" + rfqGenerationModel.VendorId + ".pdf");
             var globalSettings = new GlobalSettings
             {
                 ColorMode = ColorMode.Color,
@@ -41,13 +41,13 @@ namespace E_Procurement.Repository.Utility
                 PaperSize = PaperKind.A4,
                 Margins = new MarginSettings { Top = 10 },
                 DocumentTitle =  "RFQ DETAILS",
-                Out = Path.Combine(webRootPath, "TicketTemplate", rfqGenerationModel.RFQId + ".pdf") //@"D:\PDFCreator\Employee_Report.pdf"
+                Out = Path.Combine(webRootPath, "Uploads", "RFQ_" + rfqGenerationModel.RFQId + "_"+rfqGenerationModel.VendorId + ".pdf") //@"D:\PDFCreator\Employee_Report.pdf"
             };
             //Out = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "TicketTemplate", ticketViewModel.TicketNo + ".pdf")) //@"D:\PDFCreator\Employee_Report.pdf"
             var objectSettings = new ObjectSettings
             {
                 PagesCount = true,
-                HtmlContent = await _viewRender.RenderToStringAsync("/Views/Shared/TicketTemplate.cshtml", rfqGenerationModel),
+                HtmlContent = await _viewRender.RenderToStringAsync("/Views/PDFTemplates/RFQ_Notification.cshtml", rfqGenerationModel),
                 WebSettings = { DefaultEncoding = "utf-8", UserStyleSheet = Path.Combine(Directory.GetCurrentDirectory(), "css", "Ticket.css") }
             };
             //HeaderSettings = { FontName = "Arial", FontSize = 9, Right = "Page [page] of [toPage]", Line = true },
@@ -59,6 +59,9 @@ namespace E_Procurement.Repository.Utility
             };
 
             _converter.Convert(pdf);
+            var subject = "RFQ NOTIFICATION";
+            string emailBody = objectSettings.HtmlContent;// await _viewRender.RenderToStringAsync("/Views/PDFTemplates/PO.cshtml", rfqGenerationModel);
+            await _emailSender.SendEmailAsync(rfqGenerationModel.VendorEmail, subject, emailMessage, filePath);
 
 
             return true;

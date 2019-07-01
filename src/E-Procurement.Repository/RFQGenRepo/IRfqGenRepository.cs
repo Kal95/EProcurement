@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using E_Procurement.Data.Entity;
+using E_Procurement.Repository.Dtos;
 using E_Procurement.Repository.Interface;
 using E_Procurement.WebUI.Models.RFQModel;
 
@@ -15,7 +16,7 @@ namespace E_Procurement.Repository.RFQGenRepo
         List<Vendor> GetVendors(RfqGenModel model);
         List<RfqGenModel> GetItemCategory();
         List<RfqGenModel> GetItem(int CategoryId);
-        List<Vendor> GetVendorDetails();
+        List<Vendor> GetVendorDetails(RfqGenModel model);
 
     }
 }

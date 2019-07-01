@@ -7,8 +7,10 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Web.Mvc;
+using DinkToPdf.Contracts;
 using E_Procurement.Data;
 using E_Procurement.Data.Entity;
+using E_Procurement.Repository.Dtos;
 using E_Procurement.Repository.Interface;
 using E_Procurement.WebUI.Models.RFQModel;
 using Microsoft.AspNetCore.Http;
@@ -22,12 +24,14 @@ namespace E_Procurement.Repository.RFQGenRepo
         private readonly EProcurementContext _context;
         private readonly ISMTPService _emailSender;
         private readonly IHttpContextAccessor _contextAccessor;
+        private IConvertViewToPDF _pdfConverter;
 
-        public RfqGenRepository(EProcurementContext context, ISMTPService emailSender, IHttpContextAccessor contextAccessor)
+        public RfqGenRepository(EProcurementContext context, ISMTPService emailSender, IHttpContextAccessor contextAccessor, IConvertViewToPDF pdfConverter)
         {
             _context = context;
             _emailSender = emailSender;
             _contextAccessor = contextAccessor;
+            _pdfConverter = pdfConverter;
         }
 
 
@@ -93,6 +97,8 @@ namespace E_Procurement.Repository.RFQGenRepo
 
                 _context.SaveChanges();
 
+                //get PDF data
+              
                 var items = GetItem(model.CategoryId).ToList();
                 var itemList = items.Where(a => model.SelectedItems.Any(b => b == a.Id.ToString())).ToList();
                 var selectedV = model.SelectedVendors.ToList();
@@ -102,7 +108,7 @@ namespace E_Procurement.Repository.RFQGenRepo
                 //var selected3 = model.SelectedVendors.Zip(model.SelectedItems, (x, y) => new { X = x, Y = y });
                 foreach (var entry in vendorList)
                 {
-                    var subject = "RFQ NOTIFICATION";
+                    
                     var message = "</br><b> Dear </b>" + entry.ContactName;
                     message += "</br><b> Your company: </b>" + entry.VendorName;
 
@@ -113,7 +119,41 @@ namespace E_Procurement.Repository.RFQGenRepo
                     message += "</br>Kindly respond promptly.";
                     message += "</br>Regards";
 
-                    _emailSender.SendEmailAsync(entry.Email, subject, message,"");
+                    RFQGenerationModel model2 = new RFQGenerationModel();
+                    model2.VendorId = entry.Id;
+                    model2.ContactName = entry.ContactName;
+                    model2.VendorName = entry.VendorName;
+                    model2.VendorAddress = entry.VendorAddress;
+                    model2.VendorEmail = entry.Email;
+                    model2.RFQId = Convert.ToInt32(model.Reference.ToString());
+                   
+                    //RFQGeneration RfqGen = new RFQGeneration();
+                   // var Item = _context.RfqDetails.Where(x => x.RFQId == RfqGen.Id).ToList();
+                    List<RFQDetailsModel> rFQDetails = new List<RFQDetailsModel>();
+                    var itemV = GetItem(model.CategoryId).ToList();
+                    var itemListV = itemV.Where(a => model.SelectedItems.Any(b => b == a.Id.ToString())).ToList();
+
+                    var selected2 = model.SelectedItems.Zip(model.Quantities, (x, y) => new { X = x, Y = y });
+                    var selected3 = itemListV.Zip(model.Descriptions, (a, b) => new { A = a, B = b });
+
+                    var selected4 = selected2.Zip(selected3, (o, p) => new { O = o, P = p });
+                    var listModel = selected4.Select(x => new RFQDetailsModel
+                    {
+                        ItemName = x.P.A.ItemName,
+                        QuotedQuantity = x.O.Y,
+                        Description = x.P.B
+                    });
+
+                    rFQDetails.AddRange(listModel);
+
+
+                    model2.RFQDetails = rFQDetails;
+
+                    //generate PDF and send mail
+                    _pdfConverter.CreateRFQPDF(model2, message);
+                    //string emailBody = _pdfConverter.CreateRFQPDF(model2);
+                   // _emailSender.SendEmailAsync(entry.Email, subject, message, filePath);
+                   // _emailSender.SendEmailAsync(entry.Email, subject, message,"");
                 }
 
                 Message = "RFQ generated successfully";
@@ -271,11 +311,18 @@ namespace E_Procurement.Repository.RFQGenRepo
 
             return _context.RfqGenerations.OrderByDescending(u => u.Id).ToList();
         }
-        public List<Vendor> GetVendorDetails()
+        public List<Vendor> GetVendorDetails(RfqGenModel model)
         {
-            var mapping = _context.VendorMappings.Select(u => u.VendorID).FirstOrDefault();
 
-            return _context.Vendors.Where(u => u.Id == mapping).ToList();
+            //var mapping = _context.VendorMappings.Select(u => u.VendorID).FirstOrDefault();
+            //return _context.Vendors.Where(u => u.Id == mapping).ToList();
+
+            var items = GetItem(model.CategoryId).ToList();
+            var itemList = items.Where(a => model.SelectedItems.Any(b => b == a.Id.ToString())).ToList();
+            var selectedV = model.SelectedVendors.ToList();
+            var vendors = _context.Vendors.OrderByDescending(u => u.Id).ToList();
+            
+            return vendors;
         }
 
     }
