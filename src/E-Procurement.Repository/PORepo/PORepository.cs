@@ -81,11 +81,10 @@ namespace E_Procurement.Repository.PORepo
         {
             var query = await (from vend in _context.Vendors
                                join rfqDetails in _context.RfqDetails on vend.Id equals rfqDetails.VendorId
-                               join transaction in _context.RfqApprovalTransactions on rfqDetails.VendorId equals transaction.Id
+                               join transaction in _context.RfqApprovalTransactions on rfqDetails.VendorId equals transaction.VendorId
                                join approvalStatus in _context.RfqApprovalStatuses on transaction.RFQId equals approvalStatus.RFQId
                                join config in _context.RfqApprovalConfigs on approvalStatus.CurrentApprovalLevel equals config.ApprovalLevel
                                join rfq in _context.RfqGenerations on approvalStatus.RFQId equals rfq.Id
-                              // join po in _context.POGenerations on rfq.Id equals  po.RFQId
                                where approvalStatus.CurrentApprovalLevel == config.ApprovalLevel && config.IsFinalLevel == true
                                && !(from po in _context.PoGenerations select po.RFQId).Contains(rfq.Id)
                                orderby rfq.Id, rfq.EndDate descending
