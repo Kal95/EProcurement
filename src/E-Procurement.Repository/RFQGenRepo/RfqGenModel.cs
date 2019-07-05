@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using E_Procurement.Data.Entity;
+using E_Procurement.Repository.ReportRepo;
 using FluentNHibernate.Testing.Values;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -28,7 +29,7 @@ namespace E_Procurement.WebUI.Models.RFQModel
         public List<string> Descriptions { get; set; }
         public List<int> Quantities { get; set; }
         //public List<string> VendorName { get; set; }
-       
+        public List<ReportModel> Report { get; set; }
 
 
         [Required(ErrorMessage = "You must select at least one Vendor")]

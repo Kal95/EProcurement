@@ -1,0 +1,190 @@
+﻿
+@model E_Procurement.Repository.VendoRepo.VendorModel
+
+@{
+    ViewBag.Title = "Vendor Report";
+}
+
+
+<div class="card pd-20 pd-sm-40">
+    <form class="form-horizontal" action="@Url.Action("Vendor","Report")" method="post">
+
+        @Html.AntiForgeryToken()
+        <div class="card-body-title">Registered Vendors</div>
+        @*<a class="btn btn-primary" pull-right" href="@Url.Action("Create", "RfqGen")"><i class="fa fa-plus"> </i>  Add RFQ</a>*@
+        <p class="mg-b-20 mg-sm-b-30" style="margin-bottom:10px"> Report </p>
+        <div class="row mg-t-2" style="display:flex; justify-content:space-around">
+            <div class="col-md-1">
+                <input name="b_print" type="button" class="btn btn-outline-info" onClick="printDiv('div_print');"value=" Print Report">
+                @*<a class="btn btn-primary" style="width:100px; height:40px" pull-right" onclick="printDiv()"><i class="fa fa-print"> </i>    Print </a>*@
+
+            </div>
+
+            <div>
+                @*<label for="VendorName">Category:</label>*@
+                @Html.DropDownListFor(model => model.VendorCategoryId, Model.VendorCategoryList, "-- All Categories --", htmlAttributes: new { @id = "vendorCategory", @class = "form-control", style = "width:200px; height:40px", onchange = "document.forms[1].submit();" })
+                @*@Html.ValidationMessageFor(model => model.VendorCategoryId, "", new { @class = "text-danger" })*@
+            </div>
+            @*<div>
+                    <label for="StartDate">Start Date:</label>
+                    @Html.TextBoxFor(model => model.StartDate, new { @class = "datepicker", @placeholder = "Start Date", @Id = "StartDate", type = "date", style = "width:130px; height:30px" })
+
+
+                </div>
+                <div>
+                    <label for="EndDate">End Date:</label>
+                    @Html.TextBoxFor(model => model.EndDate, new { @class = "datepicker", @placeholder = "End Date", @Id = "EndDate", type = "date", style = "width:130px; height:30px" })
+
+
+                </div>*@
+        </div>
+
+        @*<div class="col-md-6" style="margin-top:10px; padding-right:200px">
+                <i class="fa fa-search" pull-left">
+                    <input type="text" id="myInput" style="width:200px; height:40px" onkeyup="myFunction()" placeholder="Search..">
+                </i>
+            </div>*@
+
+        <br />
+        <div class="table-wrapper" id="div_print">
+            <table id="example" class="table table-hover table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>S/N</th>
+                        <th>Vendor Name </th>
+                        <th>Address</th>
+                        @*<th>Website </th>*@
+                        @*<th>VAT No. </th>
+                            <th>TIN No. </th>
+                            <th>AAT Amount </th>
+                            <th>AAT Currency </th>
+                            <th>Account Name </th>
+                            <th>Account Number </th>
+                            <th>Branch </th>
+                            <th>CAC Number </th>*@
+                        <th>Contact Name </th>
+                        <th>Phone Number </th>
+                        @*<th>Sort Code </th>*@
+                        <th>Email </th>
+                        @*<th>Status</th>*@
+
+                    </tr>
+                </thead>
+                <tbody>
+
+                    @{int rowNo = 0;}
+                    @{
+                        var VendorDetails = Model.Report as List<E_Procurement.Repository.ReportRepo.ReportModel>;
+
+                    }
+                    @foreach (var item in VendorDetails)
+                    {
+                        @*@foreach (var item in Model.VendorList)
+                            {*@
+                        <tr>
+                            <td>@(rowNo += 1)</td>
+                            <td>@item.VendorName</td>
+                            <td>@item.VendorAddress</td>
+                            @*<td>@item.WebsiteAddress</td>*@
+
+                            @*<td>@item.VatNo</td>
+                                <td>@item.TinNo</td>
+                                <td>@item.AatAmount</td>
+                                <td>@item.AatCurrency</td>
+                                <td>@item.AccountName</td>
+                                <td>@item.AccountNo</td>
+                                <td>@item.BankBranch</td>
+                                <td>@item.CacNo</td>*@
+                            <td>@item.ContactName</td>
+                            <td>@item.PhoneNumber</td>
+                            @*<td>@item.SortCode</td>*@
+                            <td>@item.Email</td>
+
+                            @*<td>
+                                    @if (item.IsActive)
+                                    {
+                                        <label class="text-success">Active</label>
+                                    }
+                                    else
+                                    {
+                                        <label class="text-danger">Inactive</label>
+
+                                    }
+                                </td>*@
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+        </div>
+        <iframe name="print_frame" width="0" height="0" frameborder="0" src="about:blank"></iframe>
+    </form>
+</div>
+
+<script src="https://cdn.datatables.net/buttons/1.5.6/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.flash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.html5.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+<script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.print.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css"></script>
+<script src="https://cdn.datatables.net/buttons/1.5.6/css/buttons.dataTables.min.css"></script>
+@*<script>
+        $('#mytable').ddTableFilter();
+    </script>*@
+@*<script>
+        function myFunction() {
+            var input, filter, table, tr, td, i;
+            input = document.getElementById("mylist");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("myTable");
+            tr = table.getElementsByTagName("tr");
+            for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td")[0];
+                if (td) {
+                    if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+        }
+    </script>*@
+<script type="text/javascript">
+    function printDiv(printpage) {
+        var headstr = "<html><head><title></title></head><body>";
+        var footstr = "</body>";
+        var newstr = document.all.item(printpage).innerHTML;
+        var oldstr = document.body.innerHTML;
+        document.body.innerHTML = headstr + newstr + footstr;
+        window.print();
+        document.body.innerHTML = oldstr;
+        return false;
+    }
+  
+    //function printDiv() {
+    //    window.frames["print_frame"].document.body.innerHTML = document.getElementById("example").innerHTML;
+    //    window.frames["print_frame"].window.focus();
+    //    window.frames["print_frame"].window.print();
+    //}
+
+    $(function () {
+
+
+        if ($("VendorCategoryId").val() != "") {
+            var message = "Category: " + $("#VendorCategoryId option:selected").text();
+            //var VendorCategoryId = $(this).children(":selected").attr("VendorCategoryId");
+            //document.forms[1].submit;
+            //alert(message);
+        }
+
+
+    });
+
+</script>
+
+

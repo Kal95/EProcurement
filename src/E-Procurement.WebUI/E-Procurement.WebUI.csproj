@@ -77,4 +77,68 @@
     <Folder Include="wwwroot\Uploads\" />
   </ItemGroup>
 
+
+  <ItemGroup>
+    <Reference Include="Telerik.Reporting">
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Progress\Telerik Reporting R1 2019\Bin\Telerik.Reporting.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.Reporting.Adomd">
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Progress\Telerik Reporting R1 2019\Bin\Telerik.Reporting.Adomd.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.Reporting.Cache.Database">
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Progress\Telerik Reporting R1 2019\Bin\Telerik.Reporting.Cache.Database.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.Reporting.Cache.StackExchangeRedis">
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Progress\Telerik Reporting R1 2019\Bin\Telerik.Reporting.Cache.StackExchangeRedis.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.Reporting.Data.Schema">
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Progress\Telerik Reporting R1 2019\Bin\Telerik.Reporting.Data.Schema.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.Reporting.OpenXmlRendering">
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Progress\Telerik Reporting R1 2019\Bin\Telerik.Reporting.OpenXmlRendering.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.Reporting.OpenXmlRendering.2.7.2">
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Progress\Telerik Reporting R1 2019\Bin\Telerik.Reporting.OpenXmlRendering.2.7.2.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.Reporting.Service">
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Progress\Telerik Reporting R1 2019\Bin\Telerik.Reporting.Service.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.Reporting.Services.HttpClient">
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Progress\Telerik Reporting R1 2019\Bin\Telerik.Reporting.Services.HttpClient.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.Reporting.Services.ServiceStack">
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Progress\Telerik Reporting R1 2019\Bin\Telerik.Reporting.Services.ServiceStack.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.Reporting.Services.WebApi">
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Progress\Telerik Reporting R1 2019\Bin\Telerik.Reporting.Services.WebApi.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.Reporting.WebServiceDataSource">
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Progress\Telerik Reporting R1 2019\Bin\Telerik.Reporting.WebServiceDataSource.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.Reporting.XpsRendering">
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Progress\Telerik Reporting R1 2019\Bin\Telerik.Reporting.XpsRendering.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.ReportViewer.Html5.WebForms">
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Progress\Telerik Reporting R1 2019\Bin\Telerik.ReportViewer.Html5.WebForms.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.ReportViewer.Mvc">
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Progress\Telerik Reporting R1 2019\Bin\Telerik.ReportViewer.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.ReportViewer.Silverlight">
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Progress\Telerik Reporting R1 2019\Bin\Telerik.ReportViewer.Silverlight.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.ReportViewer.WebForms">
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Progress\Telerik Reporting R1 2019\Bin\Telerik.ReportViewer.WebForms.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.ReportViewer.WinForms">
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Progress\Telerik Reporting R1 2019\Bin\Telerik.ReportViewer.WinForms.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.ReportViewer.Wpf">
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Progress\Telerik Reporting R1 2019\Bin\Telerik.ReportViewer.Wpf.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.ReportViewer.Wpf.Themes">
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Progress\Telerik Reporting R1 2019\Bin\Telerik.ReportViewer.Wpf.Themes.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>
