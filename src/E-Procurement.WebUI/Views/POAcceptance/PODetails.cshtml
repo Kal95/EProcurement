@@ -1,0 +1,181 @@
+﻿@*@model E_Procurement.WebUI.Models.RfqApprovalModel.RFQGenerationViewModel*@
+@model E_Procurement.Repository.Dtos.RFQGenerationModel
+
+@{
+    ViewBag.Title = "RFQ Approval Detials";
+}
+
+
+
+
+<div class="row row-sm mg-t-20">
+    <div class="col-xl-12">
+        <div class="card pd-20 pd-sm-40 form-layout form-layout-4">
+            <h6 class="card-body-title">RFQ Approval Details </h6>
+            <p class="mg-b-20 mg-sm-b-30"> RFQ INFORMATION </p>
+
+            @*<div class="row mg-t-20">
+                <label class="col-sm-2 form-control-label"><b> RFQ No. : </b></label>
+                <div class="col-sm-4 mg-t-10 mg-sm-t-0">
+                    @Html.DisplayFor(model => model.RFQId)
+                </div>
+            </div>*@<!-- row -->
+            @*<div class="row mg-t-20">
+                <label class="col-sm-2 form-control-label"> <b> Project Code : </b></label>
+                <div class="col-sm-4 mg-t-10 mg-sm-t-0">
+                    @Html.DisplayFor(model => model.ProjectId)
+                </div>
+            </div>*@<!-- row -->
+            @*<div class="row mg-t-20">
+                <label class="col-sm-2 form-control-label"> <b> Reference : </b></label>
+                <div class="col-sm-4 mg-t-10 mg-sm-t-0">
+                    @Html.DisplayFor(model => model.Reference)
+                </div>
+            </div>*@<!-- row -->
+            @*<div class="row mg-t-20">
+                <label class="col-sm-2 form-control-label"> <b> Requisition No. : </b></label>
+                <div class="col-sm-4 mg-t-10 mg-sm-t-0">
+                    @Html.DisplayFor(model => model.RequisitionId)
+                </div>
+            </div>*@<!-- row -->
+            <div class="row mg-t-20">
+                <label class="col-sm-2 form-control-label"> <b>Duration : </b></label>
+                <div class="col-sm-4 mg-t-10 mg-sm-t-0">
+                    From @Html.DisplayFor(model => model.StartDate)
+                    to  @Html.DisplayFor(model => model.EndDate)
+                </div>
+            </div><!-- row -->
+            @*<div class="row mg-t-20">
+                <label class="col-sm-2 form-control-label"> <b> Status : </b></label>
+                <div class="col-sm-4 mg-t-10 mg-sm-t-0">
+                    @Html.DisplayFor(model => model.RFQStatus)
+                </div>
+            </div>*@<!-- row -->
+
+            <div class="row mg-t-20">
+                <label class="col-sm-2 form-control-label"><b>Vendor : </b></label>
+                <div class="col-sm-4 mg-t-10 mg-sm-t-0">
+                    From @Html.DisplayFor(model => model.VendorName)
+                </div>
+            </div><!-- row -->
+            <div class="row mg-t-20">
+                <label class="col-sm-2 form-control-label"><b>Address : </b></label>
+                <div class="col-sm-4 mg-t-10 mg-sm-t-0">
+                    @Html.DisplayFor(model => model.VendorAddress)
+                </div>
+            </div><!-- row -->
+            <div class="row mg-t-20">
+                <label class="col-sm-2 form-control-label"><b>Contact : </b></label>
+                <div class="col-sm-4 mg-t-10 mg-sm-t-0">
+                    From @Html.DisplayFor(model => model.ContactName)
+                </div>
+            </div><!-- row -->
+            @*<div class="row mg-t-20">
+                <label class="col-sm-2 form-control-label"><b> Vendor Status : </b></label>
+                <div class="col-sm-4 mg-t-10 mg-sm-t-0">
+                    @Html.DisplayFor(model => model.VendorStatus)
+                </div>
+            </div>*@<!-- row -->
+        </div><!-- card -->
+    </div><!-- col-6 -->
+
+</div>
+
+
+<div class="card pd-20 pd-sm-40">
+    <h6 class="card-body-title">RFQ Details</h6>
+    <p class="mg-b-20 mg-sm-b-30"> List </p>
+
+    @*<div class="right">
+            <a asp-controller="RfqApprovalConfig" asp-action="Create" alt="Create" class="btn btn-primary"> Create Approval Config </a>
+        </div>*@
+    <div class="table-wrapper">
+        <form role method="post" action="@Url.Action("Update","QuoteSending")" enctype="multipart/form-data">
+
+            <table id="datatable1" class="table table-striped display responsive nowrap">
+                <thead>
+                    <tr>
+                        <th class="wd-5p">S/N</th>
+                        <th class="wd-5p">Id</th>
+                        <th class="wd-5p">Item</th>
+                        <th class="wd-5p">Quantity</th>
+                        <th class="wd-5p">QuotedAmount</th>
+                        <th class="wd-5p">AgreedAmount</th>
+
+                    </tr>
+                </thead>
+               
+                    <tbody>
+                        @{
+                        int i = 0;
+                        }
+                        @{
+                            //var RFQDetails = Model.RFQDetails as List<E_Procurement.WebUI.Models.RfqApprovalModel.RFQDetailsViewModel>;
+                            var RFQDetails = Model.RFQDetails as List<E_Procurement.Repository.Dtos.RFQDetailsModel>;
+                            //var RFQGeneration = Model.RFQDetails as List<E_Procurement.Repository.Dtos.RFQDetailsModel>;
+
+                            }
+                        @foreach (var approvalConfig in RFQDetails)
+                    {
+
+                        <tr>
+                            <td>@(i = i + 1)</td>
+
+                            <td>@approvalConfig.DetailsId</td>
+                            <td>@approvalConfig.ItemName</td>
+                            <td>@approvalConfig.QuotedQuantity</td>
+                            <td>@approvalConfig.QuotedAmount</td>
+
+                            @*<input type="hidden" name="@Model.Id" />*@
+
+                            @* <input id="@approvalConfig.Id" name="@approvalConfig.Id" type="hidden" value="Value">*@
+
+                            @Html.Hidden("DetailsId", approvalConfig.DetailsId)
+
+                            @*@Html.HiddenFor(model => model.RFQDetails.First().Id)*@
+
+                            <td>
+                                <input type="text" id="agreedAmount" name="agreedAmount" class="form-control" />
+                            </td>
+
+                        </tr>
+                }
+                    </tbody>
+            </table>
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="form-layout-footer mg-t-30">
+                <button class="btn btn-info mg-r-5" type="submit">Send Quote</button>
+                <button class="btn btn-secondary">Cancel</button>
+            </div><!-- form-layout-footer -->
+        </form>
+
+    </div><!-- table-wrapper -->
+</div><!-- card -->
+
+<script src="/lib/jquery/jquery.js"></script>
+<script src="/lib/datatables/jquery.dataTables.js"></script>
+<script src="/lib/datatables-responsive/dataTables.responsive.js"></script>
+<script src="../lib/select2/js/select2.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        // $.noConflict();
+        $(function () {
+            'use strict';
+
+            // for all datatable
+            $('#datatable1').DataTable({
+                responsive: true,
+                language: {
+                    searchPlaceholder: 'Search...',
+                    sSearch: '',
+                    lengthMenu: '_MENU_ items/page',
+                }
+            });
+            // Select2
+            $('.dataTables_length select').select2({ minimumResultsForSearch: Infinity });
+        });
+    });
+</script>
+
+

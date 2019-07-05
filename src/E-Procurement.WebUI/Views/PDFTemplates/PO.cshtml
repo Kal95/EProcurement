@@ -71,8 +71,8 @@
                             <td>@(i = i + 1)</td>
                             <td>@approvalConfig.ItemName</td>
                             <td>@approvalConfig.QuotedQuantity</td>
-                            <td>@approvalConfig.QuotedAmount</td>
-                            <td>@approvalConfig.QuotedAmount</td>
+                            <td align="right">@approvalConfig.QuotedAmount</td>
+                            <td align="right">@approvalConfig.QuotedAmount</td>
                         </tr>                     
                     }
 
@@ -80,7 +80,7 @@
                     <tr>
                         <td>Total</td>
                         <td colspan=3 align="right">  Total</td>
-                        <td> ₦@Html.DisplayFor(model => model.TotalAmount)</td>
+                        <td align="right"> ₦@Html.DisplayFor(model => model.TotalAmount)</td>
                     </tr>
 
 

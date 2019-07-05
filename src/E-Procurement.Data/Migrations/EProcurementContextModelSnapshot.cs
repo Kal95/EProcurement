@@ -64,9 +64,40 @@ namespace E_Procurement.Data.Migrations
 
                     b.Property<DateTime?>("LastDateUpdated");
 
-                    b.Property<int>("PermissionId");
+                    b.Property<string>("UpdatedBy");
 
-                    b.Property<int>("RoleId");
+                    b.HasKey("Id");
+
+                    b.ToTable("Countries");
+                });
+
+            modelBuilder.Entity("E_Procurement.Data.Entity.DNGeneration", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("CreatedBy");
+
+                    b.Property<DateTime>("DateCreated");
+
+                    b.Property<byte>("DnFileBlob");
+
+                    b.Property<string>("DnFilePath");
+
+                    b.Property<string>("DnRecievedBy");
+
+                    b.Property<string>("DnUploadedBy");
+
+                    b.Property<DateTime>("DnUploadedDate");
+
+                    b.Property<bool>("IsActive");
+
+                    b.Property<bool>("IsDeleted");
+
+                    b.Property<DateTime?>("LastDateUpdated");
+
+                    b.Property<int>("PoId");
 
                     b.ToTable("Countries");
                 });
@@ -221,6 +252,8 @@ namespace E_Procurement.Data.Migrations
                     b.Property<DateTime?>("LastDateUpdated");
 
                     b.Property<string>("PONumber");
+
+                    b.Property<string>("POStatus");
 
                     b.Property<int>("RFQId");
 
@@ -604,7 +637,13 @@ namespace E_Procurement.Data.Migrations
 
                     b.Property<DateTime?>("LastDateUpdated");
 
-                    b.Property<string>("Name");
+                    b.Property<string>("PhoneNumber");
+
+                    b.Property<string>("SortCode");
+
+                    b.Property<int>("StateId");
+
+                    b.Property<string>("TinNo");
 
                     b.Property<int>("StateId");
 
@@ -631,6 +670,31 @@ namespace E_Procurement.Data.Migrations
                     b.HasIndex("StateId");
 
                     b.ToTable("Vendors");
+                });
+
+            modelBuilder.Entity("E_Procurement.Data.Entity.VendorCategory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("CategoryName");
+
+                    b.Property<string>("CreatedBy");
+
+                    b.Property<DateTime>("DateCreated");
+
+                    b.Property<bool>("IsActive");
+
+                    b.Property<bool>("IsDeleted");
+
+                    b.Property<DateTime?>("LastDateUpdated");
+
+                    b.Property<string>("UpdatedBy");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("VendorCategories");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>

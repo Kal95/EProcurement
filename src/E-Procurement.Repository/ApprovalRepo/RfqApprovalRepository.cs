@@ -107,8 +107,8 @@ namespace E_Procurement.Repository.RfqApprovalConfigRepository
                 // create a transaction scope
                 using (var transaction = await _context.Database.BeginTransactionAsync(System.Data.IsolationLevel.ReadUncommitted))
                 {
-                    var currentLevel = _context.RfqApprovalStatuses.Where(x => x.RFQId == rFQApproval.RFQId).Max(l=>l.CurrentApprovalLevel);
-                    var rfqLevel = _context.RfqApprovalConfigs.Where(x => x.ApprovalLevel == currentLevel + 1).First();                    
+                    var currentLevel = _context.RfqApprovalStatuses.Where(x => x.RFQId == rFQApproval.RFQId).First();
+                    var rfqLevel = _context.RfqApprovalConfigs.Where(x => x.ApprovalLevel == currentLevel.CurrentApprovalLevel + 1).First();                    
                     var rfq = _context.RfqGenerations.Where(x => x.Id == rFQApproval.RFQId).First();
                     string approvalEmail = "";
                     //add to approval transactions
@@ -124,13 +124,14 @@ namespace E_Procurement.Repository.RfqApprovalConfigRepository
                     approvalEmail = rfqLevel.Email;
 
                     // add to approval status
-                    RFQApprovalStatus rfqstatus = new RFQApprovalStatus
-                    {                        
-                        RFQId = rFQApproval.RFQId,
-                        CurrentApprovalLevel = rfqLevel.ApprovalLevel
-                    };
+                    currentLevel.RFQId = rFQApproval.RFQId;
+                    currentLevel.CurrentApprovalLevel = rfqLevel.ApprovalLevel;
+                   
+
+                    _context.Update<RFQApprovalStatus>(currentLevel); 
+
                     await _context.AddAsync(rfqTransaction);
-                    await _context.AddAsync(rfqstatus);
+                   // await _context.AddAsync(rfqstatus);
 
                     // check if approval is the final
                     if (rfqLevel.IsFinalLevel)

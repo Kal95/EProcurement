@@ -12,28 +12,28 @@
         <a asp-controller="RfqApprovalConfig" asp-action="Create" alt="Create" class="btn btn-primary"> Create Approval Config </a>
     </div>*@
     <div class="table-wrapper">
-        <table id="datatable1" class="table table-striped display responsive nowrap">
+        <table id="datatable1" class="table table-striped dataTable display responsive nowrap mg-b-0">
             <thead>
                 <tr>
-                    <th class="wd-5p">S/N</th>
-                    <td>
+                    <th>
                         <label class="ckbox mg-b-0">
                             <input type="checkbox"><span></span>
                         </label>
-                    </td>
+                    </th>
+                    <th class="wd-5p">S/N</th>
                     <th class="wd-5p">RFQ No</th>
                     <th class="wd-5p">Proj. ID</th>
                     <th class="wd-5p">Req. ID</th>
-                    <th class="wd-10p">Reference</th>
+                    <th class="wd-5p">Reference</th>
                     <th class="wd-15p">Description</th>
-                    <th class="wd-15p">StartDate</th>
-                    <th class="wd-15p">EndDate</th>
+                    <th class="wd-10p">StartDate</th>
+                    <th class="wd-10p">EndDate</th>
                     <th class="wd-10p">RFQStatus</th>
-                    <th class="wd-25p">Vendor Name</th>
-                    <th class="wd-25p">Address</th>
-                    <th class="wd-10p">Status</th>
+                    <th class="wd-25p">Vendor</th>
+                    <th class="wd-30p">Address</th>
                     <th class="wd-25p">Contact</th>
-                    <th class="wd-10p"></th>
+                    <th class="wd-5p">Status</th>
+                    <th class="wd-5p"></th>
                 </tr>
             </thead>
             <tbody>
@@ -43,12 +43,12 @@
                 @foreach (var approvalConfig in Model)
                 {
                 <tr>
-                    <td>@(i = i + 1)</td>
                     <td>
                         <label class="ckbox mg-b-0">
                             <input type="checkbox"><span></span>
                         </label>
                     </td>
+                    <td>@(i = i + 1)</td>
                     <td>@approvalConfig.RFQId</td>
                     <td>@approvalConfig.ProjectId</td>
                     <td>@approvalConfig.RequisitionId</td>
