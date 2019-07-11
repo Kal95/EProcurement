@@ -11,6 +11,7 @@ using E_Procurement.Repository.VendoRepo;
 using E_Procurement.WebUI.Models.RfqApprovalModel;
 using E_Procurement.Repository.Dtos;
 using System.Collections.Generic;
+using E_Procurement.WebUI.Models.POAcceptanceModel;
 
 namespace E_Procurement.WebUI.AutoMapperProfile
 {
@@ -47,6 +48,8 @@ namespace E_Procurement.WebUI.AutoMapperProfile
             CreateMap<RFQDetailsModel, RFQDetailsViewModel>().ReverseMap();
 
             CreateMap<List<RFQDetailsModel>, List<RFQDetailsViewModel>>().ReverseMap();
+
+            CreateMap<POAcceptanceViewModel, Repository.Dtos.POAcceptanceModel> ().ReverseMap();
 
 
         }

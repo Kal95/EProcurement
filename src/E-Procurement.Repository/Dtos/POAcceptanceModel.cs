@@ -4,8 +4,9 @@ using System.Text;
 
 namespace E_Procurement.Repository.Dtos
 {
-    public class POAcceptanceViewModel
+    public class POAcceptanceModel
     {
+        public int Id { get; set; }
         public int RFQId { get; set; }
         public string PONumber { get; set; }
         public int VendorId { get; set; }

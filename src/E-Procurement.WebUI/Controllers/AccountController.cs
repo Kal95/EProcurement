@@ -10,6 +10,10 @@ using AutoMapper;
 using E_Procurement.Data.Entity;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Identity;
+using E_Procurement.Repository.PermissionRepo;
+using System.Security.Claims;
+using System.Reflection;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace E_Procurement.WebUI.Controllers
 {
@@ -20,7 +24,9 @@ namespace E_Procurement.WebUI.Controllers
         private readonly  IAccountManager _accountManager;
         private readonly IMapper _mapper;
         private readonly SignInManager<User> _signInManager;
+        private readonly RoleManager<Role> _roleManager;
         private readonly UserManager<User> _userManager;
+        private readonly IPermissionRepository _permissionRepository;
 
         //[Route("Identity/Account/Login")]
         //public IActionResult LoginRedirect(string ReturnUrl)
@@ -28,12 +34,18 @@ namespace E_Procurement.WebUI.Controllers
         //    return Redirect("/Account/Login?ReturnUrl=" + ReturnUrl);
         //}
         public AccountController(SignInManager<User> signInManager,
-            UserManager<User> userManager, IAccountManager accountManager, IMapper mapper)
+                                RoleManager<Role> roleManager,
+                                UserManager<User> userManager, 
+                                IAccountManager accountManager, 
+                                IMapper mapper, 
+                                IPermissionRepository permissionRepository)
         {
             _accountManager = accountManager;
             _mapper = mapper;
             _signInManager = signInManager;
+            _roleManager = roleManager;
             _userManager = userManager;
+            _permissionRepository = permissionRepository;
         }
 
         public async Task<IActionResult> Index()
@@ -53,23 +65,49 @@ namespace E_Procurement.WebUI.Controllers
       
                 if (ModelState.IsValid)
                 {
-                    var user = await _accountManager.GetUserByEmailAsync(loginViewModel.Email);
+                var user =  _userManager.Users.FirstOrDefault(m => m.Email.Trim() == loginViewModel.Email);
+                //var user = await _accountManager.GetUserByEmailAsync(loginViewModel.Email);
                     if (user == null)
                     {
                         ModelState.AddModelError("", "Email/password not found");
                         return View(loginViewModel);
                     }
+                        var roles = await _userManager.GetRolesAsync(user);
+
+                        List<int> rolesId = new List<int>();
+                      
+                        foreach (var r in roles)
+                        {
+                            var roleId =  _roleManager.Roles.Where(x => x.Name == r).First();
+                            rolesId.Add(roleId.Id);
+                        }
+                        var permissionsForUser = await _permissionRepository.GetPermissionByRoleIdAsync(rolesId);
+
+
+
+                        var claims = new List<Claim>();
+                        foreach (var claim in permissionsForUser)
+                        {
+                            claims.Add(new Claim("Permissions", claim.PermissionName));
+                        }
+                        //Now add it to the claim
+                        var identity = new ClaimsIdentity(claims, "Cookie");
+                        var newPrincipal = new ClaimsPrincipal(identity);
+
+                        //CookieValidatePrincipalContext cn = new CookieValidatePrincipalContext;
+                        //cn.ReplacePrincipal(newPrincipal);
+                        //cn.ShouldRenew = true;
 
                 var result = await _signInManager.PasswordSignInAsync(user, loginViewModel.Password, false, false);
-                if (result.Succeeded)
-                {
-                    return RedirectToAction("Index", "Home");
-                }
-                else
-                {
-                    ModelState.AddModelError("", "Email/password not found");
-                    return View(loginViewModel);
-                }
+                    if (result.Succeeded)
+                    {
+                        return RedirectToAction("Index", "Home");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "Email/password not found");
+                        return View(loginViewModel);
+                    }
 
                 }
                 return View(loginViewModel);

@@ -5,7 +5,7 @@
 
 
 <div class="card pd-20 pd-sm-40">
-    <h6 class="card-body-title">Quote Details</h6>
+    <h6 class="card-body-title">PO </h6>
     <p class="mg-b-20 mg-sm-b-30"> List </p>
 
     @*<div class="right">
@@ -34,7 +34,6 @@
                     <th class="wd-10p">Status</th>
                     <th class="wd-25p">Contact</th>*@
                     <th class="wd-10p"></th>
-                    rachel
 
 
 
@@ -65,7 +64,7 @@
                         @*<td>@approvalConfig.RFQStatus</td>*@
                         <td>@approvalConfig.Amount</td>
                        
-                        <td><a asp-controller="POAcceptance" asp-action="UpdatePO" asp-route-id="@approvalConfig.Id" alt="Accept" class="btn btn-primary btn-icon"> <div><i class="fa fa-pencil"></i></div></a> </td>
+                        <td><a asp-controller="POAcceptance" asp-action="UpdatePO" asp-route-id="@approvalConfig.Id" alt="Accept PO" class="btn btn-primary btn-icon"> <div><i class="fa fa-check"></i></div></a> </td>
 
                     </tr>
                 }

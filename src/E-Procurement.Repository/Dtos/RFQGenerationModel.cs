@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -20,14 +21,22 @@ namespace E_Procurement.Repository.Dtos
             public string VendorAddress { get; set; }
             public string VendorStatus { get; set; }
             public string ContactName { get; set; }
-        public string VendorEmail { get; set; }
-        public List<RFQDetailsModel> RFQDetails { get; set; }
+            public string VendorEmail { get; set; }
+            public List<RFQDetailsModel> RFQDetails { get; set; }
             public string ApprovedBy { get; set; }
             public string Comments { get; set; }
             public string PONumber { get; set; }
-        public decimal TotalAmount { get; set; }
-        public DateTime ApprovedDate { get; set; }
+            public decimal TotalAmount { get; set; }
+            public DateTime ApprovedDate { get; set; }
             public DateTime ExpectedDeliveryDate { get; set; }
+
+        // section for INVOICE
+        public IFormFile InvoiceFilePath { get; set; }
+        public string DnFilePath { get; set; }
+            public byte DnFileBlob { get; set; }
+            public string DnRecievedBy { get; set; }
+            public DateTime DnUploadedDate { get; set; }
+            public string DnUploadedBy { get; set; }
 
     }
 }

@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using E_Procurement.Repository.Dtos;
 
 namespace E_Procurement.Repository.PermissionRepo
 {
@@ -100,5 +101,22 @@ namespace E_Procurement.Repository.PermissionRepo
             return (true);
         }
 
+        public async Task<IEnumerable<RolePermissionsModel>> GetPermissionByRoleIdAsync(List<int> RoleId)
+        {
+            
+                var rolePermission = await _context.Permissions
+                                .Join(
+                                    _context.PermissionRoles,
+                                    per => per.Id,
+                                    roles => roles.PermissionId,
+                                    (p, proles) => new RolePermissionsModel
+                                    {
+                                        PermissionName = p.Name,
+                                        RoleId = proles.RoleId
+                                    }
+                                ).Where(x=> RoleId.Contains(x.RoleId)).Distinct().ToListAsync();
+                return rolePermission;
+           
+        }
     }
 }

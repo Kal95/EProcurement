@@ -1,0 +1,170 @@
+﻿@*@model E_Procurement.WebUI.Models.RfqApprovalModel.RFQGenerationViewModel*@
+@model E_Procurement.Repository.Dtos.RFQGenerationModel
+@{
+    ViewBag.Title = "PO Detials";
+}
+
+
+
+
+<div class="row row-sm mg-t-20">
+    <div class="col-xl-12">
+        <div class="card pd-20 pd-sm-40 form-layout form-layout-4">
+            <h6 class="card-body-title">UPLOAD INVOICE </h6>
+            <p class="mg-b-20 mg-sm-b-30"> PO INFORMATION </p>
+
+            <div class="row mg-t-20">
+                <label class="col-sm-2 form-control-label"><b> PO No. : </b></label>
+                <div class="col-sm-4 mg-t-10 mg-sm-t-0">
+                    @Html.DisplayFor(model => model.PONumber)
+                </div>
+                <label class="col-sm-2 form-control-label"> <b> RFQ No : </b></label>
+                <div class="col-sm-4 mg-t-10 mg-sm-t-0">
+                    @Html.DisplayFor(model => model.RFQId)
+                </div>
+            </div><!-- row -->
+            <div class="row mg-t-20">
+                <label class="col-sm-2 form-control-label"> <b>Duration : </b></label>
+                <div class="col-sm-4 mg-t-10 mg-sm-t-0">
+                    From @Model.StartDate.ToString("dd MMM yyyy")
+                    to  @Model.EndDate.ToString("dd MMM yyyy")
+                </div>
+                <label class="col-sm-2 form-control-label"> <b> Status : </b></label>
+                <div class="col-sm-4 mg-t-10 mg-sm-t-0">
+                    @Html.DisplayFor(model => model.RFQStatus)
+                </div>
+
+            </div><!-- row -->
+
+            <div class="row mg-t-20">
+                <label class="col-sm-2 form-control-label"><b> Vendor : </b></label>
+                <div class="col-sm-4 mg-t-10 mg-sm-t-0">
+                    From @Html.DisplayFor(model => model.VendorName)
+                </div>
+
+                <label class="col-sm-2 form-control-label"><b> Address : </b></label>
+                <div class="col-sm-4 mg-t-10 mg-sm-t-0">
+                    @Html.DisplayFor(model => model.VendorAddress)
+                </div>
+            </div><!-- row -->
+            <div class="row mg-t-20">
+                <label class="col-sm-2 form-control-label"><b> Contact : </b></label>
+                <div class="col-sm-4 mg-t-10 mg-sm-t-0">
+                    From @Html.DisplayFor(model => model.ContactName)
+                </div>
+            </div><!-- row -->
+            
+        </div><!-- card -->
+    </div><!-- col-6 -->
+    
+</div>
+
+
+<div class="card pd-20 pd-sm-40">
+    <h6 class="card-body-title">Item Details</h6>
+ 
+    <div class="table-wrapper">
+        <form role="form" method="post">
+            <table id="datatable1" class="table table-striped display responsive nowrap">
+                <thead>
+                    <tr>
+                        <th class="wd-5p">S/N</th>
+                        <th class="wd-5p">Item</th>
+                        <th class="wd-5p">Quantity</th>
+                        <th class="wd-5p">QuotedAmount</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                    int i = 0;
+                    }
+                    @{
+                    //var RFQDetails = Model.RFQDetails as List<E_Procurement.WebUI.Models.RfqApprovalModel.RFQDetailsViewModel>;
+                    var RFQDetails = Model.RFQDetails as List<E_Procurement.Repository.Dtos.RFQDetailsModel>;
+                    var total = 0.0;
+                    }
+                    @foreach (var approvalConfig in RFQDetails)
+                    {
+                    <tr>
+                        <td>@(i = i + 1)</td>
+
+                        <td>@approvalConfig.ItemName</td>
+                        <td>@approvalConfig.QuotedQuantity</td>
+                        <td>@approvalConfig.QuotedAmount</td>
+                    </tr>
+
+                    }
+                </tbody>
+            </table>
+
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <input asp-for="RFQId" type="hidden" />
+            <input asp-for="PONumber" type="hidden" />
+            <input asp-for="RFQStatus" type="hidden" />
+            <input asp-for="VendorId" type="hidden" />
+            <input asp-for="VendorName" type="hidden" />
+            <input asp-for="VendorAddress" type="hidden" />
+            <input asp-for="VendorEmail" type="hidden" />
+            <input asp-for="TotalAmount" type="hidden" />
+            <div class="row mg-t-20">
+                <label class="col-sm-2 form-control-label"><b> Receved By: </b></label>
+                <div class="col-sm-2 mg-t-10 mg-sm-t-0">
+                    <input asp-for="DnRecievedBy" type="date" class="form-control">
+                </div>
+                <label class="col-sm-2 form-control-label"><b> Expected Delivery Date : </b></label>
+               
+                <div class="col-lg-4 mg-t-20 mg-lg-t-0">
+                    <label class="custom-file">
+                        <input asp-for="InvoiceFilePath" type="file" class="custom-file-input" required>
+                        <span class="custom-file-control custom-file-control-primary"></span>
+                    </label>
+                </div>
+            </div><!-- row -->
+
+            <div class="form-layout-footer mg-t-30">
+                <button class="btn btn-info mg-r-5">Save</button>
+                <button class="btn btn-secondary">Cancel</button>
+            </div><!-- form-layout-footer -->
+        </form>
+
+    </div><!-- table-wrapper -->
+</div><!-- card -->
+
+<script src="/lib/jquery/jquery.js"></script>
+<script src="/lib/datatables/jquery.dataTables.js"></script>
+<script src="/lib/datatables-responsive/dataTables.responsive.js"></script>
+<script src="../lib/select2/js/select2.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        // $.noConflict();
+        $(function () {
+            'use strict';
+
+            // for all datatable
+            $('#datatable1').DataTable({
+                responsive: true,
+                language: {
+                    searchPlaceholder: 'Search...',
+                    sSearch: '',
+                    lengthMenu: '_MENU_ items/page',
+                }
+            });
+            // Select2
+            $('.dataTables_length select').select2({ minimumResultsForSearch: Infinity });
+        });
+
+        $('.fc-datepicker').datepicker({
+            showOtherMonths: true,
+            selectOtherMonths: true
+        });
+        $('#datepickerNoOfMonths').datepicker({
+            showOtherMonths: true,
+            selectOtherMonths: true,
+            numberOfMonths: 2
+        });
+    });
+</script>
+
+

@@ -10,10 +10,10 @@ namespace E_Procurement.Repository.PoAcceptanceRepo
 {
     public interface IPOAcceptanceRepository : IDependencyRegister
     {
-        Task<IEnumerable<POAcceptanceViewModel>> GetAllPO();
-        Task<POAcceptanceViewModel> GetPODetails(int Id);
+        Task<IEnumerable<POAcceptanceModel>> GetAllPO();
+        Task<POAcceptanceModel> GetPODetails(int Id);
        // List<RFQDetails> GetRfqDetails();
-        bool UpdatePO(int Id, DateTime ExpectedDeliveryDate, out string Message);
+        bool UpdatePO(int Id,  out string Message);
 
     }
 }
