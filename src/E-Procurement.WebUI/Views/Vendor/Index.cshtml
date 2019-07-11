@@ -10,83 +10,84 @@
 <div class="main-card mb-3 card">
 
     <div class="card-body">
-        <a class="btn btn-primary" pull-right" href="@Url.Action("Create", "Vendor")"><i class="fa fa-plus"> </i>  Add Vendor</a>
-       
-        <i class="fa fa-search" pull-left">
-            <input type="text" id="myInput" style="width:200px; height:30px" onkeyup="myFunction()" placeholder="Search..">
-        </i>
-          
-       
-        
-        <br />
-        <hr />
-        <br />
-        <table style="width:initial" id="myTable" class="table table-hover table-striped table-bordered">
-            <thead>
-                <tr>
-                    <th>S/N</th>
-                    <th>Vendor Name </th>
-                    <th>Address</th>
-                    @*<th>Website </th>*@
-                    @*<th>VAT No. </th>
-                    <th>TIN No. </th>
-                    <th>AAT Amount </th>
-                    <th>AAT Currency </th>
-                    <th>Account Name </th>
-                    <th>Account Number </th>
-                    <th>Branch </th>
-                    <th>CAC Number </th>*@
-                    <th>Contact Name </th>
-                    <th>Phone Number </th>
-                    @*<th>Sort Code </th>*@
-                    <th>Email </th>
-                    <th>Status</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
+        <div class="" style="display:flex; justify-content:space-between">
+            <a class="btn btn-primary" pull-right" href="@Url.Action("Create", "Vendor")"><i class="fa fa-plus"> </i>  Add Vendor</a>
 
-                @{int rowNo = 0;}
-                @foreach (var item in Model)
-                {
+            <i class="fa fa-search" pull-left">
+                <input type="text" id="myInput" style="width:200px; height:30px" onkeyup="myFunction()" placeholder="Search..">
+            </i>
+        </div>
+
+
+            <br />
+            <hr />
+            <br />
+            <table style="width:initial" id="myTable" class="table table-hover table-striped table-bordered">
+                <thead>
                     <tr>
-                        <td>@(rowNo += 1)</td>
-                        <td>@item.VendorName</td>
-                        <td>@item.VendorAddress</td>
-                        @*<td>@item.WebsiteAddress</td>*@
-
-                        @*<td>@item.VatNo</td>
-                        <td>@item.TinNo</td>
-                        <td>@item.AatAmount</td>
-                        <td>@item.AatCurrency</td>
-                        <td>@item.AccountName</td>
-                        <td>@item.AccountNo</td>
-                        <td>@item.BankBranch</td>
-                        <td>@item.CacNo</td>*@
-                        <td>@item.ContactName</td>
-                        <td>@item.PhoneNumber</td>
-                        @*<td>@item.SortCode</td>*@
-                        <td>@item.Email</td>
-
-                        <td>
-                            @if (item.IsActive)
-                            {
-                                <label class="text-success">Active</label>
-                            }
-                            else
-                            {
-                                <label class="text-danger">Inactive</label>
-
-                            }
-                        </td>
-                        <td><a class="btn btn-orange" href="@Url.Action("Edit", "Vendor",  new { VendorId = item.Id })"><span class="fa fa-pencil"></span><i class="pe-7s-edit btn-icon-wrapper"></i> Edit</a></td>
+                        <th>S/N</th>
+                        <th>Vendor Name </th>
+                        <th>Address</th>
+                        @*<th>Website </th>*@
+                        @*<th>VAT No. </th>
+                        <th>TIN No. </th>
+                        <th>AAT Amount </th>
+                        <th>AAT Currency </th>
+                        <th>Account Name </th>
+                        <th>Account Number </th>
+                        <th>Branch </th>
+                        <th>CAC Number </th>*@
+                        <th>Contact Name </th>
+                        <th>Phone Number </th>
+                        @*<th>Sort Code </th>*@
+                        <th>Email </th>
+                        <th>Status</th>
+                        <th>Action</th>
                     </tr>
-                }
+                </thead>
+                <tbody>
 
-            </tbody>
-        </table>
+                    @{int rowNo = 0;}
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@(rowNo += 1)</td>
+                            <td>@item.VendorName</td>
+                            <td>@item.VendorAddress</td>
+                            @*<td>@item.WebsiteAddress</td>*@
+
+                            @*<td>@item.VatNo</td>
+                            <td>@item.TinNo</td>
+                            <td>@item.AatAmount</td>
+                            <td>@item.AatCurrency</td>
+                            <td>@item.AccountName</td>
+                            <td>@item.AccountNo</td>
+                            <td>@item.BankBranch</td>
+                            <td>@item.CacNo</td>*@
+                            <td>@item.ContactName</td>
+                            <td>@item.PhoneNumber</td>
+                            @*<td>@item.SortCode</td>*@
+                            <td>@item.Email</td>
+
+                            <td>
+                                @if (item.IsActive)
+                                {
+                                    <label class="text-success">Active</label>
+                                }
+                                else
+                                {
+                                    <label class="text-danger">Inactive</label>
+
+                                }
+                            </td>
+                            <td><a class="btn btn-orange" href="@Url.Action("Edit", "Vendor",  new { VendorId = item.Id })"><span class="fa fa-pencil"></span><i class="pe-7s-edit btn-icon-wrapper"></i> Edit</a></td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+        </div>
     </div>
-</div>
 <script>
     function myFunction() {
         // Declare variables

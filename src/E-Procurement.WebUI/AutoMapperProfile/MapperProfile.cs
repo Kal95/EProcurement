@@ -51,6 +51,7 @@ namespace E_Procurement.WebUI.AutoMapperProfile
 
             CreateMap<POAcceptanceViewModel, Repository.Dtos.POAcceptanceModel> ().ReverseMap();
 
+            CreateMap<RFQGenerationModel, RfqGenModel>().ReverseMap();
 
         }
     }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using E_Procurement.Repository.ReportRepo;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace E_Procurement.Repository.VendoRepo
@@ -34,12 +35,17 @@ namespace E_Procurement.Repository.VendoRepo
         public DateTime DateCreated { get; set; }
         public bool IsActive { get; set; }
         public IEnumerable<SelectListItem> VendorCategoryList { get; set; }
+        public List<ReportModel> Report { get; set; }
+        public IEnumerable<VendorModel> VendorList { get; set; }
         public IEnumerable<SelectListItem> BankList { get; set; }
         public IEnumerable<SelectListItem> CountryList { get; set; }
         public IEnumerable<SelectListItem> StateList { get; set; }
         public List<int> SelectedVendorCategories { get; set; }
         public int MappingId { get; set; }
         public int VendorId { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
+        public List<VendorModel> VendorDetails { get; set; }
         public VendorModel()
         {
             VendorCategoryList = new List<SelectListItem>();

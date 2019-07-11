@@ -1,0 +1,156 @@
+﻿@model E_Procurement.WebUI.Models.RFQModel.RfqGenModel
+@{
+    ViewBag.Title = "RFQ Due for Approval";
+}
+
+
+<div class="card pd-20 pd-sm-40">
+    <form class="form-horizontal" action="@Url.Action("RfqGen","Report")" method="post">
+
+        @Html.AntiForgeryToken()
+        <div class="card-body-title">Generated Request For Quote</div>
+        @*<a class="btn btn-primary" pull-right" href="@Url.Action("Create", "RfqGen")"><i class="fa fa-plus"> </i>  Add RFQ</a>*@
+        <p class="mg-b-20 mg-sm-b-30" style="margin-bottom:20px"> Report </p>
+        <div class="" style="display:flex; justify-content:space-between">
+           
+                <input name="b_print" type="button" class="btn btn-outline-info" onClick="printDiv('div_print');" value=" Print Report">
+               
+
+
+            <div>
+                <label for="StartDate">Start Date:</label>
+                @Html.TextBoxFor(model => model.StartDate, new { @class = "datepicker", @placeholder = "Start Date", @Id = "StartDate", type = "date", style = "width:130px; height:30px", onchange = "document.forms[1].submit();" })
+
+
+            </div>
+            <div>
+                <label for="EndDate">End Date:</label>
+                @Html.TextBoxFor(model => model.EndDate, new { @class = "datepicker", @placeholder = "End Date", @Id = "EndDate", type = "date", style = "width:130px; height:30px", onchange = "document.forms[1].submit();" })
+
+            </div>
+            <div>
+                <i class="fa fa-search" pull-left">
+                    <input type="text" id="myInput" style="width:200px; height:30px" onkeyup="myFunction()" placeholder="Search..">
+                </i>
+
+            </div>
+        </div>
+
+
+        <div class="table-wrapper" id="div_print">
+            <div align="center">
+                <img src="~/img/cyb-logo.png" style="max-width:1200px; height:100px;">
+                <br>
+                <p><b>RFQ Report</p></b>
+                <br>
+                @if (Model.StartDate != DateTime.MinValue || Model.EndDate != DateTime.MinValue)
+                {
+                <p>From: @Model.StartDate.ToString("dd-MMM-yyyy"), To: @Model.EndDate.ToString("dd-MMM-yyyy")</p>
+                }
+            </div>
+            <table id="datatable1" class="table table-hover table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th class="wd-5p">S/N</th>
+                        <th class="wd-15p">Reference</th>
+                        @*<th class="wd-15p">Quantity</th>*@
+                        <th class="wd-15p">Status</th>
+                        <th class="wd-20p">Description</th>
+                        <th class="wd-15p">Start Date</th>
+                        <th class="wd-10p">End Date</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int i = 0;
+                    }
+                    @{
+                        var RfqDetails = Model.Report as List<E_Procurement.Repository.ReportRepo.ReportModel>;
+
+                    }
+                    @foreach (var item in RfqDetails)
+                    {
+
+                        <tr>
+                            <td>@(i = i + 1)</td>
+                            <td> <a href="@Url.Action("RfqDetails", "Report", new {RfqId = item.RfqId })">@item.Reference</a></td>
+                            @*<td>@user.Quantity</td>*@
+                            <td>
+                                @if (item.IsActive)
+                                {
+                                    <label class="text-success">Active</label>
+                                }
+                                else
+                                {
+                                    <label class="text-danger">Inactive</label>
+
+                                }
+                            </td>
+                            <td>@item.Description</td>
+                            <td>@item.StartDate.ToString("dd-MMM-yyyy")</td>
+                            <td>@item.EndDate.ToString("dd-MMM-yyyy")</td>
+
+                        </tr>
+
+                    }
+                </tbody>
+            </table>
+        </div><!-- table-wrapper -->
+        <iframe name="print_frame" width="0" height="0" frameborder="0" src="about:blank"></iframe>
+    </form>
+</div><!-- card -->
+   <script type="text/javascript">
+    function printDiv(printpage) {
+        var headstr = "<html><head><title></title></head><body>";
+        var footstr = "</body>";
+        var newstr = document.all.item(printpage).innerHTML;
+        var oldstr = document.body.innerHTML;
+        document.body.innerHTML = headstr + newstr + footstr;
+        window.print();
+        document.body.innerHTML = oldstr;
+        return false;
+    }
+  
+    //function printDiv() {
+    //    window.frames["print_frame"].document.body.innerHTML = document.getElementById("example").innerHTML;
+    //    window.frames["print_frame"].window.focus();
+    //    window.frames["print_frame"].window.print();
+    //}
+
+    $(function () {
+
+
+        if ($("VendorCategoryId").val() != "") {
+            var message = "Category: " + $("#VendorCategoryId option:selected").text();
+            //var VendorCategoryId = $(this).children(":selected").attr("VendorCategoryId");
+            //document.forms[1].submit;
+            //alert(message);
+        }
+
+
+       });
+       function myFunction() {
+           // Declare variables
+           var input, filter, table, tr, td, i, txtValue;
+           input = document.getElementById("myInput");
+           filter = input.value.toUpperCase();
+           table = document.getElementById("datatable1");
+           tr = table.getElementsByTagName("tr");
+
+           // Loop through all table rows, and hide those who don't match the search query
+           for (i = 0; i < tr.length; i++) {
+               td = tr[i].getElementsByTagName("td")[1];
+               if (td) {
+                   txtValue = td.textContent || td.innerText;
+                   if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                       tr[i].style.display = "";
+                   } else {
+                       tr[i].style.display = "none";
+                   }
+               }
+           }
+       }
+    </script>
+
+
