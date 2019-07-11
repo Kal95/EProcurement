@@ -48,6 +48,7 @@ namespace E_Procurement.WebUI.AutoMapperProfile
 
             CreateMap<List<RFQDetailsModel>, List<RFQDetailsViewModel>>().ReverseMap();
 
+            CreateMap<RFQGenerationModel, RfqGenModel>().ReverseMap();
 
         }
     }

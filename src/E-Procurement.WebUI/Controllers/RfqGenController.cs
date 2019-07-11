@@ -167,7 +167,7 @@ namespace E_Procurement.WebUI.Controllers
 
             try
             {
-                var rfq = _rfqGenRepository.GetRfqGen().Where(u => u.Id == RfqId).FirstOrDefault();
+                var rfq = _rfqGenRepository.GetRfqGen().Where(u => u.RFQId == RfqId).FirstOrDefault();
 
                 if (rfq == null)
                 {
@@ -208,7 +208,7 @@ namespace E_Procurement.WebUI.Controllers
                 {
                     string message;
 
-                    var rfq = _rfqGenRepository.GetRfqGen().Where(u => u.Id == Model.Id).FirstOrDefault();
+                    var rfq = _rfqGenRepository.GetRfqGen().Where(u => u.RFQId == Model.Id).FirstOrDefault();
 
                     if (rfq == null) { return RedirectToAction("Index", "RfqGen"); }
 

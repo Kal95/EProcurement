@@ -21,6 +21,7 @@ namespace E_Procurement.WebUI.Models.RFQModel
         public string RfqStatus { get; set; }
         public int RfqId { get; set; }
         public int VendorId { get; set; }
+        public int PoId { get; set; }
         public string CreatedBy { get; set; }
         public bool IsActive { get; set; }
         public string UpdatedBy { get; set; }
@@ -30,7 +31,7 @@ namespace E_Procurement.WebUI.Models.RFQModel
         public List<int> Quantities { get; set; }
         //public List<string> VendorName { get; set; }
         public List<ReportModel> Report { get; set; }
-
+        public string VendorName { get; set; }
 
         [Required(ErrorMessage = "You must select at least one Vendor")]
         public List<int> SelectedVendors { get; set; }

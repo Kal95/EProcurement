@@ -41,9 +41,9 @@ namespace E_Procurement.Repository.RFQGenRepo
 
             if (confirm == 0)
             {
-                var selected = model.SelectedItems.Zip(model.Descriptions, (x, y) => new { X = x, Y = y });
-                foreach (var entry in selected)
-                {
+                //var selected = model.SelectedItems.Zip(model.Descriptions, (x, y) => new { X = x, Y = y });
+                //foreach (var entry in selected)
+                //{
                     RFQGeneration RfqGen = new RFQGeneration();
 
                     RfqGen.Reference = model.Reference;
@@ -58,41 +58,66 @@ namespace E_Procurement.Repository.RFQGenRepo
 
                     RfqGen.RFQStatus = model.RfqStatus;
 
-                    RfqGen.IsActive = true;
+                    //RfqGen.IsActive = true;
 
                     RfqGen.CreatedBy = model.CreatedBy;
 
                     RfqGen.DateCreated = DateTime.Now;
 
-                    RfqGen.Description = entry.Y;
+                    RfqGen.Description = string.Join(", ", model.Descriptions);
 
                     _context.Add(RfqGen);
 
-                }
+                //}
 
                 _context.SaveChanges();
                 foreach (var item in model.SelectedVendors)
                 {
-                    RFQDetails RfqDet = new RFQDetails();
-                    RfqDet.VendorId = item;
+                    List<RFQDetails> RfqDet = new List<RFQDetails>();
+                    var rfq = _context.RfqGenerations.Where(u => u.Reference == model.Reference).FirstOrDefault();
                     var itemV = GetItem(model.CategoryId).ToList();
                     var itemListV = itemV.Where(a => model.SelectedItems.Any(b => b == a.Id.ToString())).ToList();
 
                     var selected2 = model.SelectedItems.Zip(model.Quantities, (x, y) => new { X = x, Y = y });
-                    var selected3 = itemListV.Zip(selected2, (a, b) => new { A = a, B = b });
-                    foreach (var entry in selected3)
+                    var selected3 = itemListV.Zip(model.Descriptions, (a, b) => new { A = a, B = b });
+
+                    var selected4 = selected2.Zip(selected3, (o, p) => new { O = o, P = p });
+                    var listModel = selected4.Select(x => new RFQDetails
                     {
-                        RFQGeneration RfqGen = new RFQGeneration();
+                        ItemId = Convert.ToInt32(x.O.X.ToString()),
+                        ItemName = x.P.A.ItemName,
+                        QuotedQuantity = x.O.Y,
+                        ItemDescription = x.P.B,
+                        RFQId = rfq.Id,
+                        //IsActive = true,
+                        UpdatedBy = model.CreatedBy,
+                        VendorId = item
+                    });
+                    RfqDet.AddRange(listModel);
+                    _context.AddRange(RfqDet);
 
-                        RfqDet.ItemId = Convert.ToInt32(entry.B.X.ToString());
-                        RfqDet.ItemName = entry.A.ItemName;
-                        RfqDet.UpdatedBy = model.CreatedBy;
 
-                        RfqDet.RFQId = RfqGen.Id;
-                        RfqDet.QuotedQuantity = Convert.ToInt32(entry.B.Y.ToString());
+                    //RfqDet.VendorId = item;
+                    //var itemV = GetItem(model.CategoryId).ToList();
+                    //var itemListV = itemV.Where(a => model.SelectedItems.Any(b => b == a.Id.ToString())).ToList();
+                    //var selected1 = model.SelectedItems.Zip(model.Quantities, (x, y) => new { X = x, Y = y });
+                    //var selected2 = model.Descriptions.Zip(selected1, (a, b) => new { A = a, B = b });
+                    //var selected3 = itemListV.Zip(selected2, (o, p) => new { O = o, P = p });
+                    //foreach (var entry in selected3)
+                    //{
+                    //    var rfq = _context.RfqGenerations.Where(u => u.Reference == model.Reference).FirstOrDefault();
+                    //    //RFQGeneration RfqGen = new RFQGeneration();
 
-                        _context.Add(RfqDet);
-                    }
+                    //    RfqDet.ItemId = Convert.ToInt32(entry.B.X.ToString());
+                    //    RfqDet.ItemName = entry.A.O.ItemName;
+                    //    RfqDet.UpdatedBy = model.CreatedBy;
+                    //    RfqDet.ItemDescription = entry.A.P;
+                    //    RfqDet.RFQId = rfq.Id;
+                    //    RfqDet.IsActive = true;
+                    //    RfqDet.QuotedQuantity = Convert.ToInt32(entry.B.Y.ToString());
+
+                    //    _context.Add(RfqDet);
+                    //}
                 }
 
                 _context.SaveChanges();
@@ -127,8 +152,7 @@ namespace E_Procurement.Repository.RFQGenRepo
                     model2.VendorEmail = entry.Email;
                     model2.RFQId = Convert.ToInt32(model.Reference.ToString());
                    
-                    //RFQGeneration RfqGen = new RFQGeneration();
-                   // var Item = _context.RfqDetails.Where(x => x.RFQId == RfqGen.Id).ToList();
+                   
                     List<RFQDetailsModel> rFQDetails = new List<RFQDetailsModel>();
                     var itemV = GetItem(model.CategoryId).ToList();
                     var itemListV = itemV.Where(a => model.SelectedItems.Any(b => b == a.Id.ToString())).ToList();
@@ -306,10 +330,60 @@ namespace E_Procurement.Repository.RFQGenRepo
             return vendorList.ToList();
         }
 
-        public List<RFQGeneration> GetRfqGen()
+        public List<RFQGenerationModel> GetRfqGen()
         {
+            var ven = _context.Vendors.ToList();
+            var venList = ven.Select(x => new RfqGenModel
+            {
+                VendorId = x.Id,
+                VendorName = x.VendorName
+            }).GroupBy(v => new { v.VendorId, v.VendorName }).Select(s => s.FirstOrDefault());
 
-            return _context.RfqGenerations.OrderByDescending(u => u.Id).ToList();
+            var des = _context.RfqDetails.ToList();
+                //(from rfqdet in _context.RfqDetails
+                //      join vend in _context.Vendors on rfqdet.VendorId equals vend.Id
+                //      select new RfqGenModel()
+                //      {
+                //          RfqId = rfqdet.RFQId,
+                //          ItemName = rfqdet.ItemName,
+                //          VendorName = vend.VendorName
+                //      }).ToList();
+           
+            var desList = des.Select(x => new RfqGenModel
+            {
+                RfqId = x.RFQId,
+                VendorId = x.VendorId,
+               //VendorName = x.VendorName,
+                ItemName =  x.ItemName
+            }).GroupBy(v => new {v.RfqId, v.ItemName }).Select(s => s.FirstOrDefault());
+            
+            var vend = ven.Where(a => desList.Any(b => b.VendorId == a.Id)).ToList();
+            var vendList = vend.Select(u => new RfqGenModel
+            { VendorId = u.Id,
+              VendorName = u.VendorName
+            }).GroupBy(v => new { v.VendorId, v.VendorName }).Select(s => s.FirstOrDefault());
+            var query = (/*from rfqDetails in _context.RfqDetails*/
+                         from rfq in _context.RfqGenerations /*on rfqDetails.RFQId equals rfq.Id*/
+                           
+                         select new RFQGenerationModel()
+                         {
+                             //QuotedAmount = rfqDetails.QuotedAmount,
+                             //QuotedQuantity = rfqDetails.QuotedQuantity,
+                             RFQId = rfq.Id,
+                             ProjectId = rfq.ProjectId,
+                             RequisitionId = rfq.RequisitionId,
+                             Reference = rfq.Reference,
+                             Description = string.Join(", ", desList.Where(u => u.RfqId == rfq.Id).Select (u=> u.ItemName)),
+                             VendorName = string.Join(", ", vendList.Where(a => desList.Any(b => b.VendorId == a.VendorId && b.RfqId == rfq.Id)).Select(u => u.VendorName)),
+                             StartDate = rfq.StartDate,
+                             EndDate = rfq.EndDate,
+                             CreatedDate = rfq.DateCreated,
+                             RFQStatus = rfq.RFQStatus,
+                             //VendorId = rfqDetails.VendorId,
+                             //IsActive = rfq.IsActive
+                         });
+
+            return query.ToList();//_context.RfqGenerations.OrderByDescending(u => u.Id).ToList();
         }
         public List<Vendor> GetVendorDetails(RfqGenModel model)
         {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using E_Procurement.Repository.Dtos;
 using E_Procurement.Repository.VendoRepo;
 
 namespace E_Procurement.Repository.ReportRepo
@@ -15,10 +16,11 @@ namespace E_Procurement.Repository.ReportRepo
         public string PhoneNumber { get; set; }
         public string ContactName { get; set; }
         public string VendorStatus { get; set; }
-    
+        public DateTime CreatedDate { get; set; }
         public string WebsiteAddress { get; set; }
         public VendorModel vendorModel { get; set; }
         public List<VendorModel> VendorDetails { get; set; }
+        public List<RFQDetailsModel> RFQDetails { get; set; }
         public string Reference { get; set; }
         //public string Description { get; set; }
         public int ProjectId { get; set; }
@@ -35,5 +37,9 @@ namespace E_Procurement.Repository.ReportRepo
         public List<int> Quantities { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
+        public string PONumber { get; set; }
+        public decimal TotalAmount { get; set; }
+        public DateTime ExpectedDeliveryDate { get; set; }
+        public int PoId { get; set; }
     }
 }
