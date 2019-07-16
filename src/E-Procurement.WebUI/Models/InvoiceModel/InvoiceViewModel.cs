@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace E_Procurement.WebUI.Models.RfqApprovalModel
+namespace E_Procurement.WebUI.Models.InvoiceModel
 {
-   public class RFQGenerationViewModel
+   public class InvoiceViewModel
     {
             public int RFQId { get; set; }
             public int  ProjectId { get; set; }
@@ -18,9 +18,12 @@ namespace E_Procurement.WebUI.Models.RfqApprovalModel
             public string VendorAddress { get; set; }
             public string VendorStatus { get; set; }
             public string ContactName { get; set; }
-            public string PONumber { get; set; }
-
-            public List<RFQDetailsViewModel> RFQDetails { get; set; }
+            public string PONumber { get; set; }        
+            public string DnFilePath { get; set; }
+            public byte DnFileBlob { get; set; }
+            public string DnRecievedBy { get; set; }
+            public DateTime DnUploadedDate { get; set; }
+            public string DnUploadedBy { get; set; }
 
     }
 }

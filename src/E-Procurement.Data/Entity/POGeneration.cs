@@ -10,7 +10,7 @@ namespace E_Procurement.Data.Entity
         public string PONumber { get; set; }
         public int VendorId { get; set; }
         public decimal Amount { get; set; }
-        //public string POStatus { get; set; }
+        public string POStatus { get; set; }
         public DateTime ExpectedDeliveryDate { get; set; }
         public DateTime ActualDeliveryDate { get; set; }
        

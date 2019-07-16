@@ -1,4 +1,5 @@
 ﻿using E_Procurement.Data.Entity;
+using E_Procurement.Repository.Dtos;
 using E_Procurement.Repository.Interface;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,7 @@ namespace E_Procurement.Repository.PermissionRepo
     {
         Task<bool> CreatePermissionAsync(Permission permission);
         Task<IEnumerable<Permission>> GetPermissionAsync();
+        Task<IEnumerable<RolePermissionsModel>> GetPermissionByRoleIdAsync(List<int> RoleId);
         Task<Permission> GetPermissionByIdAsync(int Id);
         Task<bool> UpdatePermissionAsync(Permission permission);
         Task<bool> DeletePermissionAsync(int Id);

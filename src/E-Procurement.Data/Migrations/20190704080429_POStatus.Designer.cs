@@ -4,14 +4,16 @@ using E_Procurement.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace E_Procurement.Data.Migrations
 {
     [DbContext(typeof(EProcurementContext))]
-    partial class EProcurementContextModelSnapshot : ModelSnapshot
+    [Migration("20190704080429_POStatus")]
+    partial class POStatus
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -176,13 +178,11 @@ namespace E_Procurement.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("ItemCategoryId");
+                    b.Property<int>("ItemCategoryId");
 
                     b.Property<string>("ItemName");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ItemCategoryId");
 
                     b.ToTable("Items");
                 });
@@ -632,6 +632,12 @@ namespace E_Procurement.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("BankId");
+
+                    b.HasIndex("CountryId");
+
+                    b.HasIndex("StateId");
+
                     b.ToTable("Vendors");
                 });
 
@@ -776,11 +782,30 @@ namespace E_Procurement.Data.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("E_Procurement.Data.Entity.Item", b =>
+            modelBuilder.Entity("E_Procurement.Data.Entity.Vendor", b =>
                 {
-                    b.HasOne("E_Procurement.Data.Entity.ItemCategory")
-                        .WithMany("Items")
-                        .HasForeignKey("ItemCategoryId");
+                    b.HasOne("E_Procurement.Data.Entity.Bank", "Bank")
+                        .WithMany("Vendor")
+                        .HasForeignKey("BankId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("E_Procurement.Data.Entity.Country", "Country")
+                        .WithMany("Vendor")
+                        .HasForeignKey("CountryId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("E_Procurement.Data.Entity.State", "State")
+                        .WithMany("Vendor")
+                        .HasForeignKey("StateId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("E_Procurement.Data.Entity.VendorMapping", b =>
+                {
+                    b.HasOne("E_Procurement.Data.Entity.Vendor", "Vendor")
+                        .WithMany("VendorMapping")
+                        .HasForeignKey("VendorID")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>

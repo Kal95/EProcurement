@@ -19,14 +19,16 @@ namespace E_Procurement.Repository.PoAcceptanceRepo
             _context = context;
         }
 
-        public async Task<IEnumerable<POAcceptanceViewModel>> GetAllPO()
+        public async Task<IEnumerable<POAcceptanceModel>> GetAllPO()
         {
             var query = await (from poa in _context.PoGenerations
                                join vendor in _context.Vendors on poa.VendorId equals vendor.Id
                                join rfqDetails in _context.RfqDetails on poa.RFQId equals rfqDetails.RFQId
+                               where poa.POStatus == "Generated"
                                orderby poa.Id descending
-                               select new POAcceptanceViewModel()
+                               select new POAcceptanceModel()
                                {
+                                   Id = poa.Id,
                                    RFQId = poa.RFQId,
                                    VendorId = vendor.Id,
                                    PONumber = poa.PONumber,
@@ -41,11 +43,11 @@ namespace E_Procurement.Repository.PoAcceptanceRepo
                         
         }
 
-        public async Task<POAcceptanceViewModel> GetPODetails(int Id)
+        public async Task<POAcceptanceModel> GetPODetails(int Id)
         {
             var query = await _context.PoGenerations
                 .Where(x => x.Id == Id)
-                .Select(x => new POAcceptanceViewModel
+                .Select(x => new POAcceptanceModel
                 {
                     PONumber = x.PONumber,
                     Amount = x.Amount,
@@ -72,12 +74,13 @@ namespace E_Procurement.Repository.PoAcceptanceRepo
             
         }
 
-        public bool UpdatePO(int Id, DateTime ExpectedDeliveryDate, out string Message)
+        public bool UpdatePO(int Id, out string Message)
         {
             var oldEntry = _context.PoGenerations
                .Where(x => x.Id == Id).FirstOrDefault();
 
-            oldEntry.ExpectedDeliveryDate = ExpectedDeliveryDate;
+           // oldEntry.ExpectedDeliveryDate = ExpectedDeliveryDate;
+            oldEntry.POStatus = "Accepted";
 
             //oldEntry.
 

@@ -18,8 +18,6 @@
                 <div class="col-sm-4 mg-t-10 mg-sm-t-0">
                     @Html.DisplayFor(model => model.RFQId)
                 </div>
-            </div><!-- row -->
-            <div class="row mg-t-20">
                 <label class="col-sm-2 form-control-label"> <b> Project Code : </b></label>
                 <div class="col-sm-4 mg-t-10 mg-sm-t-0">
                     @Html.DisplayFor(model => model.ProjectId)
@@ -30,12 +28,13 @@
                 <div class="col-sm-4 mg-t-10 mg-sm-t-0">
                     @Html.DisplayFor(model => model.Reference)
                 </div>
-            </div><!-- row -->
-            <div class="row mg-t-20">
                 <label class="col-sm-2 form-control-label"> <b> Requisition No. : </b></label>
                 <div class="col-sm-4 mg-t-10 mg-sm-t-0">
                     @Html.DisplayFor(model => model.RequisitionId)
                 </div>
+            </div><!-- row -->
+            <div class="row mg-t-20">
+               
             </div><!-- row -->
             <div class="row mg-t-20">
                 <label class="col-sm-2 form-control-label"> <b>Duration : </b></label>
@@ -43,8 +42,6 @@
                     From @Model.StartDate.ToString("dd MMM yyyy")
                     to  @Model.EndDate.ToString("dd MMM yyyy")
                 </div>
-            </div><!-- row -->
-            <div class="row mg-t-20">
                 <label class="col-sm-2 form-control-label"> <b> Status : </b></label>
                 <div class="col-sm-4 mg-t-10 mg-sm-t-0">
                     @Html.DisplayFor(model => model.RFQStatus)
@@ -56,8 +53,6 @@
                 <div class="col-sm-4 mg-t-10 mg-sm-t-0">
                     From @Html.DisplayFor(model => model.VendorName)
                 </div>
-            </div><!-- row -->
-            <div class="row mg-t-20">
                 <label class="col-sm-2 form-control-label"><b> Address : </b></label>
                 <div class="col-sm-4 mg-t-10 mg-sm-t-0">
                     @Html.DisplayFor(model => model.VendorAddress)
@@ -68,8 +63,6 @@
                 <div class="col-sm-4 mg-t-10 mg-sm-t-0">
                     From @Html.DisplayFor(model => model.ContactName)
                 </div>
-            </div><!-- row -->
-            <div class="row mg-t-20">
                 <label class="col-sm-2 form-control-label"><b> Vendor Status : </b></label>
                 <div class="col-sm-4 mg-t-10 mg-sm-t-0">
                     @Html.DisplayFor(model => model.VendorStatus)

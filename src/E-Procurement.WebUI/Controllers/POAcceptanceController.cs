@@ -2,6 +2,7 @@
 using AutoMapper;
 using E_Procurement.Repository.Dtos;
 using E_Procurement.Repository.PoAcceptanceRepo;
+using E_Procurement.WebUI.Models.POAcceptanceModel;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -23,11 +24,16 @@ namespace E_Procurement.WebUI.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var POList = await _pOAcceptaceRepository.GetAllPO();
+            try { 
+                var POList = await _pOAcceptaceRepository.GetAllPO();
 
-            List<POAcceptanceViewModel> acceptanceList = _mapper.Map<List<POAcceptanceViewModel>>(POList);
-
-            return View(acceptanceList);
+               List<POAcceptanceViewModel> acceptanceList = _mapper.Map<List<POAcceptanceViewModel>>(POList);
+                return View(acceptanceList);
+            }
+            catch (Exception)
+            {
+                return View("Error");
+            }
         }
 
         public async Task<IActionResult> PODetails(int id)
@@ -37,11 +43,10 @@ namespace E_Procurement.WebUI.Controllers
             return View(PODetails);
         }
 
-        public ActionResult UpdatePO(int DetailsId, DateTime ExpectedDeliveryDate)
+        public ActionResult UpdatePO(int Id, DateTime ExpectedDeliveryDate)
         {
             try
             {
-
                 if (ModelState.IsValid)
                 {
                     string message;
@@ -50,14 +55,11 @@ namespace E_Procurement.WebUI.Controllers
 
                     //if (quote == null) { return RedirectToAction("Index", "QuoteSending"); }
 
-                    var status = _pOAcceptaceRepository.UpdatePO(DetailsId, ExpectedDeliveryDate, out message);
+                    var status = _pOAcceptaceRepository.UpdatePO(Id, out message);
 
                     return RedirectToAction("Index", "POAcceptance");
 
-
                     //string UserId = User.Identity.Name;
-
-
                 }
                 else
                 {
@@ -70,7 +72,6 @@ namespace E_Procurement.WebUI.Controllers
             }
             catch (Exception)
             {
-
                 return View("Error");
             }
         }

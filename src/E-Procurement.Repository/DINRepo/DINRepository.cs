@@ -9,36 +9,41 @@ using Microsoft.EntityFrameworkCore;
 using E_Procurement.Repository.Dtos;
 using System.Numerics;
 using E_Procurement.Repository.Interface;
+using E_Procurement.Repository.PORepo;
 
-namespace E_Procurement.Repository.PORepo
+namespace E_Procurement.Repository.DINRepo
 {
-    public class PORepository : IPORepository
+    public class DINRepository : IDINRepository
     {
         private readonly EProcurementContext _context;
         private readonly IConvertViewToPDF _pdfConverter;
+        private readonly IPORepository _poRepository;
 
-        public PORepository(EProcurementContext context, IConvertViewToPDF pdfConverter)
+        public DINRepository(EProcurementContext context, IConvertViewToPDF pdfConverter, IPORepository poRepository)
         {
             _context = context;
             _pdfConverter = pdfConverter;
+            _poRepository = poRepository;
         }
 
-        public async  Task<bool> GenerationPOAsync(RFQGenerationModel rfq)
+        public async  Task<bool> DNGenerationAsync(RFQGenerationModel rfq)
         {
             if (rfq != null)
             {
-                var poNumber = GuidToBigInteger(Guid.NewGuid()).ToString().Substring(0, 6);
-                POGeneration poDetails = new POGeneration
+                var poNumber = _poRepository.GetPOByPONumberAsync(rfq.PONumber);
+                DNGeneration dnDetails = new DNGeneration
                 {
-                    PONumber = poNumber,
-                    Amount = rfq.TotalAmount,
-                    RFQId = rfq.RFQId,
-                    VendorId = rfq.VendorId,
-                    POStatus = "Generated",
-                    ExpectedDeliveryDate = rfq.ExpectedDeliveryDate
+                    PoId = poNumber.Id
+                   
+                    // = poNumber,
+                    //Amount = rfq.TotalAmount,
+                    //RFQId = rfq.RFQId,
+                    //VendorId = rfq.VendorId,
+                    //POStatus = "Generated",
+                    //ExpectedDeliveryDate = rfq.ExpectedDeliveryDate
                 };
-                rfq.PONumber = poNumber;
-                await _context.AddAsync(poDetails);
+               
+                await _context.AddAsync(dnDetails);
                 await _context.SaveChangesAsync();
 
 
@@ -73,22 +78,21 @@ namespace E_Procurement.Repository.PORepo
             return false;
         }
 
-      
+        public Task<IEnumerable<RFQGenerationModel>> GetApprovedRFQAsync()
+        {
+            throw new NotImplementedException();
+        }
 
         public async Task<IEnumerable<RFQGenerationModel>> GetPOAsync()
         {
-            var query = await (from vend in _context.Vendors
-                               join rfqDetails in _context.RfqDetails on vend.Id equals rfqDetails.VendorId
-                               join transaction in _context.RfqApprovalTransactions on rfqDetails.VendorId equals transaction.VendorId
-                               join approvalStatus in _context.RfqApprovalStatuses on transaction.RFQId equals approvalStatus.RFQId
-                               join config in _context.RfqApprovalConfigs on approvalStatus.CurrentApprovalLevel equals config.ApprovalLevel
-                               join rfq in _context.RfqGenerations on approvalStatus.RFQId equals rfq.Id
-                               where approvalStatus.CurrentApprovalLevel == config.ApprovalLevel && config.IsFinalLevel == true
-                               && !(from po in _context.PoGenerations select po.RFQId).Contains(rfq.Id)
-                               orderby rfq.Id, rfq.EndDate descending
+            var query = await (from po in _context.PoGenerations
+                               join vend in _context.Vendors on po.VendorId equals vend.Id
+                               join rfq in _context.RfqGenerations on po.RFQId equals rfq.Id
+                               orderby po.Id, rfq.EndDate descending
                                select new RFQGenerationModel()
                                {
                                    RFQId = rfq.Id,
+                                   PONumber = po.PONumber,                                   
                                    ProjectId = rfq.ProjectId,
                                    RequisitionId = rfq.RequisitionId,
                                    Reference = rfq.Reference,
@@ -112,14 +116,7 @@ namespace E_Procurement.Repository.PORepo
         {
             return await _context.PoGenerations.FindAsync(Id);
         }
-
  
-
-        public async  Task<POGeneration> GetPOByPONumberAsync(string PONumber)
-        {
-            return await _context.PoGenerations.Where(x => x.PONumber == PONumber).FirstOrDefaultAsync();
-        }
-
         public BigInteger GuidToBigInteger(Guid guid)
         {
             BigInteger l_retval = 0;

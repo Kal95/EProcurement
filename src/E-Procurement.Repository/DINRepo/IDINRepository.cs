@@ -6,13 +6,13 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace E_Procurement.Repository.PORepo
+namespace E_Procurement.Repository.DINRepo
 {
-    public interface IPORepository : IDependencyRegister
+    public interface IDINRepository : IDependencyRegister
     {
-        Task<bool> GenerationPOAsync(RFQGenerationModel rfq);
+        Task<bool> DNGenerationAsync(RFQGenerationModel rfq);
         Task<IEnumerable<RFQGenerationModel>> GetPOAsync();
         Task<POGeneration> GetPOByIdAsync(int Id);
-        Task<POGeneration> GetPOByPONumberAsync(string PONumber);
+        Task<IEnumerable<RFQGenerationModel>> GetApprovedRFQAsync();
     }
 }
