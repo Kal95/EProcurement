@@ -14,7 +14,8 @@
     <Compile Remove="Migrations\20190613095529_UpdateVendorMapping6.cs" />
     <Compile Remove="Migrations\20190613095529_UpdateVendorMapping6.Designer.cs" />
     <Compile Remove="Migrations\20190620122853_EmailLog.cs" />
-    <Compile Remove="Migrations\20190716140240_VendorEvaluation.cs" />
+    <Compile Remove="Migrations\20190626133004_POStatus.cs" />
+    <Compile Remove="Migrations\20190626133004_POStatus.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
