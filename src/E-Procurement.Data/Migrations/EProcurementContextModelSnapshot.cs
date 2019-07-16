@@ -99,37 +99,6 @@ namespace E_Procurement.Data.Migrations
 
                     b.Property<int>("PoId");
 
-                    b.ToTable("Countries");
-                });
-
-            modelBuilder.Entity("E_Procurement.Data.Entity.DNGeneration", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("CreatedBy");
-
-                    b.Property<DateTime>("DateCreated");
-
-                    b.Property<byte>("DnFileBlob");
-
-                    b.Property<string>("DnFilePath");
-
-                    b.Property<string>("DnRecievedBy");
-
-                    b.Property<string>("DnUploadedBy");
-
-                    b.Property<DateTime>("DnUploadedDate");
-
-                    b.Property<bool>("IsActive");
-
-                    b.Property<bool>("IsDeleted");
-
-                    b.Property<DateTime?>("LastDateUpdated");
-
-                    b.Property<int>("PoId");
-
                     b.Property<string>("UpdatedBy");
 
                     b.HasKey("Id");
@@ -207,11 +176,13 @@ namespace E_Procurement.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("ItemCategoryId");
+                    b.Property<int?>("ItemCategoryId");
 
                     b.Property<string>("ItemName");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ItemCategoryId");
 
                     b.ToTable("Items");
                 });
@@ -645,10 +616,6 @@ namespace E_Procurement.Data.Migrations
 
                     b.Property<string>("TinNo");
 
-                    b.Property<int>("StateId");
-
-                    b.Property<string>("TinNo");
-
                     b.Property<string>("UpdatedBy");
 
                     b.Property<string>("VatNo");
@@ -662,12 +629,6 @@ namespace E_Procurement.Data.Migrations
                     b.Property<string>("WebsiteAddress");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("BankId");
-
-                    b.HasIndex("CountryId");
-
-                    b.HasIndex("StateId");
 
                     b.ToTable("Vendors");
                 });
@@ -796,30 +757,11 @@ namespace E_Procurement.Data.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("E_Procurement.Data.Entity.Vendor", b =>
+            modelBuilder.Entity("E_Procurement.Data.Entity.Item", b =>
                 {
-                    b.HasOne("E_Procurement.Data.Entity.Bank", "Bank")
-                        .WithMany("Vendor")
-                        .HasForeignKey("BankId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("E_Procurement.Data.Entity.Country", "Country")
-                        .WithMany("Vendor")
-                        .HasForeignKey("CountryId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("E_Procurement.Data.Entity.State", "State")
-                        .WithMany("Vendor")
-                        .HasForeignKey("StateId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("E_Procurement.Data.Entity.VendorMapping", b =>
-                {
-                    b.HasOne("E_Procurement.Data.Entity.Vendor", "Vendor")
-                        .WithMany("VendorMapping")
-                        .HasForeignKey("VendorID")
-                        .OnDelete(DeleteBehavior.Cascade);
+                    b.HasOne("E_Procurement.Data.Entity.ItemCategory")
+                        .WithMany("Items")
+                        .HasForeignKey("ItemCategoryId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>

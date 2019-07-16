@@ -109,19 +109,15 @@ namespace E_Procurement.WebUI.Controllers
                     Description = x.Description,
                     StartDate = x.StartDate,
                     EndDate = x.EndDate,
-                    IsActive = x.IsActive
-
+                    IsActive = x.IsActive,
+                    VendorName =x.VendorName
 
                 });
                 rfqModel.AddRange(listModel);
 
 
                 Model.Report = rfqModel;
-                //Model.ItemCategoryList = ItemCategory.Select(x => new SelectListItem
-                //{
-                //    Value = x.Id.ToString(),
-                //    Text = x.CategoryName
-                //});
+               
             }
             else
             {
@@ -133,7 +129,8 @@ namespace E_Procurement.WebUI.Controllers
                     Description = x.Description,
                     StartDate = x.StartDate,
                     EndDate = x.EndDate,
-                    IsActive = x.IsActive
+                    IsActive = x.IsActive,
+                    VendorName = x.VendorName
 
 
                 });
@@ -333,6 +330,90 @@ namespace E_Procurement.WebUI.Controllers
             model2.RFQDetails = rfqModel;
 
             return View(model2);
+        }
+        private void VendorEvaluationPredefinedInfo(RfqGenModel Model)
+        {
+            //int CategoryId = Model.VendorCategoryId;
+
+            var vendorCategory = _vendorRepository.GetItemCategory().ToList();
+            if (Model.CategoryId <= 0)
+            {
+                var Vendor = _reportRepository.GetVendors().ToList();
+                List<ReportModel> vendorModel = new List<ReportModel>();
+                Model.ItemCategoryList = vendorCategory.Select(x => new SelectListItem
+                {
+                    Value = x.Id.ToString(),
+                    Text = x.CategoryName
+                });
+
+                List<SelectListItem> list = new List<SelectListItem>();
+                list.Add(new SelectListItem(){ Text = "Excellent", Value = "5"});
+                list.Add(new SelectListItem() { Text = "Very Good", Value = "4" });
+                list.Add(new SelectListItem() { Text = "Good", Value = "3" });
+                list.Add(new SelectListItem() { Text = "Fair", Value = "2" });
+                list.Add(new SelectListItem() { Text = "Poor", Value = "1" });
+                Model.CriteriaList = list.Select(x => new SelectListItem
+                {
+                    Value = x.Value.ToString(),
+                    Text = x.Text
+                });
+
+                Model.VendorList = Vendor.Select(x => new SelectListItem
+                {
+
+                    Value = x.Id.ToString(),
+                    Text = x.VendorName
+                });
+                
+            }
+            else
+            {
+                var Mapping = _reportRepository.GetMapping().ToList();
+                var Vendor = _reportRepository.GetVendors().ToList();
+                var VendorList = Vendor.Where(a => Mapping.Any(b => b.VendorCategoryId == Model.CategoryId)).ToList();
+                List<ReportModel> vendorModel = new List<ReportModel>();
+                Model.ItemCategoryList = vendorCategory.Select(x => new SelectListItem
+                {
+                    Value = x.Id.ToString(),
+                    Text = x.CategoryName
+                });
+                List<SelectListItem> list = new List<SelectListItem>();
+                list.Add(new SelectListItem() { Text = "Excellent", Value = "5" });
+                list.Add(new SelectListItem() { Text = "Very Good", Value = "4" });
+                list.Add(new SelectListItem() { Text = "Good", Value = "3" });
+                list.Add(new SelectListItem() { Text = "Fair", Value = "2" });
+                list.Add(new SelectListItem() { Text = "Poor", Value = "1" });
+                Model.CriteriaList = list.Select(x => new SelectListItem
+                {
+                    Value = x.Value.ToString(),
+                    Text = x.Text
+                });
+
+                Model.VendorList = Vendor.Select(x => new SelectListItem
+                {
+
+                    Value = x.Id.ToString(),
+                    Text = x.VendorName
+                });
+            }
+
+        }
+        public ActionResult VendorEvaluation()
+        {
+
+            try
+            {
+                RfqGenModel Model = new RfqGenModel();
+
+                VendorEvaluationPredefinedInfo(Model);
+
+                return View(Model);
+            }
+            catch (Exception)
+            {
+
+                return View();
+            }
         }
 
     }

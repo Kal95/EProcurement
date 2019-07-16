@@ -11,36 +11,41 @@
         <div class="card-body-title">Generated Purchase Orders</div>
         @*<a class="btn btn-primary" pull-right" href="@Url.Action("Create", "RfqGen")"><i class="fa fa-plus"> </i>  Add RFQ</a>*@
         <p class="mg-b-20 mg-sm-b-30" style="margin-bottom:20px"> Report </p>
-        <div class="row mg-t-2" style="display:flex; justify-content:space-around">
-            <div class="col-md-1">
-                <input name="b_print" type="button" class="btn btn-outline-info" onClick="printDiv('div_print');" value=" Print Report">
-                @*<a class="btn btn-primary" style="width:100px; height:40px" pull-right" onclick="printDiv()"><i class="fa fa-print"> </i>    Print </a>*@
+        <div class="row mg-t-20" style="display:flex; justify-content:space-between">
+            <div class="col-md-3" style="margin-top:30px">
+
+                <input name="b_print" type="button" style="width:100px; height:40px" class="form-control btn-outline-info" onClick="printDiv('div_print');" value=" Print Report">
+            </div>
+            <div class="col-md-6" style="margin-top:0px">
+                <div class="row mg-sm-t-0">
+
+                    <div class="col-md-4">
+                        <label for="StartDate">Start Date:</label>
+                        @Html.TextBoxFor(model => model.StartDate, new { @class = "form-control datepicker", @placeholder = "Start Date", @Id = "StartDate", type = "date", style = "width:160px; height:40px", onchange = "document.forms[1].submit();" })
+
+                        @*@Html.ValidationMessageFor(m => m.StartDate, "", new { @class = "text-danger" })*@
+
+                    </div>
+                    <div class="col-md-4">
+                        <label for="EndDate">End Date:</label>
+                        @Html.TextBoxFor(model => model.EndDate, new { @class = "form-control datepicker", @placeholder = "End Date", @Id = "EndDate", type = "date", style = "width:160px; height:40px", onchange = "document.forms[1].submit();" })
+
+                        @*@Html.ValidationMessageFor(m => m.EndDate, "", new { @class = "text-danger" })*@
+
+                    </div>
+                </div>
             </div>
 
+            <div class="col-md-3" style="margin-top:30px">
 
-            <div>
-                <label for="StartDate">Start Date:</label>
-                @Html.TextBoxFor(model => model.StartDate, new { @class = "datepicker", @placeholder = "Start Date", @Id = "StartDate", type = "date", style = "width:130px; height:30px", onchange = "document.forms[1].submit();" })
-
-
-            </div>
-            <div>
-                <label for="EndDate">End Date:</label>
-                @Html.TextBoxFor(model => model.EndDate, new { @class = "datepicker", @placeholder = "End Date", @Id = "EndDate", type = "date", style = "width:130px; height:30px", onchange = "document.forms[1].submit();" })
-
-            </div>
-            <div>
-                <i class="fa fa-search" pull-left">
-                    <input type="text" id="myInput" style="width:200px; height:30px" onkeyup="myFunction()" placeholder="Search..">
-                </i>
-
+                <input type="text" id="myInput" style="width:220px; height:40px" onkeyup="myFunction()" class="form-control" placeholder="Search..">
             </div>
         </div>
 
 
         <div class="table-wrapper" id="div_print">
             <div align="center">
-                <img src="~/img/cyb-logo.png" style="max-width:1200px; height:100px;">
+                <img src="~/img/cyb-logo.png" style="max-width:1200px; height:100px;margin-top:10px">
                 <br>
                 <p><b>PO Report</p></b>
                 <br>
@@ -63,7 +68,7 @@
                         <th class="wd-25p">Contact Name</th>
                         <th class="wd-10p">Vendor Email</th>
                         <th class="wd-25p">Phone Number</th>
-                       
+
                     </tr>
                 </thead>
                 <tbody>
@@ -76,23 +81,23 @@
                     }
                     @foreach (var item in RfqDetails)
                     {
-                    <tr>
-                        <td>@(i = i + 1)</td>
-                     
-                        <td> <a href="@Url.Action("PoDetails", "Report", new {RfqId = item.RfqId })">@item.Reference</a></td>
-                        <td>@item.Description</td>
-                        <td>@item.PONumber</td>
-                        <td>@item.TotalAmount</td>
-                        <td>@item.ExpectedDeliveryDate.ToString("dd-MMM-yyyy")</td>
-                        <td>@item.VendorName</td>
-                        <td>@item.ContactName</td>
-                        <td>@item.Email</td>
-                        <td>@item.PhoneNumber</td>
-                        @*<td>@Html.ActionLink("Details", "Details", new { id = item.PoId, type = "button", @class = "btn btn-outline-info" })</td>*@
+                        <tr>
+                            <td>@(i = i + 1)</td>
 
-                        @*<a class="btn btn-primary" pull-right" href="@Url.Action("Create", "RfqGen")"><i class="fa fa-plus"> </i>  Add RFQ</a>*@
+                            <td> <a href="@Url.Action("PoDetails", "Report", new {RfqId = item.RfqId })">@item.Reference</a></td>
+                            <td>@item.Description</td>
+                            <td>@item.PONumber</td>
+                            <td>@item.TotalAmount</td>
+                            <td>@item.ExpectedDeliveryDate.ToString("dd-MMM-yyyy")</td>
+                            <td>@item.VendorName</td>
+                            <td>@item.ContactName</td>
+                            <td>@item.Email</td>
+                            <td>@item.PhoneNumber</td>
+                            @*<td>@Html.ActionLink("Details", "Details", new { id = item.PoId, type = "button", @class = "btn btn-outline-info" })</td>*@
 
-                    </tr>
+                            @*<a class="btn btn-primary" pull-right" href="@Url.Action("Create", "RfqGen")"><i class="fa fa-plus"> </i>  Add RFQ</a>*@
+
+                        </tr>
                     }
                 </tbody>
             </table>
