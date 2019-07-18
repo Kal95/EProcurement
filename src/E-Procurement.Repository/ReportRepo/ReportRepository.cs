@@ -24,6 +24,63 @@ namespace E_Procurement.Repository.ReportRepo
             _contextAccessor = contextAccessor;
             _pdfConverter = pdfConverter;
         }
+        public bool VendorEvaluation(RfqGenModel model, out string Message)
+        {
+            var confirm = _context.VendorEvaluations.Where(x => x.CreatedBy == model.CreatedBy && x.DateCreated == Convert.ToDateTime(DateTime.Now)).Count();
+
+            if (confirm == 0)
+            {
+                    List<VendorEvaluation> RfqDet = new List<VendorEvaluation>();
+                    var vendor = _context.Vendors.OrderByDescending(u => u.Id).ToList();
+                   
+                    var vendorList = vendor.Where(a => model.SelectedVendors.Any(b => b == a.Id)).ToList();
+
+                    var selected0 = model.SelectedVendors.Zip(vendorList, (n, m) => new { N = n, M = m });
+                    var selected1 = selected0.Zip(model.BestPrice, (x, y) => new { X = x, Y = y });
+                    var selected2 = model.AbilityToDeliver.Zip(model.CreditFacility, (a, b) => new { A = a, B = b });
+                    var selected3 = model.CustomerSupport.Zip(model.ProductAvailability, (a, b) => new { A = a, B = b });
+                    var selected4 = model.ProductQuality.Zip(model.WarrantySupport, (a, b) => new { A = a, B = b });
+                    var selected5 = selected1.Zip(selected2, (a, b) => new { A = a, B = b });
+                    var selected6 = selected3.Zip(selected4, (a, b) => new { A = a, B = b });
+                    var selected7 = selected5.Zip(selected6, (a, b) => new { A = a, B = b });
+                    var selected8 = selected7.Zip(model.Others, (a, b) => new { A = a, B = b });
+                
+                    var listModel = selected8.Select(x => new VendorEvaluation
+                    {
+                        VendorId = x.A.A.A.X.N.ToString(),
+                        VendorName = x.A.A.A.X.M.VendorName,
+                        BestPrice = x.A.A.A.Y,
+                        DeliveryTimeFrame = x.A.A.B.A,
+                        CreditFacility = x.A.A.B.B,
+                        CustomerCare= x.A.B.A.A,
+                        ProductAvailability = x.A.B.A.B,
+                        ProductQuality = x.A.B.B.A,
+                        WarrantySupport = x.A.B.B.B,
+                        Others = x.B,
+                        CreatedBy = model.CreatedBy,
+                        DateCreated = DateTime.Now,
+                    });
+                    RfqDet.AddRange(listModel);
+                    _context.AddRange(RfqDet);
+
+
+                
+
+                _context.SaveChanges();
+
+               
+
+                Message = "RFQ generated successfully";
+
+                return true;
+            }
+            else
+            {
+                Message = "RFQ already exist";
+
+                return false;
+            }
+        }
         public IEnumerable<Vendor> GetVendors()
         {
             return _context.Vendors.OrderByDescending(u => u.Id).ToList();
@@ -32,14 +89,14 @@ namespace E_Procurement.Repository.ReportRepo
         {
             return _context.VendorMappings.OrderByDescending(u => u.Id).ToList();
         }
-        //public List<Vendor> GetVendors(RfqGenModel model)
-        //{
-        //    var mapping = _context.VendorMappings.Where(u => u.VendorCategoryId == model.CategoryId).ToList();
-        //    var vendor = _context.Vendors.OrderByDescending(u => u.Id).ToList();
+        public List<Vendor> GetVendorsByCategory(RfqGenModel model)
+        {
+            var mapping = _context.VendorMappings.Where(u => u.VendorCategoryId == model.CategoryId).ToList();
+            var vendor = _context.Vendors.OrderByDescending(u => u.Id).ToList();
 
-        //    var vendorList = vendor.Where(a => mapping.Any(b => b.VendorID == a.Id));
-        //    return vendorList.ToList();
-        //}
+            var vendorList = vendor.Where(a => mapping.Any(b => b.VendorID == a.Id));
+            return vendorList.ToList();
+        }
         public List<RFQGenerationModel> GetRfqGen()
         {
 
