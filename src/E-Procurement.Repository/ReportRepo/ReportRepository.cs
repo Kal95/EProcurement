@@ -24,6 +24,63 @@ namespace E_Procurement.Repository.ReportRepo
             _contextAccessor = contextAccessor;
             _pdfConverter = pdfConverter;
         }
+        public bool VendorEvaluation(RfqGenModel model, out string Message)
+        {
+            var confirm = _context.VendorEvaluations.Where(x => x.CreatedBy == model.CreatedBy && x.DateCreated == Convert.ToDateTime(DateTime.Now)).Count();
+
+            if (confirm == 0)
+            {
+                    List<VendorEvaluation> RfqDet = new List<VendorEvaluation>();
+                    var vendor = _context.Vendors.OrderByDescending(u => u.Id).ToList();
+                   
+                    var vendorList = vendor.Where(a => model.SelectedVendors.Any(b => b == a.Id)).ToList();
+
+                    var selected0 = model.SelectedVendors.Zip(vendorList, (n, m) => new { N = n, M = m });
+                    var selected1 = selected0.Zip(model.BestPrice, (x, y) => new { X = x, Y = y });
+                    var selected2 = model.AbilityToDeliver.Zip(model.CreditFacility, (a, b) => new { A = a, B = b });
+                    var selected3 = model.CustomerSupport.Zip(model.ProductAvailability, (a, b) => new { A = a, B = b });
+                    var selected4 = model.ProductQuality.Zip(model.WarrantySupport, (a, b) => new { A = a, B = b });
+                    var selected5 = selected1.Zip(selected2, (a, b) => new { A = a, B = b });
+                    var selected6 = selected3.Zip(selected4, (a, b) => new { A = a, B = b });
+                    var selected7 = selected5.Zip(selected6, (a, b) => new { A = a, B = b });
+                    var selected8 = selected7.Zip(model.Others, (a, b) => new { A = a, B = b });
+                
+                    var listModel = selected8.Select(x => new VendorEvaluation
+                    {
+                        VendorId = x.A.A.A.X.N.ToString(),
+                        VendorName = x.A.A.A.X.M.VendorName,
+                        BestPrice = x.A.A.A.Y,
+                        DeliveryTimeFrame = x.A.A.B.A,
+                        CreditFacility = x.A.A.B.B,
+                        CustomerCare= x.A.B.A.A,
+                        ProductAvailability = x.A.B.A.B,
+                        ProductQuality = x.A.B.B.A,
+                        WarrantySupport = x.A.B.B.B,
+                        Others = x.B,
+                        CreatedBy = model.CreatedBy,
+                        DateCreated = DateTime.Now,
+                    });
+                    RfqDet.AddRange(listModel);
+                    _context.AddRange(RfqDet);
+
+
+                
+
+                _context.SaveChanges();
+
+               
+
+                Message = "RFQ generated successfully";
+
+                return true;
+            }
+            else
+            {
+                Message = "RFQ already exist";
+
+                return false;
+            }
+        }
         public IEnumerable<Vendor> GetVendors()
         {
             return _context.Vendors.OrderByDescending(u => u.Id).ToList();
@@ -32,37 +89,64 @@ namespace E_Procurement.Repository.ReportRepo
         {
             return _context.VendorMappings.OrderByDescending(u => u.Id).ToList();
         }
-        //public List<Vendor> GetVendors(RfqGenModel model)
-        //{
-        //    var mapping = _context.VendorMappings.Where(u => u.VendorCategoryId == model.CategoryId).ToList();
-        //    var vendor = _context.Vendors.OrderByDescending(u => u.Id).ToList();
+        public List<Vendor> GetVendorsByCategory(RfqGenModel model)
+        {
+            var mapping = _context.VendorMappings.Where(u => u.VendorCategoryId == model.CategoryId).ToList();
+            var vendor = _context.Vendors.OrderByDescending(u => u.Id).ToList();
 
-        //    var vendorList = vendor.Where(a => mapping.Any(b => b.VendorID == a.Id));
-        //    return vendorList.ToList();
-        //}
+            var vendorList = vendor.Where(a => mapping.Any(b => b.VendorID == a.Id));
+            return vendorList.ToList();
+        }
         public List<RFQGenerationModel> GetRfqGen()
         {
-            var query = (from rfqDetails in _context.RfqDetails 
-                         join rfq in _context.RfqGenerations on rfqDetails.RFQId equals rfq.Id
+
+            var ven = _context.Vendors.ToList();
+
+            var des = _context.RfqDetails.ToList();
+
+            var desList = des.Select(x => new RfqGenModel
+            {
+                RfqId = x.RFQId,
+                VendorId = x.VendorId,
+                //VendorName = x.VendorName,
+                ItemName = x.ItemName
+            }).GroupBy(v => new { v.RfqId, v.ItemName }).Select(s => s.FirstOrDefault());
+
+
+            var vendList = (from d in des
+                            join v in ven on d.VendorId equals v.Id
+                            select new RfqGenModel()
+                            {
+                                VendorId = v.Id,
+                                RfqId = d.RFQId,
+                                VendorName = v.VendorName
+                            }).GroupBy(v => new { v.RfqId, v.VendorName }).Select(s => s.FirstOrDefault());
+
+
+            var query = (from rfq in _context.RfqGenerations
+                         join rfqDetails in _context.RfqDetails on rfq.Id equals rfqDetails.RFQId
+                         //join vend in _context.Vendors on rfqDetails.VendorId equals vend.Id
+                         //where rfq.EndDate >= DateTime.Now && rfq.RFQStatus == null
+                         orderby rfq.Id, rfq.EndDate descending
                          select new RFQGenerationModel()
                          {
-                             QuotedAmount = rfqDetails.QuotedAmount,
-                             QuotedQuantity = rfqDetails.QuotedQuantity,
                              RFQId = rfq.Id,
                              ProjectId = rfq.ProjectId,
                              RequisitionId = rfq.RequisitionId,
                              Reference = rfq.Reference,
-                             Description = rfqDetails.ItemDescription,
+                             Description = string.Join(", ", desList.Where(u => u.RfqId == rfq.Id).Select(u => u.ItemName)),
                              StartDate = rfq.StartDate,
                              EndDate = rfq.EndDate,
-                             CreatedDate = rfq.DateCreated,
                              RFQStatus = rfq.RFQStatus,
-                             VendorId = rfqDetails.VendorId,
-                             IsActive = rfqDetails.IsActive
-                         });
+                             VendorName = vendList.Where(u => u.VendorId == rfqDetails.VendorId && u.RfqId == rfqDetails.RFQId).Select(u => u.VendorName).FirstOrDefault(),
+                             //VendorAddress = vend.VendorAddress,
+                             //VendorStatus = vend.VendorStatus,
+                             //ContactName = vend.ContactName
+                         }).GroupBy(v => new { v.RFQId, v.VendorName }).Select(s => s.FirstOrDefault()).ToList();//.Distinct().ToList();
 
-            return query.ToList();//_context.RfqGenerations.OrderByDescending(u => u.Id).ToList();
+            return query;//.OrderByDescending(u => u.EndDate).ToList();
         }
+    
         public List<RFQDetails> GetRFQDetails()
         {
            return _context.RfqDetails.OrderByDescending(u => u.Id).ToList();

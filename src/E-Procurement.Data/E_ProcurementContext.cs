@@ -42,7 +42,7 @@ namespace E_Procurement.Data
         public DbSet<ItemCategory> ItemCategories { get; set; }
         public DbSet<Item> Items { get; set; }
         public DbSet<VendorMapping> VendorMappings { get; set; }
-
+        public DbSet<VendorEvaluation> VendorEvaluations { get; set; }
 
 
         public DbSet<Permission> Permissions { get; set; }

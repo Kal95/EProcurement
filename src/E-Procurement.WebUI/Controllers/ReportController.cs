@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Abp.Web.Mvc.Alerts;
 using AutoMapper;
 using E_Procurement.Repository.Dtos;
 using E_Procurement.Repository.PORepo;
@@ -10,11 +11,13 @@ using E_Procurement.Repository.RFQGenRepo;
 using E_Procurement.Repository.VendoRepo;
 using E_Procurement.WebUI.Models.RfqApprovalModel;
 using E_Procurement.WebUI.Models.RFQModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace E_Procurement.WebUI.Controllers
 {
+    [Authorize]
     public class ReportController : Controller
     {
         private readonly IReportRepository _reportRepository;
@@ -31,16 +34,16 @@ namespace E_Procurement.WebUI.Controllers
             _reportRepository = reportRepository;
             _mapper = mapper;
         }
-        private void VendorPredefinedInfo(VendorModel Model)
+        private void VendorPredefinedInfo(RfqGenModel Model)
         {
             //int CategoryId = Model.VendorCategoryId;
 
             var vendorCategory = _vendorRepository.GetItemCategory().ToList();
-            if (Model.VendorCategoryId <= 0)
+            if (Model.CategoryId <= 0)
             {
                 var Vendor = _reportRepository.GetVendors().ToList();
                 List<ReportModel> vendorModel = new List<ReportModel>();
-                Model.VendorCategoryList = vendorCategory.Select(x => new SelectListItem
+                Model.ItemCategoryList = vendorCategory.Select(x => new SelectListItem
                 {
                     Value = x.Id.ToString(),
                     Text = x.CategoryName
@@ -61,16 +64,14 @@ namespace E_Procurement.WebUI.Controllers
         }
             else
             {
-                var Mapping = _reportRepository.GetMapping().ToList();
-                var Vendor = _reportRepository.GetVendors().ToList();
-                var VendorList = Vendor.Where(a => Mapping.Any(b => b.VendorCategoryId == Model.VendorCategoryId)).ToList();
-                 List<ReportModel> vendorModel = new List<ReportModel>();
-                Model.VendorCategoryList = vendorCategory.Select(x => new SelectListItem
+                var Vendor = _reportRepository.GetVendorsByCategory(Model).ToList();
+                List<ReportModel> vendorModel = new List<ReportModel>();
+                Model.ItemCategoryList = vendorCategory.Select(x => new SelectListItem
                 {
                     Value = x.Id.ToString(),
                     Text = x.CategoryName
                  });
-                var listModel = VendorList.Select(x => new ReportModel
+                var listModel = Vendor.Select(x => new ReportModel
                 {
                     VendorName = x.VendorName,
                     VendorAddress = x.VendorAddress,
@@ -109,19 +110,15 @@ namespace E_Procurement.WebUI.Controllers
                     Description = x.Description,
                     StartDate = x.StartDate,
                     EndDate = x.EndDate,
-                    IsActive = x.IsActive
-
+                    IsActive = x.IsActive,
+                    VendorName =x.VendorName
 
                 });
                 rfqModel.AddRange(listModel);
 
 
                 Model.Report = rfqModel;
-                //Model.ItemCategoryList = ItemCategory.Select(x => new SelectListItem
-                //{
-                //    Value = x.Id.ToString(),
-                //    Text = x.CategoryName
-                //});
+               
             }
             else
             {
@@ -133,7 +130,8 @@ namespace E_Procurement.WebUI.Controllers
                     Description = x.Description,
                     StartDate = x.StartDate,
                     EndDate = x.EndDate,
-                    IsActive = x.IsActive
+                    IsActive = x.IsActive,
+                    VendorName = x.VendorName
 
 
                 });
@@ -208,7 +206,7 @@ namespace E_Procurement.WebUI.Controllers
 
         }
        
-        public ActionResult Vendor(VendorModel Model)
+        public ActionResult Vendor(RfqGenModel Model)
         {
             try
             {
@@ -334,6 +332,150 @@ namespace E_Procurement.WebUI.Controllers
 
             return View(model2);
         }
+        private void VendorEvaluationPredefinedInfo(RfqGenModel Model)
+        {
+            //int CategoryId = Model.VendorCategoryId;
+
+            var vendorCategory = _vendorRepository.GetItemCategory().ToList();
+            if (Model.CategoryId <= 0)
+            {
+                var Vendor = _reportRepository.GetVendors().ToList();
+                List<ReportModel> vendorModel = new List<ReportModel>();
+                Model.ItemCategoryList = vendorCategory.Select(x => new SelectListItem
+                {
+                    Value = x.Id.ToString(),
+                    Text = x.CategoryName
+                });
+
+                List<SelectListItem> list = new List<SelectListItem>();
+                list.Add(new SelectListItem(){ Text = "Excellent", Value = "Excellent"});
+                list.Add(new SelectListItem() { Text = "Very Good", Value = "Very Good" });
+                list.Add(new SelectListItem() { Text = "Good", Value = "Good" });
+                list.Add(new SelectListItem() { Text = "Fair", Value = "Fair" });
+                list.Add(new SelectListItem() { Text = "Poor", Value = "Poor" });
+                Model.CriteriaList = list.Select(x => new SelectListItem
+                {
+                    Value = x.Value.ToString(),
+                    Text = x.Text
+                });
+
+                Model.VendorList = Vendor.Select(x => new SelectListItem
+                {
+
+                    Value = x.Id.ToString(),
+                    Text = x.VendorName
+                });
+                
+            }
+            else
+            {
+                var Vendor = _reportRepository.GetVendorsByCategory(Model).ToList();
+                
+                List<ReportModel> vendorModel = new List<ReportModel>();
+                Model.ItemCategoryList = vendorCategory.Select(x => new SelectListItem
+                {
+                    Value = x.Id.ToString(),
+                    Text = x.CategoryName
+                });
+                List<SelectListItem> list = new List<SelectListItem>();
+                list.Add(new SelectListItem() { Text = "Excellent", Value = "Excellent" });
+                list.Add(new SelectListItem() { Text = "Very Good", Value = "Very Good" });
+                list.Add(new SelectListItem() { Text = "Good", Value = "Good" });
+                list.Add(new SelectListItem() { Text = "Fair", Value = "Fair" });
+                list.Add(new SelectListItem() { Text = "Poor", Value = "Poor" });
+                Model.CriteriaList = list.Select(x => new SelectListItem
+                {
+                    Value = x.Value.ToString(),
+                    Text = x.Text
+                });
+
+                Model.VendorList = Vendor.Select(x => new SelectListItem
+                {
+
+                    Value = x.Id.ToString(),
+                    Text = x.VendorName
+                });
+            }
+
+        }
+
+        [HttpGet]
+        public ActionResult VendorEvaluation()
+        {
+
+            try
+            {
+                RfqGenModel Model = new RfqGenModel();
+                //Model.CategoryId = CategoryId;
+                VendorEvaluationPredefinedInfo(Model);
+
+                return View(Model);
+            }
+            catch (Exception)
+            {
+
+                return View();
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult VendorEvaluation(RfqGenModel Model)
+        {
+            try
+            {
+                string message;
+                string UserId = User.Identity.Name;
+
+                //ModelState.AddModelError("BestPrice", "Region is mandatory");
+                
+                if (ModelState.IsValid)
+                {
+                    Model.CreatedBy = UserId;
+
+                    var status = _reportRepository.VendorEvaluation(Model, out message);
+
+                    ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
+
+                    if (status == true)
+                    {
+
+                        ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
+
+                    }
+
+                    else
+                    {
+                        ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
+                        return View(Model);
+                    }
+
+                    return RedirectToAction("VendorEvaluation", "Report");
+                }
+                else
+                {
+                    VendorEvaluationPredefinedInfo(Model);
+
+                    ViewBag.StatusCode = 2;
+
+                    return View(Model);
+
+                }
+            }
+
+            catch (Exception)
+            {
+
+                return View("Error");
+            }
+        }
+
+        //[HttpGet]
+        ////[ValidateAntiForgeryToken]
+        //public ActionResult VendorEvaluation(string selectedValue)
+        //{
+        //    return null;
+        //}
 
     }
 }

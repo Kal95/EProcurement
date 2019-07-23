@@ -1,5 +1,5 @@
 ﻿
-@model E_Procurement.Repository.VendoRepo.VendorModel
+@model E_Procurement.WebUI.Models.RFQModel.RfqGenModel
 
 @{
     ViewBag.Title = "Vendor Report";
@@ -14,25 +14,25 @@
         @*<a class="btn btn-primary" pull-right" href="@Url.Action("Create", "RfqGen")"><i class="fa fa-plus"> </i>  Add RFQ</a>*@
         <p class="mg-b-20 mg-sm-b-30" style="margin-bottom:10px"> Report </p>
         <div class="" style="display:flex; justify-content:space-between">
-           
-                <input name="b_print" type="button" class="btn btn-outline-info" onClick="printDiv('div_print');" value=" Print Report">
-               
 
-             
-                @Html.DropDownListFor(model => model.VendorCategoryId, Model.VendorCategoryList, "-- All Categories --", htmlAttributes: new { @id = "vendorCategory", @class = "form-control", style = "width:200px; height:40px", onchange = "document.forms[1].submit();" })
-             
+            <input name="b_print" type="button" class="btn btn-outline-info" onClick="printDiv('div_print');" value=" Print Report">
+
+
+
+            @Html.DropDownListFor(model => model.CategoryId, Model.ItemCategoryList, "-- All Categories --", htmlAttributes: new { @id = "CategoryId", @class = "form-control", style = "width:200px; height:40px", onchange = "document.forms[1].submit();" })
+
             @*<div>
-            <label for="StartDate">Start Date:</label>
-            @Html.TextBoxFor(model => model.StartDate, new { @class = "datepicker", @placeholder = "Start Date", @Id = "StartDate", type = "date", style = "width:130px; height:30px" })
+                    <label for="StartDate">Start Date:</label>
+                    @Html.TextBoxFor(model => model.StartDate, new { @class = "datepicker", @placeholder = "Start Date", @Id = "StartDate", type = "date", style = "width:130px; height:30px" })
 
 
-        </div>
-        <div>
-            <label for="EndDate">End Date:</label>
-            @Html.TextBoxFor(model => model.EndDate, new { @class = "datepicker", @placeholder = "End Date", @Id = "EndDate", type = "date", style = "width:130px; height:30px" })
+                </div>
+                <div>
+                    <label for="EndDate">End Date:</label>
+                    @Html.TextBoxFor(model => model.EndDate, new { @class = "datepicker", @placeholder = "End Date", @Id = "EndDate", type = "date", style = "width:130px; height:30px" })
 
 
-        </div>*@
+                </div>*@
         </div>
 
         @*<div class="col-md-6" style="margin-top:10px; padding-right:200px">
@@ -56,13 +56,13 @@
                         <th>Address</th>
                         @*<th>Website </th>*@
                         @*<th>VAT No. </th>
-                    <th>TIN No. </th>
-                    <th>AAT Amount </th>
-                    <th>AAT Currency </th>
-                    <th>Account Name </th>
-                    <th>Account Number </th>
-                    <th>Branch </th>
-                    <th>CAC Number </th>*@
+                            <th>TIN No. </th>
+                            <th>AAT Amount </th>
+                            <th>AAT Currency </th>
+                            <th>Account Name </th>
+                            <th>Account Number </th>
+                            <th>Branch </th>
+                            <th>CAC Number </th>*@
                         <th>Contact Name </th>
                         <th>Phone Number </th>
                         @*<th>Sort Code </th>*@
@@ -81,7 +81,7 @@
                     @foreach (var item in VendorDetails)
                     {
                         @*@foreach (var item in Model.VendorList)
-                    {*@
+                            {*@
                         <tr>
                             <td>@(rowNo += 1)</td>
                             <td>@item.VendorName</td>
@@ -89,29 +89,29 @@
                             @*<td>@item.WebsiteAddress</td>*@
 
                             @*<td>@item.VatNo</td>
-                        <td>@item.TinNo</td>
-                        <td>@item.AatAmount</td>
-                        <td>@item.AatCurrency</td>
-                        <td>@item.AccountName</td>
-                        <td>@item.AccountNo</td>
-                        <td>@item.BankBranch</td>
-                        <td>@item.CacNo</td>*@
+                                <td>@item.TinNo</td>
+                                <td>@item.AatAmount</td>
+                                <td>@item.AatCurrency</td>
+                                <td>@item.AccountName</td>
+                                <td>@item.AccountNo</td>
+                                <td>@item.BankBranch</td>
+                                <td>@item.CacNo</td>*@
                             <td>@item.ContactName</td>
                             <td>@item.PhoneNumber</td>
                             @*<td>@item.SortCode</td>*@
                             <td>@item.Email</td>
 
                             @*<td>
-                            @if (item.IsActive)
-                            {
-                                <label class="text-success">Active</label>
-                            }
-                            else
-                            {
-                                <label class="text-danger">Inactive</label>
+                                    @if (item.IsActive)
+                                    {
+                                        <label class="text-success">Active</label>
+                                    }
+                                    else
+                                    {
+                                        <label class="text-danger">Inactive</label>
 
-                            }
-                        </td>*@
+                                    }
+                                </td>*@
                         </tr>
                     }
 
@@ -166,7 +166,7 @@
         document.body.innerHTML = oldstr;
         return false;
     }
-  
+
     //function printDiv() {
     //    window.frames["print_frame"].document.body.innerHTML = document.getElementById("example").innerHTML;
     //    window.frames["print_frame"].window.focus();

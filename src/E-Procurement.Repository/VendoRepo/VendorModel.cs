@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using E_Procurement.Repository.ReportRepo;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace E_Procurement.Repository.VendoRepo
@@ -34,7 +35,26 @@ namespace E_Procurement.Repository.VendoRepo
         public string UpdatedBy { get; set; }
         public DateTime DateCreated { get; set; }
         public bool IsActive { get; set; }
+        public IFormFile MemorandumOfAssoociation { get; set; }
+        public IFormFile BankReference { get; set; }
+        public IFormFile CertificateOfVAT { get; set; }
+        public IFormFile TaxClearance { get; set; }
+        public IFormFile ParticularsOfDirectors { get; set; }
+        public IFormFile ParticularsOfShareholders { get; set; }
+        public IFormFile NoticeOfSituationAddress { get; set; }
+        public IFormFile Reference { get; set; }
+
+        public string MOAFilePath { get; set; }
+        public string BankRefFilePath { get; set; }
+        public string COVFilePath { get; set; }
+        public string TaxFilePath { get; set; }
+        public string PODFilePath { get; set; }
+        public string POSFilePath { get; set; }
+        public string NOSFilePath { get; set; }
+        public string RefFilePath { get; set; }
+
         public IEnumerable<SelectListItem> VendorCategoryList { get; set; }
+        public IEnumerable<SelectListItem> CurrentVendorCategoryList { get; set; }
         public List<ReportModel> Report { get; set; }
         public IEnumerable<VendorModel> VendorList { get; set; }
         public IEnumerable<SelectListItem> BankList { get; set; }
@@ -46,6 +66,7 @@ namespace E_Procurement.Repository.VendoRepo
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public List<VendorModel> VendorDetails { get; set; }
+        public bool CurrentCategories { get; set; }
         public VendorModel()
         {
             VendorCategoryList = new List<SelectListItem>();

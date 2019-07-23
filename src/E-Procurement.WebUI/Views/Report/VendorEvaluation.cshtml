@@ -1,0 +1,165 @@
+﻿
+@model E_Procurement.WebUI.Models.RFQModel.RfqGenModel
+
+@{
+    ViewBag.Title = "Vendor Evaluation";
+}
+
+
+<div class="card pd-20 pd-sm-40">
+    <form class="form-horizontal" action="@Url.Action("VendorEvaluation","Report")" method="post">
+
+        @Html.AntiForgeryToken()
+        
+        <div class="card-body-title">Registered Vendors</div>
+        @*<a class="btn btn-primary" pull-right" href="@Url.Action("Create", "RfqGen")"><i class="fa fa-plus"> </i>  Add RFQ</a>*@
+        <p class="mg-b-20 mg-sm-b-30" style="margin-bottom:10px"> Vendor Evaluation </p>
+        <div class="" style="display:flex; justify-content:space-between">
+
+            @*<input name="b_print" type="button" class="btn btn-outline-info" onClick="printDiv('div_print');" value=" Print Report">*@
+
+            @Html.DropDownListFor(model => model.CategoryId, Model.ItemCategoryList, "-- All Categories --", htmlAttributes: new { id = "CategoryId", @class = "form-control", style = "width:300px; height:40px", onchange = "DoPostBack();" @*onchange = "return fetchData();"*@ })
+            
+           
+            <button type="submit" class="btn btn-info mg-r-5"><span class="glyphicon glyphicon-send"></span>  Submit</button>
+
+      
+        </div>
+
+        @*<div class="col-md-6" style="margin-top:10px; padding-right:200px">
+            <i class="fa fa-search" pull-left">
+                <input type="text" id="myInput" style="width:200px; height:40px" onkeyup="myFunction()" placeholder="Search..">
+            </i>
+        </div>*@
+
+        <br />
+        <div class="table-wrapper" id="div_print">
+            @*<div align="center">
+                <img src="~/img/cyb-logo.png" style="max-width:1200px; height:100px;">
+                <br>
+                <p><b>Vendor Report</p></b>
+            </div>*@
+            <table id="example" class="table table-hover table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>S/N</th>
+                        <th>Vendor Name </th>
+                        <th>Best Price</th>
+                        <th>Product Availability</th>
+                        <th>Product Quality</th>
+                        <th>Ability To Deliver Within Agreed Time Frame </th>
+                        <th>Credit Facility</th>
+                        <th>Warranty Support</th>
+                        <th>Customer Care and Support</th>
+                        <th>Others</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+
+                    @{int rowNo = 0;}
+                    @*@{
+                        var VendorDetails = Model.Report as List<E_Procurement.Repository.ReportRepo.ReportModel>;
+
+                    }*@
+                    @foreach (var vendor in Model.VendorList)
+                    {
+                        @*@foreach (var item in Model.VendorList)
+                        {*@
+                        <tr>
+                            <td>@(rowNo += 1)</td>
+                            <td>
+                                <label for="@vendor.Text">@vendor.Text</label>
+                                <input type="hidden" id="@vendor.Value" name="SelectedVendors" value="@vendor.Value" />
+                            </td>
+                            <td>
+                                @Html.DropDownListFor(model => model.BestPrice, Model.CriteriaList, "-- Select --", htmlAttributes: new { @id = "BestPrice", @class = "form-control", style = "width:120px; height:40px", required = "required" })
+                            </td>
+                            <td>
+                                @Html.DropDownListFor(model => model.ProductAvailability, Model.CriteriaList, "-- Select --", htmlAttributes: new { @id = "ProductAvailability", @class = "form-control", style = "width:120px; height:40px", required = "required" })
+                            </td>
+                            <td>
+                                @Html.DropDownListFor(model => model.ProductQuality, Model.CriteriaList, "-- Select --", htmlAttributes: new { @id = "ProductQuality", @class = "form-control", style = "width:120px; height:40px", required = "required" })
+                            </td>
+                            <td>
+                                @Html.DropDownListFor(model => model.AbilityToDeliver, Model.CriteriaList, "-- Select --", htmlAttributes: new { @id = "AbilityToDeliver", @class = "form-control", style = "width:120px; height:40px", required = "required" })
+                            </td>
+                            <td>
+                                @Html.DropDownListFor(model => model.CreditFacility, Model.CriteriaList, "-- Select --", htmlAttributes: new { @id = "CreditFacility", @class = "form-control", style = "width:120px; height:40px", required = "required" })
+                            </td>
+                            <td>
+                                @Html.DropDownListFor(model => model.WarrantySupport, Model.CriteriaList, "-- Select --", htmlAttributes: new { @id = "WarrantySupport", @class = "form-control", style = "width:120px; height:40px", required = "required" })
+                            </td>
+                            <td>
+                                @Html.DropDownListFor(model => model.CustomerSupport, Model.CriteriaList, "-- Select --", htmlAttributes: new { @id = "CustomerSupport", @class = "form-control", style = "width:120px; height:40px", required = "required" })
+                            </td>
+                            <td>
+                                @Html.DropDownListFor(model => model.Others, Model.CriteriaList, "-- Select --", htmlAttributes: new { @id = "Others", @class = "form-control", style = "width:120px; height:40px", required = "required" })
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+        </div>
+        <iframe name="print_frame" width="0" height="0" frameborder="0" src="about:blank"></iframe>
+    </form>
+</div>
+
+<script src="https://cdn.datatables.net/buttons/1.5.6/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.flash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.html5.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+<script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.print.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css"></script>
+<script src="https://cdn.datatables.net/buttons/1.5.6/css/buttons.dataTables.min.css"></script>
+
+<script type="text/javascript">
+    function printDiv(printpage) {
+        var headstr = "<html><head><title></title></head><body>";
+        var footstr = "</body>";
+        var newstr = document.all.item(printpage).innerHTML;
+        var oldstr = document.body.innerHTML;
+        document.body.innerHTML = headstr + newstr + footstr;
+        window.print();
+        document.body.innerHTML = oldstr;
+        return false;
+    }
+
+
+
+    function DoPostBack() {
+        var select = document.getElementById("CategoryId");
+        var option = select.options[select.selectedIndex];
+        if (option.value != "") {
+            var Table = document.getElementById("example");
+            Table.innerHTML = "";
+            document.forms[1].action = "/Report/VendorEvaluation";
+            document.forms[1].submit();
+        }
+        else {
+            var Table = document.getElementById("example");
+            Table.innerHTML = "";
+            document.forms[1].action = "/Report/VendorEvaluation";
+            document.forms[1].submit();
+        }
+    }
+   
+
+    @*function fetchData() {
+        var CategoryId = $('#ItemCategory').val();
+        //alert(selectedValue);
+        $.post('@Url.Action("VendorEvaluation", "Report")', { CategoryId: CategoryId }, function () {
+            alert(CategoryId)
+            return false;
+            // handle the server response here
+        });
+    }*@
+
+</script>
+
+

@@ -10,12 +10,13 @@ namespace E_Procurement.Repository.ReportRepo
 {
     public interface IReportRepository : IDependencyRegister
     {
-        //List<Vendor> GetVendors(RfqGenModel model);
+        List<Vendor> GetVendorsByCategory(RfqGenModel model);
         IEnumerable<Vendor> GetVendors();
         IEnumerable<VendorMapping> GetMapping();
         //List<Vendor> GetVendorDetails(RfqGenModel model);
         List<RFQGenerationModel> GetRfqGen();
         List<RFQGenerationModel> GetPoGen();
         List<RFQDetails> GetRFQDetails();
+        bool VendorEvaluation(RfqGenModel model, out string Message);
     }
 }

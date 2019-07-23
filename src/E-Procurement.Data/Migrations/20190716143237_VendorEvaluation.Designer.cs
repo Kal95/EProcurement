@@ -4,14 +4,16 @@ using E_Procurement.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace E_Procurement.Data.Migrations
 {
     [DbContext(typeof(EProcurementContext))]
-    partial class EProcurementContextModelSnapshot : ModelSnapshot
+    [Migration("20190716143237_VendorEvaluation")]
+    partial class VendorEvaluation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -590,10 +592,6 @@ namespace E_Procurement.Data.Migrations
 
                     b.Property<int>("BankId");
 
-                    b.Property<string>("BankRefFilePath");
-
-                    b.Property<string>("COVFilePath");
-
                     b.Property<string>("CacNo");
 
                     b.Property<string>("ContactName");
@@ -612,23 +610,11 @@ namespace E_Procurement.Data.Migrations
 
                     b.Property<DateTime?>("LastDateUpdated");
 
-                    b.Property<string>("MOAFilePath");
-
-                    b.Property<string>("NOSFilePath");
-
-                    b.Property<string>("PODFilePath");
-
-                    b.Property<string>("POSFilePath");
-
                     b.Property<string>("PhoneNumber");
-
-                    b.Property<string>("RefFilePath");
 
                     b.Property<string>("SortCode");
 
                     b.Property<int>("StateId");
-
-                    b.Property<string>("TaxFilePath");
 
                     b.Property<string>("TinNo");
 

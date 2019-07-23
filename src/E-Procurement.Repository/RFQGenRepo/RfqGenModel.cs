@@ -25,7 +25,7 @@ namespace E_Procurement.WebUI.Models.RFQModel
         public string CreatedBy { get; set; }
         public bool IsActive { get; set; }
         public string UpdatedBy { get; set; }
-        public int  Quantity { get; set; }
+        public int Quantity { get; set; }
         public string Description { get; set; }
         public List<string> Descriptions { get; set; }
         public List<int> Quantities { get; set; }
@@ -42,7 +42,14 @@ namespace E_Procurement.WebUI.Models.RFQModel
         public int CategoryId { get; set; }
         public string CategoryName { get; set; }
         public IEnumerable<SelectListItem> ItemCategoryList { get; set; }
-
+        public List<string>BestPrice {get; set;}
+        public List<string> AbilityToDeliver { get; set; }
+        public List<string> CreditFacility { get; set; }
+        public List<string> CustomerSupport { get; set; }
+        public List<string> ProductAvailability { get; set; }
+        public List<string> ProductQuality { get; set; }
+        public List<string> WarrantySupport { get; set; }
+        public List<string> Others { get; set; }
 
         public RfqGenModel()
         {
@@ -62,8 +69,8 @@ namespace E_Procurement.WebUI.Models.RFQModel
         public DateTime StartDate { get; set; }
         [Required]
         public DateTime EndDate { get; set; }
+        public IEnumerable<SelectListItem> CriteriaList { get; set; }
 
-    
     }
 
 }
