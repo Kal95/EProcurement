@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Abp.Web.Mvc.Alerts;
@@ -11,6 +12,7 @@ using E_Procurement.Repository.CountryRepo;
 using E_Procurement.Repository.StateRepo;
 using E_Procurement.Repository.VendorCategoryRepo;
 using E_Procurement.Repository.VendoRepo;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -24,8 +26,9 @@ namespace E_Procurement.WebUI.Controllers
         private readonly IBankRepository _bankRepository;
         private readonly IVendorCategoryRepository _vendorCategoryRepository;
         private readonly IMapper _mapper;
+        private IHostingEnvironment _hostingEnv;
 
-        public VendorController(IVendorRepository vendorRepository, IVendorCategoryRepository vendorCategoryRepository, ICountryRepository countryRepository, IStateRepository stateRepository, IBankRepository bankRepository, IMapper mapper)
+        public VendorController(IVendorRepository vendorRepository, IVendorCategoryRepository vendorCategoryRepository, ICountryRepository countryRepository, IStateRepository stateRepository, IBankRepository bankRepository, IMapper mapper, IHostingEnvironment hostingEnv)
         {
             _vendorRepository = vendorRepository;
             _vendorCategoryRepository = vendorCategoryRepository;
@@ -33,6 +36,7 @@ namespace E_Procurement.WebUI.Controllers
             _stateRepository = stateRepository;
             _bankRepository = bankRepository;
             _mapper = mapper;
+            _hostingEnv = hostingEnv;
         }
         public ActionResult Index()
         {
@@ -49,8 +53,82 @@ namespace E_Procurement.WebUI.Controllers
             }
         }
 
+        private void LoadFilePath(VendorModel Model)
+        {
+            if (Model.BankReference != null || Model.CertificateOfVAT !=null || Model.MemorandumOfAssoociation != null || Model.NoticeOfSituationAddress != null || Model.ParticularsOfDirectors != null || Model.ParticularsOfShareholders != null || Model.Reference != null || Model.TaxClearance != null)
+            {
+                var myReference = new Random();
+                string referencecode = myReference.Next(23006).ToString();
 
-        private void LoadPredefinedInfo(VendorModel Model)
+                string webRootPath = _hostingEnv.WebRootPath;
+
+                var allowedExtensions = new[] { ".pdf", ".jpg", ".jpeg", ".png" };
+                var checkextension1 = Path.GetExtension(Model.MemorandumOfAssoociation.FileName).ToLower();
+                var checkextension2 = Path.GetExtension(Model.NoticeOfSituationAddress.FileName).ToLower();
+                var checkextension3 = Path.GetExtension(Model.ParticularsOfDirectors.FileName).ToLower();
+                var checkextension4 = Path.GetExtension(Model.ParticularsOfShareholders.FileName).ToLower();
+                var checkextension5 = Path.GetExtension(Model.Reference.FileName).ToLower();
+                var checkextension6 = Path.GetExtension(Model.TaxClearance.FileName).ToLower();
+                var checkextension7 = Path.GetExtension(Model.CertificateOfVAT.FileName).ToLower();
+                var checkextension8 = Path.GetExtension(Model.BankReference.FileName).ToLower();
+
+                var MOAFilePath = referencecode + "_" + "Memorandum_Of_Association" + Path.GetExtension(Model.MemorandumOfAssoociation.FileName);
+                var NOSFilePath = referencecode + "_" + "Notice_Of_Situation" + Path.GetExtension(Model.NoticeOfSituationAddress.FileName);
+                var PODFilePath = referencecode + "_" + "Particulars_Of_Directors" + Path.GetExtension(Model.ParticularsOfDirectors.FileName);
+                var POSFilePath = referencecode + "_" + "Particulars_Of_Shareholders" + Path.GetExtension(Model.ParticularsOfShareholders.FileName);
+                var RefFilePath = referencecode + "_" + "Reference" + Path.GetExtension(Model.Reference.FileName);
+                var TaxFilePath = referencecode + "_" + "Tax_Clearance" + Path.GetExtension(Model.TaxClearance.FileName);
+                var COVFilePath = referencecode + "_" + "Certificate_Of_VAT" + Path.GetExtension(Model.CertificateOfVAT.FileName);
+                var BankRefFilePath = referencecode + "_" + "Bank_Reference_Letter" + Path.GetExtension(Model.BankReference.FileName);
+
+                if (!allowedExtensions.Contains(checkextension1) || !allowedExtensions.Contains(checkextension2) || !allowedExtensions.Contains(checkextension3) || !allowedExtensions.Contains(checkextension4) || !allowedExtensions.Contains(checkextension5) || !allowedExtensions.Contains(checkextension6) || !allowedExtensions.Contains(checkextension7) || !allowedExtensions.Contains(checkextension8))
+                {
+                    ModelState.AddModelError("", "Invalid file extention.");
+                    //return View(Model);
+                }
+
+
+                //var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "upload", imageFilePath);
+                var path1 = Path.Combine(webRootPath, "Uploads", "VendorDocuments", MOAFilePath);
+                var path2 = Path.Combine(webRootPath, "Uploads", "VendorDocuments", NOSFilePath);
+                var path3 = Path.Combine(webRootPath, "Uploads", "VendorDocuments", PODFilePath);
+                var path4 = Path.Combine(webRootPath, "Uploads", "VendorDocuments", POSFilePath);
+                var path5 = Path.Combine(webRootPath, "Uploads", "VendorDocuments", RefFilePath);
+                var path6 = Path.Combine(webRootPath, "Uploads", "VendorDocuments", TaxFilePath);
+                var path7 = Path.Combine(webRootPath, "Uploads", "VendorDocuments", COVFilePath);
+                var path8 = Path.Combine(webRootPath, "Uploads", "VendorDocuments", BankRefFilePath);
+
+
+                if (System.IO.File.Exists(path1)) { System.IO.File.Delete(path1); }
+                if (System.IO.File.Exists(path2)) { System.IO.File.Delete(path2); }
+                if (System.IO.File.Exists(path3)) { System.IO.File.Delete(path3); }
+                if (System.IO.File.Exists(path4)) { System.IO.File.Delete(path4); }
+                if (System.IO.File.Exists(path5)) { System.IO.File.Delete(path5); }
+                if (System.IO.File.Exists(path6)) { System.IO.File.Delete(path6); }
+                if (System.IO.File.Exists(path7)) { System.IO.File.Delete(path7); }
+                if (System.IO.File.Exists(path8)) { System.IO.File.Delete(path8); }
+
+                using (Stream stream = new FileStream(path1, FileMode.Create)) { Model.MemorandumOfAssoociation.CopyTo(stream); }
+                using (Stream stream = new FileStream(path2, FileMode.Create)) { Model.NoticeOfSituationAddress.CopyTo(stream); }
+                using (Stream stream = new FileStream(path3, FileMode.Create)) { Model.ParticularsOfDirectors.CopyTo(stream); }
+                using (Stream stream = new FileStream(path4, FileMode.Create)) { Model.ParticularsOfShareholders.CopyTo(stream); }
+                using (Stream stream = new FileStream(path5, FileMode.Create)) { Model.Reference.CopyTo(stream); }
+                using (Stream stream = new FileStream(path6, FileMode.Create)) { Model.TaxClearance.CopyTo(stream); }
+                using (Stream stream = new FileStream(path7, FileMode.Create)) { Model.CertificateOfVAT.CopyTo(stream); }
+                using (Stream stream = new FileStream(path8, FileMode.Create)) { Model.BankReference.CopyTo(stream); }
+
+                Model.MOAFilePath = path1;
+                Model.NOSFilePath = path2;
+                Model.PODFilePath = path3;
+                Model.POSFilePath = path4;
+                Model.RefFilePath = path5;
+                Model.TaxFilePath = path6;
+                Model.COVFilePath = path7;
+                Model.BankRefFilePath = path8;
+            }
+        }
+
+            private void LoadPredefinedInfo(VendorModel Model)
         {
 
 
@@ -63,12 +141,39 @@ namespace E_Procurement.WebUI.Controllers
             var bank = _bankRepository.GetBanks().ToList();
 
 
-            Model.VendorCategoryList = vendorCategory.Select(x => new SelectListItem
-            {
-                Value = x.Id.ToString(),
-                Text = x.CategoryName
-            });
+            //var vendor = _vendorRepository.GetVendors().Where(u => u.Id == Model.VendorId).FirstOrDefault();
 
+            var mapping = _vendorRepository.GetMapping().Where(u => u.VendorID == Model.Id).ToList();
+
+            var SelectedCategories = vendorCategory.Where(a => mapping.Any(b => b.VendorCategoryId == a.Id)).ToList();
+            var NewCategories = vendorCategory.Except(SelectedCategories);//.Where(a => mapping.Any(b => b.VendorCategoryId != a.Id)).ToList();
+            if (SelectedCategories.ToList().Count == 0)
+            {
+                Model.VendorCategoryList = vendorCategory.Select(x => new SelectListItem
+                {
+                    Value = x.Id.ToString(),
+                    Text = x.CategoryName,
+                    Selected = true
+                });
+            }
+            else 
+            {
+                Model.VendorCategoryList = NewCategories.Select(x => new SelectListItem
+                {
+                    Value = x.Id.ToString(),
+                    Text = x.CategoryName,
+                    
+                    Selected = false
+                });
+
+                Model.CurrentVendorCategoryList = SelectedCategories.Select(x => new SelectListItem
+                {
+                    Value = x.Id.ToString(),
+                    Text = x.CategoryName,
+
+                    Selected = true
+                });
+            }
 
             Model.CountryList = country.Select(x => new SelectListItem
             {
@@ -129,7 +234,8 @@ namespace E_Procurement.WebUI.Controllers
                 if (ModelState.IsValid)
                 {
                     Model.CreatedBy = UserId;
-
+                    
+                    LoadFilePath(Model);
                     var status = _vendorRepository.CreateVendor(Model, out message);
 
                     ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
@@ -173,13 +279,23 @@ namespace E_Procurement.WebUI.Controllers
 
             try
             {
+                var categories = _vendorRepository.GetItemCategory().ToList();
+               
                 var vendor = _vendorRepository.GetVendors().Where(u => u.Id == VendorId).FirstOrDefault();
-              
+
+                var mapping = _vendorRepository.GetMapping().Where(u => u.VendorID == vendor.Id).ToList();
+
+                var SelectedCategories = categories.Where(a => mapping.Any(b => b.VendorCategoryId == a.Id)).Select(u => u.Id).ToList();
+                
                 if (vendor == null)
                 {
                     return RedirectToAction("Index", "Vendor");
                 }
-
+                Model.SelectedVendorCategories = SelectedCategories.ToList();
+                
+              
+                List<VendorModel> selcat = new List<VendorModel>();
+                
                 Model.Id = vendor.Id;
                 Model.VendorName = vendor.VendorName;
                 Model.AatAmount = vendor.AatAmount;
@@ -204,8 +320,16 @@ namespace E_Procurement.WebUI.Controllers
                 Model.VendorStatus = vendor.VendorStatus;
                 Model.WebsiteAddress = vendor.WebsiteAddress;
                 Model.VatNo = vendor.VatNo;
-               
+                Model.MOAFilePath = vendor.MOAFilePath;
+                Model.NOSFilePath = vendor.NOSFilePath;
+                Model.PODFilePath = vendor.PODFilePath;
+                Model.POSFilePath = vendor.POSFilePath;
+                Model.RefFilePath = vendor.RefFilePath;
+                Model.TaxFilePath = vendor.TaxFilePath;
+                Model.COVFilePath = vendor.COVFilePath;
+                Model.BankRefFilePath = vendor.BankRefFilePath;
                 LoadPredefinedInfo(Model);
+                
 
                 return View(Model);
 
@@ -233,6 +357,7 @@ namespace E_Procurement.WebUI.Controllers
 
                     Model.UpdatedBy = User.Identity.Name;
 
+                    LoadFilePath(Model);
                     var status = _vendorRepository.UpdateVendor(Model, out message);
 
                     ViewBag.Message = TempData["MESSAGE"] as AlertMessage;

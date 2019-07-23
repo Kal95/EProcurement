@@ -34,16 +34,16 @@ namespace E_Procurement.WebUI.Controllers
             _reportRepository = reportRepository;
             _mapper = mapper;
         }
-        private void VendorPredefinedInfo(VendorModel Model)
+        private void VendorPredefinedInfo(RfqGenModel Model)
         {
             //int CategoryId = Model.VendorCategoryId;
 
             var vendorCategory = _vendorRepository.GetItemCategory().ToList();
-            if (Model.VendorCategoryId <= 0)
+            if (Model.CategoryId <= 0)
             {
                 var Vendor = _reportRepository.GetVendors().ToList();
                 List<ReportModel> vendorModel = new List<ReportModel>();
-                Model.VendorCategoryList = vendorCategory.Select(x => new SelectListItem
+                Model.ItemCategoryList = vendorCategory.Select(x => new SelectListItem
                 {
                     Value = x.Id.ToString(),
                     Text = x.CategoryName
@@ -64,16 +64,14 @@ namespace E_Procurement.WebUI.Controllers
         }
             else
             {
-                var Mapping = _reportRepository.GetMapping().ToList();
-                var Vendor = _reportRepository.GetVendors().ToList();
-                var VendorList = Vendor.Where(a => Mapping.Any(b => b.VendorCategoryId == Model.VendorCategoryId)).ToList();
-                 List<ReportModel> vendorModel = new List<ReportModel>();
-                Model.VendorCategoryList = vendorCategory.Select(x => new SelectListItem
+                var Vendor = _reportRepository.GetVendorsByCategory(Model).ToList();
+                List<ReportModel> vendorModel = new List<ReportModel>();
+                Model.ItemCategoryList = vendorCategory.Select(x => new SelectListItem
                 {
                     Value = x.Id.ToString(),
                     Text = x.CategoryName
                  });
-                var listModel = VendorList.Select(x => new ReportModel
+                var listModel = Vendor.Select(x => new ReportModel
                 {
                     VendorName = x.VendorName,
                     VendorAddress = x.VendorAddress,
@@ -208,7 +206,7 @@ namespace E_Procurement.WebUI.Controllers
 
         }
        
-        public ActionResult Vendor(VendorModel Model)
+        public ActionResult Vendor(RfqGenModel Model)
         {
             try
             {

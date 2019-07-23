@@ -56,6 +56,14 @@ namespace E_Procurement.Repository.VendoRepo
                 vendor.VendorStatus = model.VendorStatus;
                 vendor.WebsiteAddress = model.WebsiteAddress;
                 vendor.VatNo = model.VatNo;
+                vendor.BankRefFilePath = model.BankRefFilePath;
+                vendor.COVFilePath = model.COVFilePath;
+                vendor.MOAFilePath = model.MOAFilePath; 
+                vendor.NOSFilePath = model.NOSFilePath;
+                vendor.PODFilePath = model.PODFilePath;
+                vendor.POSFilePath = model.POSFilePath;
+                vendor.RefFilePath = model.RefFilePath;
+                vendor.TaxFilePath = model.TaxFilePath;
                 _context.Vendors.Add(vendor);
 
 
@@ -129,7 +137,14 @@ namespace E_Procurement.Repository.VendoRepo
                 oldEntry.UpdatedBy = model.UpdatedBy;
                 oldEntry.LastDateUpdated = DateTime.Now;
                 oldEntry.IsActive = model.IsActive;
-
+                oldEntry.BankRefFilePath = model.BankRefFilePath;
+                oldEntry.COVFilePath = model.COVFilePath;
+                oldEntry.MOAFilePath = model.MOAFilePath;
+                oldEntry.NOSFilePath = model.NOSFilePath;
+                oldEntry.PODFilePath = model.PODFilePath;
+                oldEntry.POSFilePath = model.POSFilePath;
+                oldEntry.RefFilePath = model.RefFilePath;
+                oldEntry.TaxFilePath = model.TaxFilePath;
 
                 foreach (var category in model.SelectedVendorCategories)
                 {

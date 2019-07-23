@@ -35,5 +35,13 @@ namespace E_Procurement.Data.Entity
         public Bank Bank { get; set; }
         public Country Country { get; set; }
         public State State { get; set; }
+        public string MOAFilePath { get; set; }
+        public string BankRefFilePath { get; set; }
+        public string COVFilePath { get; set; }
+        public string TaxFilePath { get; set; }
+        public string PODFilePath { get; set; }
+        public string POSFilePath { get; set; }
+        public string NOSFilePath { get; set; }
+        public string RefFilePath { get; set; }
     }
 }
