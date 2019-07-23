@@ -90,6 +90,11 @@ namespace E_Procurement.WebUI.Controllers
                         Alert("Quote updated successfully.", NotificationType.success);
                         return RedirectToAction("Index", "QuoteSending");
                     }
+                    else
+                    {
+                        Alert("Quote updated successfully.", NotificationType.error);
+                        return View();
+                    }
               
 
 
