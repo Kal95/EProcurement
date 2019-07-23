@@ -12,10 +12,11 @@ using E_Procurement.WebUI.Models.RfqApprovalModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using static E_Procurement.WebUI.Enums.Enums;
 
 namespace E_Procurement.WebUI.Controllers
 {
-    public class POController : Controller
+    public class POController : BaseController
     {
         //private readonly IRfqApprovalRepository _RfqApprovalRepository;
         private readonly IPORepository _PORepository;
@@ -61,7 +62,7 @@ namespace E_Procurement.WebUI.Controllers
             {
                 if (string.IsNullOrEmpty(rfqApproval.RFQStatus) || rfqApproval.RFQStatus != "Approved")
                 {
-                    ModelState.AddModelError("", "Can not create PO for RFQ not approved.");
+                    Alert("Can not create PO for RFQ not approved.", NotificationType.info);
                     return View(rfqApproval);
                 }
          
@@ -74,13 +75,19 @@ namespace E_Procurement.WebUI.Controllers
                 //};
                 var generatePo = await _PORepository.GenerationPOAsync(rfqApproval);
                 if(generatePo)
+                {
+
+                    Alert("Can not create PO for RFQ not approved.", NotificationType.info);
                     return RedirectToAction("Index");
+                }
 
 
+                Alert("Can not create PO. Please try again later.", NotificationType.error);
                 return View(rfqApproval);
             }
             catch (Exception ex)
             {
+                Alert("Error!!! Please try again later.", NotificationType.error);
                 return View();
             }
 

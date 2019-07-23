@@ -11,7 +11,7 @@ namespace E_Procurement.Repository.AccountRepo
         Task<bool> CreateRoleAsync(Role role);
         Task<bool> UpdateRoleAsync(Role role);
         Task<(bool Succeeded, string[] Error)> CreatePasswordlessUserAsync(User user, IEnumerable<string> roles);
-        Task<bool> CreateUserAsync(User user, string password);
+        Task<bool> CreateUserAsync(User user, string password, string Role);
         Task<(bool Succeeded, string[] Error)> DeleteRoleAsync(Role role);
         Task<(bool Succeeded, string[] Error)> DeleteRoleAsync(string roleName);
         Task<(bool Succeeded, string[] Error)> DeleteUserAsync(long userId);
@@ -21,7 +21,7 @@ namespace E_Procurement.Repository.AccountRepo
         Task<Role> GetRoleByNameAsync(string roleName);
         Task<Role> GetRoleLoadRelatedAsync(string roleName);
         Task<List<Role>> GetRolesLoadRelatedAsync(int page, int pageSize);
-        Task<(User User, string[] Role)> GetUserAndRolesAsync(long userId);
+        Task<(User User, string[] Role)> GetUserAndRolesAsync(long userId);        
         Task<User> GetUserByEmailAsync(string email);
         Task<User> GetUserByIdAsync(int userId);
         Task<User> GetUserByUserNameAsync(string userName);

@@ -10,6 +10,8 @@ using E_Procurement.Repository.Dtos;
 using System.Numerics;
 using E_Procurement.Repository.Interface;
 using E_Procurement.Repository.PORepo;
+using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 
 namespace E_Procurement.Repository.DINRepo
 {
@@ -18,66 +20,90 @@ namespace E_Procurement.Repository.DINRepo
         private readonly EProcurementContext _context;
         private readonly IConvertViewToPDF _pdfConverter;
         private readonly IPORepository _poRepository;
+        private readonly IHttpContextAccessor _contextAccessor;
 
-        public DINRepository(EProcurementContext context, IConvertViewToPDF pdfConverter, IPORepository poRepository)
+        public DINRepository(EProcurementContext context, IConvertViewToPDF pdfConverter, IPORepository poRepository, IHttpContextAccessor contextAccessor)
         {
             _context = context;
             _pdfConverter = pdfConverter;
             _poRepository = poRepository;
+            _contextAccessor = contextAccessor;
         }
 
         public async  Task<bool> DNGenerationAsync(RFQGenerationModel rfq)
         {
             if (rfq != null)
             {
-                var poNumber = _poRepository.GetPOByPONumberAsync(rfq.PONumber);
+                var poNumber = await _context.PoGenerations.Where(x => x.PONumber == rfq.PONumber).FirstOrDefaultAsync();
                 DNGeneration dnDetails = new DNGeneration
                 {
-                    PoId = poNumber.Id
-                   
-                    // = poNumber,
-                    //Amount = rfq.TotalAmount,
-                    //RFQId = rfq.RFQId,
-                    //VendorId = rfq.VendorId,
-                    //POStatus = "Generated",
-                    //ExpectedDeliveryDate = rfq.ExpectedDeliveryDate
+                    PoId = poNumber.Id,
+                    DnUploadedDate = DateTime.Now,
+                    DnFilePath= rfq.DnFilePath,
+                    DnUploadedBy= _contextAccessor.HttpContext.User.Identity.Name,
+                    DnRecievedBy = rfq.DnRecievedBy
                 };
                
                 await _context.AddAsync(dnDetails);
                 await _context.SaveChangesAsync();
-
-
-                //re gen the detials
-                var Item = await _context.RfqDetails.Where(x => x.RFQId == rfq.RFQId).ToListAsync();
-                var totalAmount = Item.Sum(x => x.QuotedAmount);
-
-                List<RFQDetailsModel> rFQDetails = new List<RFQDetailsModel>();
-                
-                var listModel = Item.Select(x => new RFQDetailsModel
-                {
-                    RFQId = x.RFQId,
-                    VendorId = x.VendorId,
-                    ItemId = x.ItemId,
-                    ItemName = x.ItemName,
-                    QuotedQuantity = x.QuotedQuantity,
-                    AgreedQuantity = x.AgreedQuantity,
-                    QuotedAmount = x.QuotedAmount,
-                    AgreedAmount = x.AgreedAmount
-                });
-
-                rFQDetails.AddRange(listModel);
-                
-
-                rfq.RFQDetails = rFQDetails;
-
-                //generate PDF and send mail
-                await _pdfConverter.CreatePOPDF(rfq);
                 return true;
             }
 
             return false;
         }
+        public async Task<RFQGenerationModel> GetInvoiceDetailsAsync(int RFQId)
+        {
+            var Item = await _context.RfqDetails.Where(x => x.RFQId == RFQId).ToListAsync();
+            var totalAmount = Item.Sum(x => x.QuotedAmount);
+            var query = await (from rfq in _context.RfqGenerations
+                               join rfqDetails in _context.RfqDetails on rfq.Id equals rfqDetails.RFQId
+                               join vend in _context.Vendors on rfqDetails.VendorId equals vend.Id
+                               join po in _context.PoGenerations on rfq.Id equals po.RFQId
+                               where rfq.Id == RFQId
+                               orderby rfq.Id, rfq.EndDate descending
+                               select new RFQGenerationModel()
+                               {
+                                   RFQId = rfq.Id,
+                                   ProjectId = rfq.ProjectId,
+                                   RequisitionId = rfq.RequisitionId,
+                                   Reference = rfq.Reference,
+                                   Description = rfq.Description,
+                                   StartDate = rfq.StartDate,
+                                   EndDate = rfq.EndDate,
+                                   RFQStatus = rfq.RFQStatus,
+                                   VendorId = vend.Id,
+                                   VendorName = vend.VendorName,
+                                   VendorAddress = vend.VendorAddress,
+                                   VendorStatus = vend.VendorStatus,
+                                   ContactName = vend.ContactName,
+                                   VendorEmail = vend.Email,
+                                   TotalAmount = totalAmount,
+                                   PONumber = po.PONumber
+                               }).Distinct().FirstOrDefaultAsync();
 
+            List<RFQDetailsModel> rFQDetails = new List<RFQDetailsModel>();
+            foreach (var item in Item)
+            {
+                rFQDetails.Add(new RFQDetailsModel
+                {
+                    RFQId = item.RFQId,
+                    VendorId = item.VendorId,
+                    ItemId = item.ItemId,
+                    ItemName = item.ItemName,
+                    QuotedQuantity = item.QuotedQuantity,
+                    AgreedQuantity = item.AgreedQuantity,
+                    QuotedAmount = item.QuotedAmount,
+                    AgreedAmount = item.AgreedAmount
+                }
+                );
+            }
+
+            query.RFQDetails = rFQDetails;
+
+
+            return query;
+
+        }
         public Task<IEnumerable<RFQGenerationModel>> GetApprovedRFQAsync()
         {
             throw new NotImplementedException();
@@ -88,6 +114,8 @@ namespace E_Procurement.Repository.DINRepo
             var query = await (from po in _context.PoGenerations
                                join vend in _context.Vendors on po.VendorId equals vend.Id
                                join rfq in _context.RfqGenerations on po.RFQId equals rfq.Id
+                               //join dn in _context.DnGenerations on po.Id equals dn.PoId
+                              // where !(from dn in _context.DnGenerations select dn.PoId).Contains(po.Id)
                                orderby po.Id, rfq.EndDate descending
                                select new RFQGenerationModel()
                                {

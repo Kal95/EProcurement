@@ -8,13 +8,13 @@
         <div class="card pd-20 pd-sm-40 form-layout form-layout-4">
             <h6 class="card-body-title">Roles Permissions</h6>
             <p class="mg-b-20 mg-sm-b-30"> Assign Role to Permission</p>
-            <form role="form" method="post">
+            <form role="form" id="form1" method="post" asp-action="CreateRolePermissions">
                 <div asp-validation-summary="All" class="text-danger"></div>
                 <div class="row">
                     <label class="col-sm-2 form-control-label">Username : <span class="tx-danger">*</span></label>
                     <div class="col-sm-4 mg-t-10 mg-sm-t-0">
                         <select asp-for="RoleId" asp-items="@ViewBag.roles"
-                                class="form-control custom-select" required>
+                                class="form-control custom-select" required onchange="DoPostBack();">
                             <option value="">Please select one</option>
                         </select>
                     </div>
@@ -27,23 +27,31 @@
                                 <option value="">Please select one</option>
                             </select>*@
                         @{
+                            //List<E_Procurement.WebUI.Models.PermissionModel.RolePermissionViewModel> RolePermission = new List<E_Procurement.WebUI.Models.PermissionModel.RolePermissionViewModel>();
                             var RolePermission = ViewBag.Permission as List<E_Procurement.WebUI.Models.PermissionModel.RolePermissionViewModel>;
+                            //RolePermission.AddRange(ViewBag.Permission);
 
-                            <table id="tblPermissionEdit" class="table table-bordered">
+                        <table id="tblPermissionEdit" class="table table-bordered">
 
-                                @for (int i = 0; i < RolePermission.Count(); i++)
-                                    {
+                            @for (int i = 0; i < RolePermission.Count(); i++)
+                            {
                                 <tbody>
                                     <tr>
-
                                         @Html.Hidden("RolePermission[" + @i + "].PermissionId", RolePermission[i].PermissionId)
-                                        <td>@Html.CheckBox("RolePermission[" + @i + "].SelectedPermission", RolePermission[i].SelectedPermission)</td>
+
+                                        @*<input type="checkbox" @Model.VendorList value="@vendor.Value" checked="checked" name="SelectedVendors" id="@vendor.Value" />*@
+
+                                        <td>
+                                            <input type="checkbox" id="@RolePermission[i].PermissionId" asp-for="@RolePermission[i].SelectedPermission" value="true" checked="@RolePermission[i].SelectedPermission" />
+                                        </td>
+                                        @*<td>@Html.CheckBox("RolePermission[" + @i + "].SelectedPermission", htmlAttributes: new { @checked = (RolePermission[i].SelectedPermission == true) ? true : false })</td>*@
                                         <td> @Html.TextBox("RolePermission[" + @i + "].PermissionName", RolePermission[i].PermissionName, new { @readonly = "readonly", @class = "qty readonly" })</td>
                                     </tr>
                                 </tbody>
 
-                                    }
-                            </table>
+                            }
+
+                        </table>
 
                         }
 
@@ -59,3 +67,15 @@
     </div><!-- col-6 -->
 
 </div>
+<script type="text/javascript">
+    function DoPostBack() {
+        var select = document.getElementById("RoleId");
+        var option = select.options[select.selectedIndex];
+        if (option.value != "") {
+            var Table = document.getElementById("tblPermissionEdit");
+            Table.innerHTML = "";
+            document.forms[1].action = "/Permission/AssignRolePermissions";
+            document.forms[1].submit();
+        }
+    }
+</script>

@@ -112,13 +112,13 @@ article, aside, dialog, figcaption, figure, footer, header, hgroup, main, nav, s
 }
 
 body {
-  margin: 0;
-  font-family: "Roboto", "Helvetica Neue", Arial, sans-serif;
-  font-size: 0.875rem;
-  font-weight: normal;
-  line-height: 1.5;
-  color: #868ba1;
-  background-color: #D8DCE3;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    font-size: 0.875rem;
+    font-weight: normal;
+    line-height: 1.5;
+    color: #868ba1;
+    background-color: #D8DCE3;
 }
 
 [tabindex="-1"]:focus {

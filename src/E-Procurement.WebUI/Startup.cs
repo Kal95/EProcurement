@@ -51,6 +51,13 @@ namespace E_Procurement.WebUI
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
+            //services.AddAuthentication(options =>
+            //{
+            //    options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            //    options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            //});
+            
+
             services.AddDbContext<EProcurementContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
@@ -61,6 +68,7 @@ namespace E_Procurement.WebUI
                 .AddRoleManager<RoleManager<Role>>()
                 .AddSignInManager<SignInManager<User>>()
                 .AddEntityFrameworkStores<EProcurementContext>();
+                
 
             //services.AddIdentity<User, Role>()
             //   .AddUserManager<UserManager<User>>()

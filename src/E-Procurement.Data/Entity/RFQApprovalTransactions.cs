@@ -11,7 +11,7 @@ namespace E_Procurement.Data.Entity
         public string ApprovalStatus { get; set; }
         public string ApprovedBy { get; set; }
         public int ApprovalLevel { get; set; }
-        public int Comments { get; set; }
+        public string Comments { get; set; }
 
     }
 }

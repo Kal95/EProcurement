@@ -27,6 +27,8 @@
     <link href="/lib/datatables/jquery.dataTables.css" rel="stylesheet">
     <!-- Amanda CSS -->
     <link rel="stylesheet" href="/css/amanda.css">
+    <link href="~/sweetAlert/sweetalert.css" rel="stylesheet" />
+    <script src="~/sweetAlert/sweetalert.min.js"></script>
 </head>
 
 <body>
@@ -116,48 +118,45 @@
                             <li class="nav-item"><a asp-controller="Permission" asp-action="Index" class="nav-link">Permisions</a></li>
                             <li class="nav-item"><a asp-controller="Permission" asp-action="AssignRolePermissions" class="nav-link">Assign Role Permisions</a></li>
                             <li class="nav-item"><a asp-controller="RfqApprovalConfig" asp-action="Index" class="nav-link">RFQ Approval Config</a></li>
+                            <li class="nav-item"><a href="@Url.Action("Create", "Vendor")" class="nav-link">Vendor Registration</a></li>
+                            <li class="nav-item"><a href="@Url.Action("Index", "Vendor")" class="nav-link">Vendor Review</a></li>
 
                         </ul>
                     </li><!-- nav-item -->
-                    <li class="nav-item">
-                        <a href="" class="nav-link with-sub">
-                            <i class="icon ion-ios-filing-outline"></i>
-                            <span>Vendor</span>
-                        </a>
-                        <ul class="nav-sub">
-                            <li class="nav-item"><a href="accordion.html" class="nav-link">Status</a></li>
-                            <li class="nav-item"><a href="@Url.Action("Index", "VendorCategory")" class="nav-link">Category</a></li>
-                            <li class="nav-item"><a href="@Url.Action("Create", "Vendor")" class="nav-link">Registration</a></li>
-                            <li class="nav-item"><a href="@Url.Action("Index", "Vendor")" class="nav-link">Review/Selection</a></li>
-
-                        </ul>
-                    </li><!-- nav-item -->
-
-                    <li class="nav-item">
-                        <a href="" class="nav-link with-sub">
-                            <i class="icon ion-ios-filing-outline"></i>
-                            <span>Quote Sending</span>
-                        </a>
-                        <ul class="nav-sub">
-                            <li class="nav-item"><a href="@Url.Action("Index", "QuoteSending")" class="nav-link">Send Quote</a></li>
-                            <li class="nav-item"><a href="@Url.Action("Index", "POAcceptance")" class="nav-link">PO Acceptance</a></li>
-                            <li class="nav-item"><a href="@Url.Action("Index", "Invoice")" class="nav-link">Invoice Upload</a></li>
-
-
-                        </ul>
-                    </li>
                     <li class="nav-item">
                         <a href="" class="nav-link with-sub">
                             <i class="icon ion-ios-filing-outline"></i>
                             <span>RFQ</span>
                         </a>
                         <ul class="nav-sub">
-                            <li class="nav-item"><a href="@Url.Action("Create", "RfqGen")" class="nav-link">Generation</a></li>
-                            <li class="nav-item"><a href="@Url.Action("Index", "RfqGen")" class="nav-link">Review/Selection</a></li>
-                            <li class="nav-item"><a href="buttons.html" class="nav-link">Registration</a></li>
+                            <li class="nav-item"><a href="@Url.Action("Index", "RfqGen")" class="nav-link">Generated List</a></li>
+                            <li class="nav-item"><a href="@Url.Action("Create", "RfqGen")" class="nav-link">Generate RFQ</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a href="" class="nav-link with-sub">
+                            <i class="icon ion-ios-filing-outline"></i>
+                            <span>Vendor</span>
+                        </a>
+                        <ul class="nav-sub">
+                            @*<li class="nav-item"><a href="@Url.Action("Index", "VendorCategory")" class="nav-link">Category</a></li>*@
+                            <li class="nav-item"><a href="@Url.Action("Index", "QuoteSending")" class="nav-link">Send Quote</a></li>
+                            <li class="nav-item"><a href="@Url.Action("Index", "POAcceptance")" class="nav-link">PO Acceptance</a></li>
+                            <li class="nav-item"><a href="@Url.Action("Index", "Invoice")" class="nav-link">Invoice Upload</a></li>
 
                         </ul>
                     </li><!-- nav-item -->
+                    <!-- nav-item -->
+                    @*<li class="nav-item">
+            <a href="" class="nav-link with-sub">
+                <i class="icon ion-ios-filing-outline"></i>
+                <span>Quote Sending</span>
+            </a>
+            <ul class="nav-sub">
+
+
+            </ul>
+        </li>*@
                     <li class="nav-item">
                         <a href="" class="nav-link with-sub">
                             <i class="icon ion-ios-filing-outline"></i>
@@ -179,8 +178,6 @@
                             <li class="nav-item"><a href="@Url.Action("Vendor", "Report")" class="nav-link">Vendor Report</a></li>
                             <li class="nav-item"><a href="@Url.Action("RfqGen", "Report")" class="nav-link">RFQ Generation Report</a></li>
                             <li class="nav-item"><a href="@Url.Action("PoGen", "Report")" class="nav-link">PO Generation</a></li>
-                            <li class="nav-item"><a href="chart-rickshaw.html" class="nav-link">Rickshaw</a></li>
-                            <li class="nav-item"><a href="chart-sparkline.html" class="nav-link">Sparkline</a></li>
                         </ul>
                     </li><!-- nav-item -->
                     <!-- nav-item -->
@@ -209,6 +206,7 @@
     <div class="am-mainpanel">
         <div class="am-pagebody">
             <partial name="_CookieConsentPartial" />
+            @Html.Partial("_NotificationPanel")
             @RenderBody()
         </div><!-- am-pagebody -->
         <div class="am-footer">

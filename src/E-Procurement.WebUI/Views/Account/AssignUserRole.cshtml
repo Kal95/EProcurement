@@ -8,13 +8,13 @@
         <div class="card pd-20 pd-sm-40 form-layout form-layout-4">
             <h6 class="card-body-title">Users</h6>
             <p class="mg-b-20 mg-sm-b-30"> Assign User to Role</p>
-            <form role="form" method="post">
+            <form role="form" method="post" asp-action="CreateUserRole">
                 <div asp-validation-summary="All" class="text-danger"></div>
                 <div class="row">
                     <label class="col-sm-2 form-control-label">Username : <span class="tx-danger">*</span></label>
                     <div class="col-sm-4 mg-t-10 mg-sm-t-0">
                         <select asp-for="Id" asp-items="@ViewBag.users"
-                                class="form-control custom-select" required>
+                                class="form-control custom-select" required onchange="DoPostBack();">
                             <option value="">Please select one</option>
                         </select>
                     </div>
@@ -33,12 +33,15 @@
 
                                 @for (int i = 0; i < UserRole.Count(); i++)
                                     {
-                                <tbody>
-                                    <tr>
-                                        <td>@Html.CheckBox("UserRole[" + @i + "].SelectedRole", UserRole[i].SelectedRole)</td>
-                                        <td> @Html.TextBox("UserRole[" + @i + "].Role", UserRole[i].Role, new { @readonly = "readonly", @class = "qty readonly" })</td>
-                                    </tr>
-                                </tbody>
+                                    <tbody>
+                                        <tr>
+                                            @*<td>@Html.CheckBox("UserRole[" + @i + "].SelectedRole", UserRole[i].SelectedRole)</td>*@
+                                            <td>
+                                                <input type="checkbox" asp-for="@UserRole[i].SelectedRole" value="true" checked="@UserRole[i].SelectedRole" />
+                                            </td>
+                                            <td> @Html.TextBox("UserRole[" + @i + "].Role", UserRole[i].Role, new { @readonly = "readonly", @class = "qty readonly" })</td>
+                                        </tr>
+                                    </tbody>
                                     }
                             </table>
 
@@ -56,3 +59,15 @@
     </div><!-- col-6 -->
 
 </div>
+<script type="text/javascript">
+    function DoPostBack() {
+        var select = document.getElementById("Id");
+        var option = select.options[select.selectedIndex];
+        if (option.value != "") {
+            var Table = document.getElementById("tblUserEdit");
+            Table.innerHTML = "";
+            document.forms[1].action = "/Account/AssignUserRole";
+            document.forms[1].submit();
+        }
+    }
+</script>
