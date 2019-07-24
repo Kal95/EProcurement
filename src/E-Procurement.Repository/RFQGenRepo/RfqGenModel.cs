@@ -32,6 +32,11 @@ namespace E_Procurement.WebUI.Models.RFQModel
         //public List<string> VendorName { get; set; }
         public List<ReportModel> Report { get; set; }
         public string VendorName { get; set; }
+        public string VendorAddress { get; set; }
+        public string VendorStatus { get; set; }
+        public string ContactName { get; set; }
+        public string VendorEmail { get; set; }
+        public string PhoneNumber { get; set; }
 
         [Required(ErrorMessage = "You must select at least one Vendor")]
         public List<int> SelectedVendors { get; set; }

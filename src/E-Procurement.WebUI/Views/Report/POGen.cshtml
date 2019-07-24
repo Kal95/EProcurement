@@ -60,7 +60,7 @@
                         <th class="wd-5p">S/N</th>
 
                         <th class="wd-10p">Reference</th>
-                        <th class="wd-15p">Description</th>
+                        <th class="wd-15p">Item(s)</th>
                         <th class="wd-15p">PO Number</th>
                         <th class="wd-15p">Total Amount</th>
                         <th class="wd-10p">Expected Delivery Date</th>
@@ -84,7 +84,7 @@
                         <tr>
                             <td>@(i = i + 1)</td>
 
-                            <td> <a href="@Url.Action("PoDetails", "Report", new {RfqId = item.RfqId })">@item.Reference</a></td>
+                            <td> <a href="@Url.Action("PoDetails", "Report", new {RfqId = item.RfqId, VendorId = item.VendorId })">@item.Reference</a></td>
                             <td>@item.Description</td>
                             <td>@item.PONumber</td>
                             <td>@item.TotalAmount</td>

@@ -138,7 +138,9 @@ namespace E_Procurement.Repository.ReportRepo
                              StartDate = rfq.StartDate,
                              EndDate = rfq.EndDate,
                              RFQStatus = rfq.RFQStatus,
+                             CreatedDate = rfq.DateCreated,
                              VendorName = vendList.Where(u => u.VendorId == rfqDetails.VendorId && u.RfqId == rfqDetails.RFQId).Select(u => u.VendorName).FirstOrDefault(),
+                             VendorId = vendList.Where(u => u.VendorId == rfqDetails.VendorId && u.RfqId == rfqDetails.RFQId).Select(u => u.VendorId).FirstOrDefault(),
                              //VendorAddress = vend.VendorAddress,
                              //VendorStatus = vend.VendorStatus,
                              //ContactName = vend.ContactName
@@ -154,20 +156,48 @@ namespace E_Procurement.Repository.ReportRepo
 
         public List<RFQGenerationModel> GetPoGen()
         {
+            var ven = _context.Vendors.ToList();
+
+            var des = _context.RfqDetails.ToList();
+
+            var desList = des.Select(x => new RfqGenModel
+            {
+                RfqId = x.RFQId,
+                VendorId = x.VendorId,
+                //VendorName = x.VendorName,
+                ItemName = x.ItemName
+            }).GroupBy(v => new { v.RfqId, v.ItemName }).Select(s => s.FirstOrDefault());
+
+
+            var vendList = (from d in des
+                            join v in ven on d.VendorId equals v.Id
+                            select new RfqGenModel()
+                            {
+                                VendorId = v.Id,
+                                RfqId = d.RFQId,
+                                VendorName = v.VendorName,
+                                VendorAddress = v.VendorAddress,
+                                VendorEmail = v.Email,
+                                ContactName = v.ContactName,
+                                VendorStatus = v.VendorStatus,
+                                PhoneNumber = v.PhoneNumber
+                            }).GroupBy(v => new { v.RfqId, v.VendorName }).Select(s => s.FirstOrDefault());
+
             //List<RFQGenerationModel> RfqGen = new List<RFQGenerationModel>();
             var query = (from po in _context.PoGenerations
-                               join vend in _context.Vendors on po.VendorId equals vend.Id
-                               join rfqDetails in _context.RfqDetails on vend.Id equals rfqDetails.VendorId
-                               join transaction in _context.RfqApprovalTransactions on rfqDetails.VendorId equals transaction.Id
-                               join approvalStatus in _context.RfqApprovalStatuses on transaction.RFQId equals approvalStatus.RFQId
-                               join config in _context.RfqApprovalConfigs on approvalStatus.CurrentApprovalLevel equals config.ApprovalLevel
-                               join rfq in _context.RfqGenerations on approvalStatus.RFQId equals rfq.Id
-                              // join po in _context.POGenerations on rfq.Id equals  po.RFQId
-                               //where approvalStatus.CurrentApprovalLevel == config.ApprovalLevel && config.IsFinalLevel == true
-                               //&& !(from po in _context.PoGenerations select po.RFQId).Contains(rfq.Id)
-                               //orderby rfq.Id, rfq.EndDate descending
-                               select new RFQGenerationModel()
-                               {
+                         join rfqDetails in _context.RfqDetails on po.RFQId equals rfqDetails.RFQId
+                         //join vend in _context.Vendors on po.VendorId equals vend.Id
+                         //join rfqDetails in _context.RfqDetails on vend.Id equals rfqDetails.VendorId
+                         //join transaction in _context.RfqApprovalTransactions on rfqDetails.VendorId equals transaction.VendorId
+                         //join approvalStatus in _context.RfqApprovalStatuses on transaction.RFQId equals approvalStatus.RFQId
+                         //join config in _context.RfqApprovalConfigs on approvalStatus.CurrentApprovalLevel equals config.ApprovalLevel
+                         join rfq in _context.RfqGenerations on rfqDetails.RFQId equals rfq.Id
+                         // join po in _context.POGenerations on rfq.Id equals  po.RFQId
+                         //where approvalStatus.CurrentApprovalLevel == config.ApprovalLevel && config.IsFinalLevel == true
+                         //&& !(from po in _context.PoGenerations select po.RFQId).Contains(rfq.Id)
+                         orderby po.Id descending
+                         select new RFQGenerationModel()
+                          {
                                    PONumber = po.PONumber,
                                    ExpectedDeliveryDate = po.ExpectedDeliveryDate,
                                    QuotedAmount = rfqDetails.QuotedAmount,
@@ -176,20 +206,25 @@ namespace E_Procurement.Repository.ReportRepo
                                    ProjectId = rfq.ProjectId,
                                    RequisitionId = rfq.RequisitionId,
                                    Reference = rfq.Reference,
-                                   Description = rfq.Description,
                                    StartDate = rfq.StartDate,
                                    EndDate = rfq.EndDate,
                                    CreatedDate = po.DateCreated,
                                    RFQStatus = rfq.RFQStatus,
-                                   VendorId = vend.Id,
-                                   VendorName = vend.VendorName,
-                                   VendorEmail = vend.Email,
-                                   PhoneNumber = vend.PhoneNumber,
-                                   VendorAddress = vend.VendorAddress,
-                                   VendorStatus = vend.VendorStatus,
-                                   ContactName = vend.ContactName
-                               });
-           
+                                   VendorId = vendList.Where(u => u.VendorId == rfqDetails.VendorId && u.RfqId == rfqDetails.RFQId).Select(u => u.VendorId).FirstOrDefault(),
+                                   
+                                   VendorEmail = vendList.Where(u => u.VendorId == rfqDetails.VendorId && u.RfqId == rfqDetails.RFQId).Select(u => u.VendorEmail).FirstOrDefault(),
+                                   PhoneNumber = vendList.Where(u => u.VendorId == rfqDetails.VendorId && u.RfqId == rfqDetails.RFQId).Select(u => u.PhoneNumber).FirstOrDefault(),
+                                   VendorAddress = vendList.Where(u => u.VendorId == rfqDetails.VendorId && u.RfqId == rfqDetails.RFQId).Select(u => u.VendorAddress).FirstOrDefault(),
+                                   VendorStatus = vendList.Where(u => u.VendorId == rfqDetails.VendorId && u.RfqId == rfqDetails.RFQId).Select(u => u.VendorStatus).FirstOrDefault(),
+                                   ContactName = vendList.Where(u => u.VendorId == rfqDetails.VendorId && u.RfqId == rfqDetails.RFQId).Select(u => u.ContactName).FirstOrDefault(),
+                                   Description = string.Join(", ", desList.Where(u => u.RfqId == po.RFQId).Select(u => u.ItemName)),
+                             
+                                   VendorName = vendList.Where(u => u.VendorId == rfqDetails.VendorId && u.RfqId == rfqDetails.RFQId).Select(u => u.VendorName).FirstOrDefault(),
+                             //VendorAddress = vend.VendorAddress,
+                             //VendorStatus = vend.VendorStatus,
+                             //ContactName = vend.ContactName
+                         }).GroupBy(v => new { v.RFQId, v.VendorName }).Select(s => s.FirstOrDefault()).ToList();
+
 
 
 

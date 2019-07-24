@@ -56,6 +56,7 @@
                     <thead>
                         <tr>
                             <td>s/n </td>
+                            <td>Item </td>
                             <td class="col-sm-4">Description </td>
                             <td> Qty</td>
                             <td>Unit Price ₦ </td>
@@ -73,13 +74,14 @@
                         }
                         @foreach (var approvalConfig in RFQDetails)
                         {
-                            <tr>
-                                <td>@(i = i + 1)</td>
-                                <td>@approvalConfig.ItemName</td>
-                                <td>@approvalConfig.QuotedQuantity</td>
-                                <td align="right">@approvalConfig.QuotedAmount</td>
-                                <td align="right">@approvalConfig.QuotedAmount</td>
-                            </tr>
+                        <tr>
+                            <td>@(i = i + 1)</td>
+                            <td>@approvalConfig.ItemName</td>
+                            <td>@approvalConfig.Description</td>
+                            <td>@approvalConfig.QuotedQuantity</td>
+                            <td align="right">@approvalConfig.QuotedAmount</td>
+                            <td align="right">@approvalConfig.QuotedAmount</td>
+                        </tr>
                         }
 
 

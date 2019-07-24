@@ -105,6 +105,7 @@ namespace E_Procurement.WebUI.Controllers
                 var RfqList = _reportRepository.GetRfqGen().OrderBy(u => u.EndDate).ToList();
                 var listModel = RfqList.Select(x => new ReportModel
                 {
+                    VendorId = x.VendorId,
                     RfqId = x.RFQId,
                     Reference = x.Reference,
                     Description = x.Description,
@@ -125,6 +126,7 @@ namespace E_Procurement.WebUI.Controllers
                 var RfqList = _reportRepository.GetRfqGen().Where(u => (Convert.ToDateTime(u.StartDate) >= Convert.ToDateTime(Model.StartDate)) && (Convert.ToDateTime(u.EndDate) <= Convert.ToDateTime(Model.EndDate))).OrderBy(u => u.EndDate).ToList();
                 var listModel = RfqList.Select(x => new ReportModel
                 {
+                    VendorId = x.VendorId,
                     RfqId = x.RFQId,
                     Reference = x.Reference,
                     Description = x.Description,
@@ -152,6 +154,8 @@ namespace E_Procurement.WebUI.Controllers
                 //var RfqList = _rfqGenRepository.GetRfqGen().OrderBy(u => u.EndDate).ToList();
                 var listModel = PO.Select(x => new ReportModel
                 {
+                    VendorId = x.VendorId,
+                    CreatedDate = x.CreatedDate,
                     RfqId = x.RFQId,
                     PoId = x.PoId,
                     Reference = x.Reference,
@@ -182,6 +186,7 @@ namespace E_Procurement.WebUI.Controllers
                 var POList = _reportRepository.GetPoGen().Where(u => (Convert.ToDateTime(u.CreatedDate) >= Convert.ToDateTime(Model.StartDate)) && (Convert.ToDateTime(u.CreatedDate) <= Convert.ToDateTime(Model.EndDate))).OrderBy(u => u.EndDate).ToList();
                 var listModel = POList.Select(x => new ReportModel
                 {
+                    VendorId = x.VendorId,
                     CreatedDate = x.CreatedDate,
                     RfqId = x.RFQId,
                     Reference = x.Reference,
@@ -258,7 +263,7 @@ namespace E_Procurement.WebUI.Controllers
         }
         public ActionResult PoDetails (ReportModel Model)
         {
-            var RFQ = _reportRepository.GetRFQDetails().Where(u => u.RFQId == Model.RfqId).FirstOrDefault();
+            var RFQ = _reportRepository.GetRFQDetails().Where(u => u.RFQId == Model.RfqId && u.VendorId == Model.VendorId).FirstOrDefault();
             var vendor = _reportRepository.GetVendors().Where(u => u.Id == RFQ.VendorId).FirstOrDefault();
             var PO = _reportRepository.GetPoGen().Where(u => u.RFQId == Model.RfqId).FirstOrDefault();
 
@@ -272,7 +277,7 @@ namespace E_Procurement.WebUI.Controllers
             
 
             List<RFQDetailsModel> poModel = new List<RFQDetailsModel>();
-            var POList = _reportRepository.GetRFQDetails().Where(u => u.RFQId == Model.RfqId).ToList();
+            var POList = _reportRepository.GetRFQDetails().Where(u => u.RFQId == Model.RfqId && u.VendorId == vendor.Id).ToList();
             model2.TotalAmount = POList.Sum(x => x.QuotedAmount);
             var listModel = POList.Select(x => new RFQDetailsModel
             {
@@ -280,6 +285,7 @@ namespace E_Procurement.WebUI.Controllers
                 VendorId = x.VendorId,
                 ItemId = x.ItemId,
                 ItemName = x.ItemName,
+                Description = x.ItemDescription,
                 QuotedQuantity = x.QuotedQuantity,
                 AgreedQuantity = x.AgreedQuantity,
                 QuotedAmount = x.QuotedAmount,
@@ -295,8 +301,8 @@ namespace E_Procurement.WebUI.Controllers
         }
         public ActionResult RfqDetails(ReportModel Model)
         {
-            //var RFQ = _reportRepository.GetRFQDetails().Where(u => u.RFQId == Model.RfqId).FirstOrDefault();
-            var vendor = _reportRepository.GetVendors().Where(a => _reportRepository.GetRFQDetails().Any(b => b.VendorId == a.Id && b.RFQId == Model.RfqId)).FirstOrDefault();
+            var RFQ = _reportRepository.GetRFQDetails().Where(u => u.RFQId == Model.RfqId && u.VendorId == Model.VendorId).FirstOrDefault();
+            var vendor = _reportRepository.GetVendors().Where(u => u.Id == RFQ.VendorId).FirstOrDefault();
             //var vendor = _reportRepository.GetVendors().Where(u => u.Id == RFQ.VendorId).FirstOrDefault();
             var rfq = _reportRepository.GetRfqGen().Where(u => u.RFQId == Model.RfqId).FirstOrDefault();
 
@@ -310,7 +316,7 @@ namespace E_Procurement.WebUI.Controllers
 
 
             List<RFQDetailsModel> rfqModel = new List<RFQDetailsModel>();
-            var RFQList = _reportRepository.GetRFQDetails().Where(u => u.RFQId == Model.RfqId).ToList();
+            var RFQList = _reportRepository.GetRFQDetails().Where(u => u.RFQId == Model.RfqId && u.VendorId == vendor.Id).ToList();
             model2.TotalAmount = RFQList.Sum(x => x.QuotedAmount);
             var listModel = RFQList.Select(x => new RFQDetailsModel
             {
