@@ -9,10 +9,11 @@ using E_Procurement.Repository.PermissionRepo;
 using E_Procurement.WebUI.Models.PermissionModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using static E_Procurement.WebUI.Enums.Enums;
 
 namespace E_Procurement.WebUI.Controllers
 {
-    public class PermissionController : Controller
+    public class PermissionController :  BaseController
     {
         private readonly IPermissionRepository _permissionRepository;
         private readonly IMapper _mapper;
@@ -33,6 +34,10 @@ namespace E_Procurement.WebUI.Controllers
             return View(permissions);
         }
 
+    
+
+
+
         public IActionResult CreatePermission()
         {
             return View();
@@ -50,9 +55,12 @@ namespace E_Procurement.WebUI.Controllers
 
                 if (result)
                 {
-                    //await _userManager.AddToRoleAsync(user, registerViewModel.UserRoles);
-
+                    Alert("Permission created successfully.", NotificationType.success);
                     return RedirectToAction("Index");
+                }
+                else
+                {
+                    Alert("SomeProblems were encountered while trying to perform operation. <br> Please try again.", NotificationType.error);
                 }
 
 
@@ -67,6 +75,11 @@ namespace E_Procurement.WebUI.Controllers
                 var permission = await _permissionRepository.GetPermissionByIdAsync(Id);
 
                 PermissionViewModel per = _mapper.Map<PermissionViewModel>(permission);
+                if(permission == null)
+                {
+                   Alert("Invalid Permission selected.", NotificationType.error);
+                   return RedirectToAction("Index");
+                }
                 return View(per);
             }
             catch (Exception ex)
@@ -90,9 +103,15 @@ namespace E_Procurement.WebUI.Controllers
                 
                 var result = await _permissionRepository.UpdatePermissionAsync(getPermission);
 
+              
                 if (result)
                 {
+                    Alert("Permission updated successfully.", NotificationType.success);
                     return RedirectToAction("Index");
+                }
+                else
+                {
+                    Alert("SomeProblems were encountered while trying to perform operation. Please try again.", NotificationType.error);
                 }
             }
             return View(permission);
@@ -103,10 +122,15 @@ namespace E_Procurement.WebUI.Controllers
           
                 var result = await _permissionRepository.DeletePermissionAsync(Id);
 
-                if (result)
-                {
-                    return RedirectToAction("Index");
-                }
+            if (result)
+            {
+                Alert("Permission deleted successfully.", NotificationType.success);
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                Alert("SomeProblems were encountered while trying to perform operation.  Please try again.", NotificationType.error);
+            }
 
             return View("Index");
         }
@@ -128,14 +152,13 @@ namespace E_Procurement.WebUI.Controllers
                 }).ToList();
 
                 List<RolePermissionViewModel> PermissionList = new List<RolePermissionViewModel>();
-                foreach (var item in permissions)
-                {
-                    PermissionList.Add(new RolePermissionViewModel { PermissionName = item.Name, PermissionId=item.Id});
-                }
+                //foreach (var item in permissions)
+                //{
+                //    PermissionList.Add(new RolePermissionViewModel { PermissionName = item.Name, PermissionId = item.Id });
+                //}
 
                 ViewBag.roles = rolesList;
                 ViewBag.permission = PermissionList;
-
                 return View();
             }
             catch (Exception ex)
@@ -144,43 +167,112 @@ namespace E_Procurement.WebUI.Controllers
             }
 
         }
+
         [HttpPost]
-        public async Task<IActionResult> AssignRolePermissions(string RoleId, List<RolePermissionViewModel> RolePermission)
+        public async Task<IActionResult> CreateRolePermissions(string RoleId, List<RolePermissionViewModel> RolePermission)
         {
 
-            if (ModelState.IsValid)
+            try
             {
-                List<RolePermissionViewModel> rolesPermission = new List<RolePermissionViewModel>();
-                if (RolePermission != null)
+                if (ModelState.IsValid)
                 {
-                    rolesPermission = RolePermission.Where(x => x.SelectedPermission == true).ToList();
+
+                    List<RolePermissionViewModel> rolesPermission = new List<RolePermissionViewModel>();
+                    if (RolePermission != null)
+                    {
+                        rolesPermission = RolePermission.Where(x => x.SelectedPermission == true).ToList();
+                    }
+
+                    List<int> selectecPermission = new List<int>();
+
+                    foreach (var role in rolesPermission)
+                    {
+                        selectecPermission.Add(role.PermissionId);
+                    }
+
+
+                    var result = await _permissionRepository.AssignRolePermissionAsync(int.Parse(RoleId), selectecPermission);
+                    
+
+                    if (result)
+                    {
+                        Alert("Permission assigned successfully.", NotificationType.success);
+                        return RedirectToAction("Index");
+                    }
+                    else
+                    {
+                        Alert("SomeProblems were encountered while trying to perform operation.  Please try again.", NotificationType.error);
+                    }
                 }
-                //else
-                //{
-                //    roles.Add(new UserRoleViewModel { SelectedRole = true, Role = "Enroller" });
-                //}
 
-                List<int> selectecPermission = new List<int>();
-
-                foreach (var role in rolesPermission)
-                {
-                    selectecPermission.Add(role.PermissionId);
-                }
-
-
-                var result = await _permissionRepository.AssignRolePermissionAsync(int.Parse(RoleId), selectecPermission);
-
-                if (result)
-                {
-                    //await _userManager.AddToRoleAsync(user, registerViewModel.UserRoles);
-
-                    return RedirectToAction("Permission");
-                }
-
-
-
+            }
+            catch (Exception ex)
+            {
+                throw ex;
             }
             return View();
         }
+        [HttpPost]
+        public async Task<IActionResult> AssignRolePermissions(string RoleId, List<RolePermissionViewModel> RolePermission)
+        {
+           
+            try
+            {
+                if (string.IsNullOrEmpty(RoleId))
+                {
+                    Alert("Please select Role.", NotificationType.warning);
+                    return View();
+                }
+
+                    if (!string.IsNullOrEmpty(RoleId))
+                {
+                    var permissions = await _permissionRepository.GetPermissionAsync();
+                    var roles = await _accountManager.GetRoles();
+
+                    var currentPermissions = await _permissionRepository.GetPermissionByRoleIdAsync(Convert.ToInt16(RoleId));
+
+
+                    var rolesList = roles.Select(a => new SelectListItem()
+                    {
+                        Value = a.Id.ToString(),
+                        Text = a.Name
+                    }).ToList();
+
+                    List<RolePermissionViewModel> PermissionList = new List<RolePermissionViewModel>();
+                    foreach (var item in permissions)
+                    {
+                        var isPermissionAssigned = currentPermissions.Any(x=> x.PermissionName.Contains(item.Name));
+                        if (isPermissionAssigned)
+                        {
+                            PermissionList.Add(new RolePermissionViewModel { SelectedPermission = true, PermissionName = item.Name, PermissionId = item.Id });
+                        }
+                        else
+                        {
+                            PermissionList.Add(new RolePermissionViewModel { PermissionName = item.Name, PermissionId = item.Id });
+                        }
+                    }
+
+                    ViewBag.roles = rolesList;
+                    ViewBag.permission = PermissionList;
+
+                    return View();
+                }
+
+
+               
+                
+            }
+            catch (Exception ex)
+            {
+                Alert("SomeProblems were encountered while trying to perform operation.  Please try again.", NotificationType.error);
+            }
+            return View();
+        }
+        public ActionResult AccessDenied()
+        {
+            return View();
+        }
+
+
     }
 }

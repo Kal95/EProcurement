@@ -29,15 +29,15 @@ namespace E_Procurement.Repository.Dtos
             public decimal TotalAmount { get; set; }
             public DateTime ApprovedDate { get; set; }
             public DateTime ExpectedDeliveryDate { get; set; }
-        public DateTime CreatedDate { get; set; }
-        public decimal QuotedAmount { get; set; }
-        public string PhoneNumber { get; set; }
-        public int QuotedQuantity { get; set; }
-        public bool IsActive { get; set; }
+            public DateTime CreatedDate { get; set; }
+            public decimal QuotedAmount { get; set; }
+            public string PhoneNumber { get; set; }
+            public int QuotedQuantity { get; set; }
+            public bool IsActive { get; set; }
 
-        // section for INVOICE
-        public IFormFile InvoiceFilePath { get; set; }
-        public string DnFilePath { get; set; }
+            // section for INVOICE
+            public IFormFile InvoiceFilePath { get; set; }
+            public string DnFilePath { get; set; }
             public byte DnFileBlob { get; set; }
             public string DnRecievedBy { get; set; }
             public DateTime DnUploadedDate { get; set; }

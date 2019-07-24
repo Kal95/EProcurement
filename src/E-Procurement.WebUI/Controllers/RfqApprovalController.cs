@@ -11,10 +11,11 @@ using E_Procurement.WebUI.Models.RfqApprovalModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using static E_Procurement.WebUI.Enums.Enums;
 
 namespace E_Procurement.WebUI.Controllers
 {
-    public class RfqApprovalController : Controller
+    public class RfqApprovalController : BaseController
     {
         private readonly IRfqApprovalRepository _RfqApprovalRepository;
         private readonly IMapper _mapper;
@@ -64,7 +65,11 @@ namespace E_Procurement.WebUI.Controllers
 
             //RfqApproval.RFQDetails = rqfDetails;
             if (RfqApprovalDetails == null)
+            {
+                Alert("Could not load approval details. Please, try again later.", NotificationType.error);
                 return View();
+            }
+                
 
             return View(RfqApprovalDetails);
         }
@@ -89,18 +94,33 @@ namespace E_Procurement.WebUI.Controllers
                 if (string.IsNullOrEmpty(rfqApproval.RFQStatus))
                 {
                     var approval = await _RfqApprovalRepository.CreateRFQApprovalAsync(rfqApproval);
-                    return RedirectToAction("Index");
+                    if (approval)
+                    {
+
+                        Alert("RFQ Approval sent.", NotificationType.success);
+                        return RedirectToAction("Index");
+                    }
+                    Alert("RFQ Approval Error.", NotificationType.error);
+                    return View();
                 }
                 else
                 {
 
                     var approval = await _RfqApprovalRepository.CreateRFQPendingApprovalAsync(rfqApproval);
-                    return RedirectToAction("PendingApproval");
+                    if (approval)
+                    {
+
+                        Alert("RFQ Approval sent.", NotificationType.success);
+                        return RedirectToAction("PendingApproval");
+                    }
+                    Alert("RFQ Approval Error.", NotificationType.error);
+                    return View();
                 }
 
             }
             catch(Exception ex)
             {
+                Alert("An error encountered. Please try again later.", NotificationType.error);
                 return View();
             }
 

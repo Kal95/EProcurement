@@ -47,7 +47,8 @@ namespace E_Procurement.Repository.RfqApprovalConfigRepository
                     {
                         ApprovalLevel = rfqLevel.ApprovalLevel,
                         RFQId = rFQApproval.RFQId,
-                        VendorId = rFQApproval.VendorId
+                        VendorId = rFQApproval.VendorId,
+                        Comments = rFQApproval.Comments
                     };
 
                     await _context.AddAsync(rfqTransaction);
@@ -119,6 +120,7 @@ namespace E_Procurement.Repository.RfqApprovalConfigRepository
                         VendorId = rFQApproval.VendorId,
                         ApprovalLevel = rfqLevel.ApprovalLevel,
                         ApprovedBy = currentUser,
+                        Comments = rFQApproval.Comments
                     };
 
                     approvalEmail = rfqLevel.Email;
@@ -275,7 +277,7 @@ namespace E_Procurement.Repository.RfqApprovalConfigRepository
 
             var query = await (from vend in _context.Vendors
                                join rfqDetails in _context.RfqDetails on vend.Id  equals rfqDetails.VendorId
-                               join transaction in _context.RfqApprovalTransactions on rfqDetails.VendorId equals transaction.Id
+                               join transaction in _context.RfqApprovalTransactions on rfqDetails.VendorId equals transaction.VendorId
                                join approvalStatus in _context.RfqApprovalStatuses on transaction.RFQId equals approvalStatus.RFQId
                                join config in _context.RfqApprovalConfigs on approvalStatus.CurrentApprovalLevel equals config.ApprovalLevel
                                join rfq in _context.RfqGenerations on approvalStatus.RFQId equals rfq.Id

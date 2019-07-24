@@ -7,16 +7,21 @@ using System.Threading.Tasks;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using E_Procurement.Repository.Dtos;
+using Microsoft.AspNetCore.Identity;
+using E_Procurement.Repository.AccountRepo;
 
 namespace E_Procurement.Repository.PermissionRepo
 {
    public class PermissionRepository : IPermissionRepository
     {
         private readonly EProcurementContext _context;
+        private readonly IAccountManager _accountManager;
 
-        public PermissionRepository(EProcurementContext context)
+        public PermissionRepository(EProcurementContext context,
+                                IAccountManager accountManager )
         {
             _context = context;
+            _accountManager = accountManager;
         }
 
         public async Task<bool> CreatePermissionAsync(Permission permission)
@@ -56,7 +61,7 @@ namespace E_Procurement.Repository.PermissionRepo
 
         public async Task<bool> DeletePermissionAsync(int Id)
         {
-            var permission = _context.Permissions.FindAsync(Id);
+            var permission = await _context.Permissions.Where(x=>x.Id==Id).FirstAsync();
             if (permission != null)
             {
                  _context.Remove(permission);
@@ -73,6 +78,11 @@ namespace E_Procurement.Repository.PermissionRepo
           
             try
             {
+                var currentper = _context.PermissionRoles.Where(x => x.RoleId == Id);
+                if(currentper.Count() > 0)
+                {
+                    _context.PermissionRoles.RemoveRange(currentper);
+                }
                 List<PermissionRole> rolePermissions = new List<PermissionRole>();
 
                 foreach (var model in permission)
@@ -118,5 +128,24 @@ namespace E_Procurement.Repository.PermissionRepo
                 return rolePermission;
            
         }
+        public async Task<IEnumerable<RolePermissionsModel>> GetPermissionByRoleIdAsync(int RoleId)
+        {
+
+            var rolePermission = await _context.Permissions
+                            .Join(
+                                _context.PermissionRoles,
+                                per => per.Id,
+                                roles => roles.PermissionId,
+                                (p, proles) => new RolePermissionsModel
+                                {
+                                    PermissionName = p.Name,
+                                    RoleId = proles.RoleId
+                                }
+                            ).Where(x => RoleId==x.RoleId).Distinct().ToListAsync();
+            return rolePermission;
+
+        }
+
+
     }
 }

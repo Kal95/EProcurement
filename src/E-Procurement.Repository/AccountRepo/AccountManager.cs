@@ -76,7 +76,7 @@ namespace E_Procurement.Repository.AccountRepo
                 .SingleOrDefaultAsync();
 
             if (user == null)
-                return (null,null);
+                return (null, null);
 
             var userRoleIds = user.Roles.Select(r => r.RoleId).ToList();
 
@@ -85,11 +85,14 @@ namespace E_Procurement.Repository.AccountRepo
                 .Select(r => r.Name)
                 .ToArrayAsync();
 
+
+
             return (user, roles);
         }
 
 
-        public async Task<List<(User User, string[] )>> GetUsersAndRolesAsync()
+
+        public async Task<List<(User User, string[])>> GetUsersAndRolesAsync()
         {
             IQueryable<User> usersQuery = _context.Users
                 .Include(u => u.Roles)
@@ -114,8 +117,6 @@ namespace E_Procurement.Repository.AccountRepo
                 .ToList();
         }
 
-    
-   
 
         public async Task<(bool Succeeded, string[] Error)> CreatePasswordlessUserAsync(User user, IEnumerable<string> roles)
         {
@@ -144,11 +145,30 @@ namespace E_Procurement.Repository.AccountRepo
 
             return (true, new string[] { });
         }
-        public async Task<bool> CreateUserAsync(User user, string password)
+        public async Task<bool> CreateUserAsync(User user, string password, string Role)
         {
             var result = await _userManager.CreateAsync(user, password);
             if (!result.Succeeded)
                 return (false);
+            
+            if (!result.Succeeded)
+            {
+                await DeleteUserAsync(user);
+                return false;
+            }
+
+
+            user = await _userManager.FindByEmailAsync(user.Email);
+
+            try
+            {
+                result = await _userManager.AddToRoleAsync(user, Role.ToUpper());
+            }
+            catch
+            {
+                await DeleteUserAsync(user);
+                throw;
+            }
             
             if (!result.Succeeded)
             {
@@ -253,12 +273,7 @@ namespace E_Procurement.Repository.AccountRepo
             var result = await _userManager.DeleteAsync(user);
             return (result.Succeeded, result.Errors.Select(e => e.Description).ToArray());
         }
-
-
-
-
-
-
+        
         public async Task<Role> GetRoleByIdAsync(long roleId)
         {
             return await _roleManager.FindByIdAsync(roleId.ToString());
@@ -328,7 +343,23 @@ namespace E_Procurement.Repository.AccountRepo
             var user = await _userManager.FindByIdAsync(Id);
             if (user == null)
                 return false;
-           
+
+
+            // remove user from all roles
+            var allroles = await GetRoles();
+            //List<string> selectecRoles = new List<string>();
+
+            foreach (var role in allroles)
+            {
+                var isUserinRole = await _userManager.IsInRoleAsync(user, role.Name);
+                if (isUserinRole)
+                {
+                    await _userManager.RemoveFromRoleAsync(user, role.Name);
+                }
+            }
+            //var removeRoles = await _userManager.RemoveFromRolesAsync(user, allroles.Select(r => r.Name).ToArray());
+            //if (!removeRoles.Succeeded)
+            //    return false;
 
             var addRoleResult = await _userManager.AddToRolesAsync(user, roles.ToArray<string>());
             

@@ -19,29 +19,29 @@
                 <div class="row mg-t-20">
                     <label class="col-sm-2 form-control-label">Last name: <span class="tx-danger">*</span></label>
                     <div class="col-sm-4 mg-t-10 mg-sm-t-0">
-                        <input asp-for="LastName" type="text" class="form-control" placeholder="Enter lastname">
+                        <input asp-for="LastName" type="text" class="form-control" placeholder="Enter lastname" required>
                     </div>
                 </div>
                 <div class="row mg-t-20">
                     <label class="col-sm-2 form-control-label">User name: <span class="tx-danger">*</span></label>
                     <div class="col-sm-4 mg-t-10 mg-sm-t-0">
-                        <input asp-for="Username" type="text" class="form-control" placeholder="Enter department">
+                        <input asp-for="Username" type="text" class="form-control" placeholder="Enter department" required>
                     </div>
                 </div>
                 <div class="row mg-t-20">
                     <label class="col-sm-2 form-control-label">Email: <span class="tx-danger">*</span></label>
                     <div class="col-sm-4 mg-t-10 mg-sm-t-0">
-                        <input asp-for="Email" type="text" class="form-control" placeholder="Enter email address">
+                        <input asp-for="Email" type="text" class="form-control" placeholder="Enter email address" required>
                     </div>
                 </div>
                 <div class="row mg-t-20">
-                    <label class="col-sm-2 form-control-label">Department: <span class="tx-danger">*</span></label>
+                    <label class="col-sm-2 form-control-label">Department:</label>
                     <div class="col-sm-4 mg-t-10 mg-sm-t-0">
                         <input asp-for="Department" type="text" class="form-control" placeholder="Enter department">
                     </div>
                 </div>
                 <div class="row mg-t-20">
-                    <label class="col-sm-2 form-control-label">Unit: <span class="tx-danger">*</span></label>
+                    <label class="col-sm-2 form-control-label">Unit:</label>
                     <div class="col-sm-4 mg-t-10 mg-sm-t-0">
                         <input asp-for="Unit" type="text" class="form-control" placeholder="Enter unit">
                     </div>
@@ -49,16 +49,24 @@
                 <div class="row mg-t-20">
                     <label class="col-sm-2 form-control-label">Password: <span class="tx-danger">*</span></label>
                     <div class="col-sm-4 mg-t-10 mg-sm-t-0">
-                        <input asp-for="Password" class="form-control" type="password" placeholder="Enter Password">
+                        <input asp-for="Password" class="form-control" type="password" placeholder="Enter Password" required>
                     </div>
                 </div>
                 <div class="row mg-t-20">
                     <label class="col-sm-2 form-control-label">Confirm Password: <span class="tx-danger">*</span></label>
                     <div class="col-sm-4 mg-t-10 mg-sm-t-0">
-                        <input asp-for="ConfirmPassword" class="form-control" type="password" placeholder="Confirm Password">
+                        <input asp-for="ConfirmPassword" class="form-control" type="password" placeholder="Confirm Password" required>
                     </div>
                 </div>
-
+                <div class="row  mg-t-20">
+                    <label class="col-sm-2 form-control-label">Role : <span class="tx-danger">*</span></label>
+                    <div class="col-sm-4 mg-t-10 mg-sm-t-0">
+                        <select asp-for="Role" asp-items="@ViewBag.roles"
+                                class="form-control custom-select" required>
+                            <option value="">Please select one</option>
+                        </select>
+                    </div>
+                </div>
                 <div class="form-layout-footer mg-t-30">
                     <button class="btn btn-info mg-r-5">Submit Form</button>
                     <button class="btn btn-secondary">Cancel</button>

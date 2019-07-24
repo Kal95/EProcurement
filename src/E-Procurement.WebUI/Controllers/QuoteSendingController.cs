@@ -8,10 +8,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using static E_Procurement.WebUI.Enums.Enums;
 
 namespace E_Procurement.WebUI.Controllers
 {
-    public class QuoteSendingController : Controller
+    public class QuoteSendingController : BaseController
     {
         private readonly IQuoteSendingRepository _quoteSendingRepository;
         private readonly IMapper _mapper;
@@ -75,49 +76,33 @@ namespace E_Procurement.WebUI.Controllers
 
                     //foreach (var Id in RFQId)
                     //{
-                        var quote = _quoteSendingRepository.GetRfqDetails().Where(u => u.Id == DetailsId[0]).FirstOrDefault();
+                    var quote = _quoteSendingRepository.GetRfqDetails().Where(u => u.Id == DetailsId[0]).FirstOrDefault();
 
-                        if (quote == null) { return RedirectToAction("Index", "QuoteSending"); }
+                    if (quote == null) {
+                        Alert("Invalid QUOTE details.", NotificationType.error);
+                        return RedirectToAction("Index", "QuoteSending");
+                    }
 
-                        var status = _quoteSendingRepository.UpdateQuote(DetailsId, agreedAmount, out message);
+                    var status = _quoteSendingRepository.UpdateQuote(DetailsId, agreedAmount, out message);
 
-                        //for (int i = 0; i < agreedAmount.Length; i++)
-                        //{
-                        //    var status = _quoteSendingRepository.UpdateQuote(Id, agreedAmount[], out message);
-
-                        //    ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
-
-                        //    if (status == true)
-                        //    {
-
-                        //        ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
-                        //    }
-
-                        //    else
-                        //    {
-                        //        ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
-                        //        return View();
-                        //    }
-
-                           
-                        //}
-
-                       
-
-
-                    //}
-                    return RedirectToAction("Index", "QuoteSending");
-
-
-                    //string UserId = User.Identity.Name;
+                    if(status)
+                    {
+                        Alert("Quote updated successfully.", NotificationType.success);
+                        return RedirectToAction("Index", "QuoteSending");
+                    }
+                    else
+                    {
+                        Alert("Quote updated successfully.", NotificationType.error);
+                        return View();
+                    }
+              
 
 
                 }
                 else
                 {
-                    ViewBag.StatusCode = 2;
-
-                    ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
+                  
+                        Alert("Error!! Please try again later.", NotificationType.error);
 
                     return View();
                 }

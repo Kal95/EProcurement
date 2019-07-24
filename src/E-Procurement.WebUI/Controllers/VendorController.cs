@@ -12,12 +12,15 @@ using E_Procurement.Repository.CountryRepo;
 using E_Procurement.Repository.StateRepo;
 using E_Procurement.Repository.VendorCategoryRepo;
 using E_Procurement.Repository.VendoRepo;
+using E_Procurement.WebUI.Filters;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace E_Procurement.WebUI.Controllers
 {
+    [Authorize]
     public class VendorController : Controller
     {
         private readonly IVendorRepository _vendorRepository;
@@ -203,6 +206,7 @@ namespace E_Procurement.WebUI.Controllers
 
 
         // GET: Vendor/Create
+        [PermissionValidation("can_create_vendor")]
         public ActionResult Create()
         {
 

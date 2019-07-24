@@ -9,10 +9,11 @@ using E_Procurement.Repository.ApprovalRepo;
 using E_Procurement.WebUI.Models.RfqApprovalModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using static E_Procurement.WebUI.Enums.Enums;
 
 namespace E_Procurement.WebUI.Controllers
 {
-    public class RfqApprovalConfigController : Controller
+    public class RfqApprovalConfigController : BaseController
     {
         private readonly IRfqApprovalConfigRepository _RfqApprovalConfigRepository;
         private readonly IMapper _mapper;
@@ -69,29 +70,33 @@ namespace E_Procurement.WebUI.Controllers
                 var userApprovalCheck = await _RfqApprovalConfigRepository.CheckUserApprovalAsync(RfqApprovalConfig.UserId);
                 if (userApprovalCheck != null)
                 {
-                    ModelState.AddModelError("", "Can not create multiple approval level for the selected user!!");
+                    Alert("Can not create multiple approval level for the selected user!! </br> Please try again.", NotificationType.info);
                     return View(RfqApprovalConfig);
                 }
 
                 var finalApprovalCheck = await _RfqApprovalConfigRepository.GetFinalApprovalAsync();
                 if (finalApprovalCheck != null)
                 {
-                    ModelState.AddModelError("", "Can not assign final approval to multiple user!!");
+                    Alert("Can not assign final approval to multiple user!! </br> Please try again.", NotificationType.info);
                     return View(RfqApprovalConfig);
                 }
 
                 var mappedRfqApprovalConfig = _mapper.Map<RFQApprovalConfig>(RfqApprovalConfig);
                 var result = await _RfqApprovalConfigRepository.CreateApprovalConfigAsync(mappedRfqApprovalConfig);
 
+              
                 if (result)
                 {
-                    //await _userManager.AddToRoleAsync(user, registerViewModel.UserRoles);
+                    Alert("Approval config created successfully.", NotificationType.success);
                     return RedirectToAction("Index");
                 }
-
+                else
+                {
+                    Alert("Some problems were encountered while trying to perform operation. </br> Please try again.", NotificationType.error);
+                }
 
             }
-
+            Alert("Some entry fields were are not validated. </br> Kindly, review all entry field.", NotificationType.error);
             return View(RfqApprovalConfig);
         }
         public async Task<IActionResult> Edit(int Id)
@@ -115,7 +120,8 @@ namespace E_Procurement.WebUI.Controllers
             }
             catch (Exception ex)
             {
-                throw ex;
+                Alert("Some problems were encountered while trying to perform operation. </br> Please try again.", NotificationType.error);
+                return RedirectToAction("Index");
             }
             
         }
@@ -123,38 +129,67 @@ namespace E_Procurement.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(RFQApprovalConfigModel RfqApprovalConfig)
         {
-
-            if (ModelState.IsValid)
+            try
             {
-                var user = await _accountManager.GetUserByIdAsync(RfqApprovalConfig.UserId);
-                RfqApprovalConfig.Email = user.Email;
-                var getRfqApprovalConfig = await _RfqApprovalConfigRepository.GetApprovalConfigByIdAsync(RfqApprovalConfig.Id);
-                if (getRfqApprovalConfig == null)
-                    return View(getRfqApprovalConfig);
-                getRfqApprovalConfig.ApprovalLevel = RfqApprovalConfig.ApprovalLevel;
-                getRfqApprovalConfig.Email = RfqApprovalConfig.Email;
-                getRfqApprovalConfig.IsFinalLevel = RfqApprovalConfig.IsFinalLevel;
-
-                var result = await _RfqApprovalConfigRepository.UpdateApprovalConfigAsync(getRfqApprovalConfig);
-
-                if (result)
+                if (!ModelState.IsValid)
                 {
-                    return RedirectToAction("Index");
+                    Alert("Some problems were encountered while trying to perform operation. </br> Please try again.", NotificationType.error);
+                    return View(RfqApprovalConfig);
                 }
+                if (ModelState.IsValid)
+                {
+                    var user = await _accountManager.GetUserByIdAsync(RfqApprovalConfig.UserId);
+                    RfqApprovalConfig.Email = user.Email;
+                    var getRfqApprovalConfig = await _RfqApprovalConfigRepository.GetApprovalConfigByIdAsync(RfqApprovalConfig.Id);
+                    if (getRfqApprovalConfig == null)
+                        return View(getRfqApprovalConfig);
+                    getRfqApprovalConfig.ApprovalLevel = RfqApprovalConfig.ApprovalLevel;
+                    getRfqApprovalConfig.Email = RfqApprovalConfig.Email;
+                    getRfqApprovalConfig.IsFinalLevel = RfqApprovalConfig.IsFinalLevel;
+
+                    var result = await _RfqApprovalConfigRepository.UpdateApprovalConfigAsync(getRfqApprovalConfig);
+
+                    if (result)
+                    {
+                        Alert("Approval config updated successfully.", NotificationType.success);
+                        return RedirectToAction("Index");
+                    }
+                    else
+                    {
+                        Alert("Some problems were encountered while trying to perform operation. </br> Please try again.", NotificationType.error);
+                        return View(RfqApprovalConfig);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Alert("Some problems were encountered while trying to perform operation. </br> Please try again.", NotificationType.error);
+               
             }
             return View(RfqApprovalConfig);
         }
 
         public async Task<IActionResult> Delete(int Id)
         {
-          
+            try
+            { 
                 var result = await _RfqApprovalConfigRepository.DeleteApprovalConfigAsync(Id);
-
+            
                 if (result)
                 {
+                    Alert("Permission deleted successfully.", NotificationType.success);
                     return RedirectToAction("Index");
                 }
-
+                else
+                {
+                    Alert("Some problems were encountered while trying to perform operation. Please try again.", NotificationType.error);
+                    return View("Index");
+                }
+            }
+            catch (Exception ex)
+            {
+                Alert("Some problems were encountered while trying to perform operation. Please try again.", NotificationType.error);
+            }
             return View("Index");
         }
 

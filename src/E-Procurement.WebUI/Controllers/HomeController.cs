@@ -6,11 +6,14 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using E_Procurement.WebUI.Models;
 using Microsoft.AspNetCore.Authorization;
+using E_Procurement.WebUI.Filters;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace E_Procurement.WebUI.Controllers
 {
     [Authorize]
-   // [ValidateAntiForgeryToken]
+    // [ValidateAntiForgeryToken]
+    
     public class HomeController : Controller
     {
         //[Route("Identity/Account/Login")]
@@ -18,6 +21,8 @@ namespace E_Procurement.WebUI.Controllers
         //{
         //    return Redirect("/Account/Login?ReturnUrl=" + ReturnUrl);
         //}
+        //[Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
+       
         public IActionResult Index()
         {
             return View();

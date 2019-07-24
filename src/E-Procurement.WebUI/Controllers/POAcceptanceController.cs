@@ -8,10 +8,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using static E_Procurement.WebUI.Enums.Enums;
 
 namespace E_Procurement.WebUI.Controllers
 {
-    public class POAcceptanceController : Controller
+    public class POAcceptanceController : BaseController
     {
         private readonly IPOAcceptanceRepository _pOAcceptaceRepository;
         private readonly IMapper _mapper;
@@ -51,27 +52,21 @@ namespace E_Procurement.WebUI.Controllers
                 {
                     string message;
                     
-                    //var quote = _pOAcceptaceRepository.GetRfqDetails().Where(u => u.Id == DetailsId[0]).FirstOrDefault();
-
-                    //if (quote == null) { return RedirectToAction("Index", "QuoteSending"); }
-
                     var status = _pOAcceptaceRepository.UpdatePO(Id, out message);
 
+                    Alert("Update successfully accepted.", NotificationType.success);
                     return RedirectToAction("Index", "POAcceptance");
-
-                    //string UserId = User.Identity.Name;
+                    
                 }
                 else
                 {
-                    ViewBag.StatusCode = 2;
-
-                    ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
-
+                    Alert("Update rejected due to invalid entries", NotificationType.error);
                     return View();
                 }
             }
             catch (Exception)
             {
+                Alert("Error!!! Please try again later.", NotificationType.error);
                 return View("Error");
             }
         }
