@@ -11,10 +11,11 @@ using E_Procurement.Repository.StateRepo;
 using E_Procurement.WebUI.Models.StateModel;
 using Microsoft.VisualStudio.Web.CodeGeneration.Contracts.Messaging;
 using Microsoft.IdentityModel.Tokens;
+using static E_Procurement.WebUI.Enums.Enums;
 
 namespace E_Procurement.WebUI.Controllers
 {
-    public class StateController : Controller
+    public class StateController : BaseController
     {
         private readonly IStateRepository _stateRepository;
         private readonly IMapper _mapper;
@@ -69,19 +70,17 @@ namespace E_Procurement.WebUI.Controllers
                 { 
 
                     var status = _stateRepository.CreateState(model, out message);
-
-                    ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
-
+                    
                     if (status == true)
                     {
 
-                        ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
+                        Alert("State Created Successfully", NotificationType.success);
 
                     }
 
                     else
                     {
-                        ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
+                        Alert("This State Already Exists", NotificationType.info); 
                         return View(model);
                     }
 
@@ -90,7 +89,8 @@ namespace E_Procurement.WebUI.Controllers
                 else
                 {
                     ViewBag.StatusCode = 2;
-                  
+                    Alert("State Wasn't Created", NotificationType.error);
+
                     return View(model);
 
                 }
@@ -117,7 +117,9 @@ namespace E_Procurement.WebUI.Controllers
 
                 if (state == null)
                 {
-                 return RedirectToAction("Index", "State");
+                    Alert("This State Doesn't Exist", NotificationType.warning);
+
+                    return RedirectToAction("Index", "State");
                 }
 
                 Model.Id = state.Id;
@@ -151,23 +153,22 @@ namespace E_Procurement.WebUI.Controllers
 
                     var state = _stateRepository.GetStates().FirstOrDefault(u => u.Id == Model.Id);
 
-                    if (state == null) { return RedirectToAction("Index", "State"); }
+                    if (state == null) { Alert("This State Doesn't Exist", NotificationType.warning); return RedirectToAction("Index", "State"); }
 
                     Model.UpdatedBy = User.Identity.Name;
 
                     var status = _stateRepository.UpdateState(Model, out message);
-
-                    ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
+                    
 
                     if (status == true)
                     {
-
-                     ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
+                        Alert("State Updated Successfully", NotificationType.success);
+                      
                     }
 
                     else
                     {
-                        ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
+                        Alert("This State Already Exists", NotificationType.info);
                         return View(Model);
                     }
 
@@ -177,7 +178,7 @@ namespace E_Procurement.WebUI.Controllers
                 {
                     ViewBag.StatusCode = 2;
 
-                    ViewBag.Message = TempData["MESSAGE"] as AlertMessage; 
+                    Alert("State Wasn't Updated", NotificationType.error);
 
                     return View(Model);
                 }

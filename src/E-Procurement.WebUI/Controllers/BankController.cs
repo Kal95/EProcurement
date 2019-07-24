@@ -8,10 +8,11 @@ using Microsoft.AspNetCore.Mvc;
 using E_Procurement.Repository.BankRepo;
 using E_Procurement.WebUI.Models.BankModel;
 using Abp.Web.Mvc.Alerts;
+using static E_Procurement.WebUI.Enums.Enums;
 
 namespace E_Procurement.WebUI.Controllers
 {
-    public class BankController : Controller
+    public class BankController : BaseController
     {
         private readonly IBankRepository _bankRepository;
         private readonly IMapper _mapper;
@@ -63,19 +64,18 @@ namespace E_Procurement.WebUI.Controllers
                 if (ModelState.IsValid)
                 {
                     var status = _bankRepository.CreateBank(Model, out message);
-
-                    ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
+                    
 
                     if (status == true)
                     {
 
-                        ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
+                        Alert("Bank Created Successfully", NotificationType.success);
 
                     }
 
                     else
                     {
-                        ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
+                        Alert("This Bank Already Exists", NotificationType.info);
                         return View(Model);
                     }
 
@@ -84,6 +84,8 @@ namespace E_Procurement.WebUI.Controllers
                 else
                 {
                     ViewBag.StatusCode = 2;
+
+                    Alert("Bank Wasn't Created", NotificationType.error);
 
                     return View(Model);
 
@@ -110,6 +112,7 @@ namespace E_Procurement.WebUI.Controllers
 
                 if (bank == null)
                 {
+                    Alert("This Bank Doesn't Exist", NotificationType.warning);
                     return RedirectToAction("Index", "Bank");
                 }
 
@@ -144,23 +147,22 @@ namespace E_Procurement.WebUI.Controllers
 
                     var bank = _bankRepository.GetBanks().Where(u => u.Id == Model.Id).FirstOrDefault();
 
-                    if (bank == null) { return RedirectToAction("Index", "Bank"); }
+                    if (bank == null) { Alert("This Bank Doesn't Exist", NotificationType.warning); return RedirectToAction("Index", "Bank"); }
 
                     Model.UpdatedBy = User.Identity.Name;
 
                     var status = _bankRepository.UpdateBank(Model, out message);
-
-                    ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
+                    
 
                     if (status == true)
                     {
 
-                        ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
+                        Alert("Bank Updated Successfully", NotificationType.success);
                     }
 
                     else
                     {
-                        ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
+                        Alert("This Bank Already Exists", NotificationType.info);
                         return View(Model);
                     }
 
@@ -170,7 +172,7 @@ namespace E_Procurement.WebUI.Controllers
                 {
                     ViewBag.StatusCode = 2;
 
-                    ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
+                    Alert("Bank Wasn't Updated", NotificationType.error);
 
                     return View(Model);
                 }

@@ -17,11 +17,12 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using static E_Procurement.WebUI.Enums.Enums;
 
 namespace E_Procurement.WebUI.Controllers
 {
     [Authorize]
-    public class VendorController : Controller
+    public class VendorController : BaseController
     {
         private readonly IVendorRepository _vendorRepository;
         private readonly ICountryRepository _countryRepository;
@@ -241,19 +242,18 @@ namespace E_Procurement.WebUI.Controllers
                     
                     LoadFilePath(Model);
                     var status = _vendorRepository.CreateVendor(Model, out message);
-
-                    ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
+                    
 
                     if (status == true)
                     {
 
-                        ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
+                        Alert("Vendor Created Successfully", NotificationType.success);
 
                     }
 
                     else
                     {
-                        ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
+                        Alert("Vendor Already Exists", NotificationType.info);
                         return View(Model);
                     }
 
@@ -262,6 +262,7 @@ namespace E_Procurement.WebUI.Controllers
                 else
                 {
                     LoadPredefinedInfo(Model);
+                    Alert("Vendor Wasn't Created", NotificationType.error);
 
                     ViewBag.StatusCode = 2;
 
@@ -293,6 +294,7 @@ namespace E_Procurement.WebUI.Controllers
                 
                 if (vendor == null)
                 {
+                    Alert("This Vendor Doesn't Exist", NotificationType.warning);
                     return RedirectToAction("Index", "Vendor");
                 }
                 Model.SelectedVendorCategories = SelectedCategories.ToList();
@@ -357,24 +359,23 @@ namespace E_Procurement.WebUI.Controllers
 
                     var vendor = _vendorRepository.GetVendors().FirstOrDefault(u => u.Id == Model.Id);
 
-                    if (vendor == null) { return RedirectToAction("Index", "Vendor"); }
+                    if (vendor == null) { Alert("This Vendor Doesn't Exist", NotificationType.warning); return RedirectToAction("Index", "Vendor"); }
 
                     Model.UpdatedBy = User.Identity.Name;
 
                     LoadFilePath(Model);
                     var status = _vendorRepository.UpdateVendor(Model, out message);
-
-                    ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
+                    
 
                     if (status == true)
                     {
 
-                        ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
+                        Alert("Vendor Updated Successfully", NotificationType.success);
                     }
 
                     else
                     {
-                        ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
+                        Alert("This Vendor Already Exists", NotificationType.info);
                         return RedirectToAction("Index", "Vendor");
                     }
 
@@ -384,7 +385,7 @@ namespace E_Procurement.WebUI.Controllers
                 {
                     ViewBag.StatusCode = 2;
 
-                    ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
+                    Alert("Vendor Wasn't Updated", NotificationType.error);
 
                     return View(Model);
                 }
