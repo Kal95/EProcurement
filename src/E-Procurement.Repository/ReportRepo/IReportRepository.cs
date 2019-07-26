@@ -12,6 +12,8 @@ namespace E_Procurement.Repository.ReportRepo
     {
         List<Vendor> GetVendorsByCategory(RfqGenModel model);
         IEnumerable<Vendor> GetVendors();
+        IEnumerable<VendorEvaluation> GetVendorEvaluation();
+        List<VendorEvaluation> GetVendorEvaluationByCategory(RfqGenModel model);
         IEnumerable<VendorMapping> GetMapping();
         //List<Vendor> GetVendorDetails(RfqGenModel model);
         List<RFQGenerationModel> GetRfqGen();

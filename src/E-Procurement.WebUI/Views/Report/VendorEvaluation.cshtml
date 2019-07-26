@@ -47,11 +47,11 @@
                         <th>Best Price</th>
                         <th>Product Availability</th>
                         <th>Product Quality</th>
-                        <th>Ability To Deliver Within Agreed Time Frame </th>
+                        <th>Agreed Time Delivery </th>
                         <th>Credit Facility</th>
                         <th>Warranty Support</th>
                         <th>Customer Care and Support</th>
-                        <th>Others</th>
+                        @*<th>Others</th>*@
 
                     </tr>
                 </thead>
@@ -93,9 +93,9 @@
                             <td>
                                 @Html.DropDownListFor(model => model.CustomerSupport, Model.CriteriaList, "-- Select --", htmlAttributes: new { @id = "CustomerSupport", @class = "form-control", style = "width:120px; height:40px", required = "required" })
                             </td>
-                            <td>
+                            @*<td>
                                 @Html.DropDownListFor(model => model.Others, Model.CriteriaList, "-- Select --", htmlAttributes: new { @id = "Others", @class = "form-control", style = "width:120px; height:40px", required = "required" })
-                            </td>
+                            </td>*@
                         </tr>
                     }
 

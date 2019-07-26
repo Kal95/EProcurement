@@ -28,6 +28,10 @@ namespace E_Procurement.WebUI.AutoMapperProfile
 
             CreateMap<BankModel, Bank>().ReverseMap();
 
+            CreateMap<CategoryModel, ItemCategory>().ReverseMap();
+
+            CreateMap<CategoryModel, Item>().ReverseMap();
+
             CreateMap<VendorCategoryModel, VendorCategory>().ReverseMap();
 
             CreateMap<RfqGenModel, RFQGeneration>().ReverseMap();

@@ -1,0 +1,57 @@
+﻿@model E_Procurement.WebUI.Models.VendorCategoryModel.CategoryModel
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Vendor Categories";
+    ViewBag.PageDesc = "Create Category";
+    ViewBag.FavIcon = "fa fa-street-view";
+}
+
+
+        <div class="row row-sm mg-t-20">
+            <div class="col-xl-12">
+                <div class="card pd-20 pd-sm-40 form-layout form-layout-4">
+                    <h6 class="card-body-title">Item</h6>
+                    <p class="mg-b-20 mg-sm-b-30">Create</p>
+                    <form class="form-horizontal" action="@Url.Action("ItemCreate","VendorCategory")" method="post">
+                        @Html.AntiForgeryToken()
+                        @*<h2 class="text-center">Basic forms Example</h2>*@
+                        <br />
+
+                        <!-- Text input-->
+                        <div class="row mg-t-20">
+
+                            <div class="col-md-6" style="margin-top:10px">
+                                <label for="VendorName">Category:</label>
+                                @Html.DropDownListFor(model => model.CategoryId, Model.ItemCategoryList, "-- Select Category --", htmlAttributes: new { id = "ItemCategory", @class = "form-control", required = "required", style = "width:450px; height:40px" })
+                                @Html.ValidationMessageFor(model => model.CategoryId, "", new { @class = "text-danger" })
+                            </div>
+
+
+                        </div>
+                        <div class="row mg-t-20">
+                            <div class="col-md-6" style="margin-top:10px">
+                                <label for="ItemName">Item Name:</label>
+                                @Html.EditorFor(model => model.ItemName, new { htmlAttributes = new { id = "ItemName", @class = "form-control", @type = "text", required = "required", style = "width:450px; height:40px" } })
+                                @Html.ValidationMessageFor(model => model.ItemName, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                            <!-- ./Text input-->
+                            <!-- Button -->
+                        <br/>
+                            <div class="form-group">
+                                <label class="col-md-8 control-label"></label>
+                                <div class="col-md-4">
+
+                                    <button type="submit" class="btn btn-info mg-r-5"><span class="glyphicon glyphicon-send"></span>  Submit</button>
+
+                                    <a href="@Url.Action("ItemIndex","VendorCategory")" class="btn btn-secondary"><span class="glyphicon glyphicon-remove"></span> Back</a>
+                                </div>
+
+                            </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+ 

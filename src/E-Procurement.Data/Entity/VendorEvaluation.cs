@@ -6,6 +6,7 @@ namespace E_Procurement.Data.Entity
 {
     public class VendorEvaluation : BaseEntity.Entity
     {
+        public int EvaluationPeriodId { get; set; }
         public string VendorId {get; set;}
         public string VendorName { get; set; }
         public string BestPrice { get; set; }

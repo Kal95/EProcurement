@@ -81,9 +81,22 @@ namespace E_Procurement.Repository.ReportRepo
                 return false;
             }
         }
+        
         public IEnumerable<Vendor> GetVendors()
         {
             return _context.Vendors.OrderByDescending(u => u.Id).ToList();
+        }
+        public IEnumerable<VendorEvaluation> GetVendorEvaluation()
+        {
+            return _context.VendorEvaluations.OrderByDescending(u => u.Id).ToList();
+        }
+        public List<VendorEvaluation> GetVendorEvaluationByCategory(RfqGenModel model)
+        {
+            var mapping = _context.VendorMappings.Where(u => u.VendorCategoryId == model.CategoryId).ToList();
+            var vendor = _context.VendorEvaluations.OrderByDescending(u => u.Id).ToList();
+
+            var vendorList = vendor.Where(a => mapping.Any(b => b.VendorID == a.Id));
+            return vendorList.ToList();
         }
         public IEnumerable<VendorMapping> GetMapping()
         {
@@ -97,6 +110,7 @@ namespace E_Procurement.Repository.ReportRepo
             var vendorList = vendor.Where(a => mapping.Any(b => b.VendorID == a.Id));
             return vendorList.ToList();
         }
+
         public List<RFQGenerationModel> GetRfqGen()
         {
 

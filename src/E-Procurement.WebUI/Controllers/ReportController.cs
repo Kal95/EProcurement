@@ -210,7 +210,115 @@ namespace E_Procurement.WebUI.Controllers
             //Model.VendorList = Vendor;
 
         }
-       
+        private void VendorEvaluationReportPredefinedInfo(RfqGenModel Model)
+        {
+            //int CategoryId = Model.VendorCategoryId;
+            var EvaluationScore = _reportRepository.GetVendorEvaluation().ToList();
+            
+                List<SelectListItem> list = new List<SelectListItem>();
+                list.Add(new SelectListItem() { Text = "Excellent", Value = "5" });
+                list.Add(new SelectListItem() { Text = "Very Good", Value = "4" });
+                list.Add(new SelectListItem() { Text = "Good", Value = "3" });
+                list.Add(new SelectListItem() { Text = "Fair", Value = "2" });
+                list.Add(new SelectListItem() { Text = "Poor", Value = "1" });
+           
+           
+            var ScoreList = (from d in EvaluationScore
+                              join BP in list on d.BestPrice equals BP.Text
+                              join DT in list on d.DeliveryTimeFrame equals DT.Text
+                              join CF in list on d.CreditFacility equals CF.Text
+                              join CC in list on d.CustomerCare equals CC.Text
+                              join PA in list on d.ProductAvailability equals PA.Text
+                              join PQ in list on d.ProductQuality equals PQ.Text
+                              join WS in list on d.WarrantySupport equals WS.Text
+                              join O in list on d.Others equals O.Text
+                            
+                              select new ReportModel()
+            {
+                VendorId = Convert.ToInt32(d.VendorId.ToString()),
+                VendorName = d.VendorName,
+                BestPrice = " (" + BP.Value+"/5)",
+                DeliveryTimeFrame = " (" + DT.Value+"/5)",
+                CreditFacility = " (" + CF.Value+"/5)",
+                CustomerCare = " (" + CC.Value+"/5)",
+                ProductAvailability = " (" + PA.Value+"/5)",
+                ProductQuality = " (" + PQ.Value+"/5)",
+                WarrantySupport = " (" + WS.Value+"/5)",
+                Others = " (" + O.Value+"/5)",
+                CreatedBy = d.CreatedBy,
+                CreatedDate = d.DateCreated,
+                Score = ((Convert.ToInt32(BP.Value) + Convert.ToInt32(DT.Value) + Convert.ToInt32(CF.Value) + Convert.ToInt32(CC.Value) + Convert.ToInt32(PA.Value) + Convert.ToInt32(PQ.Value) + Convert.ToInt32(WS.Value) /*+ Convert.ToInt32(O.Value)*/)*(100/35)).ToString() +"%"
+
+        }).GroupBy(v => new { v.VendorId, v.Score }).Select(s => s.FirstOrDefault());
+
+            
+            var vendorCategory = _vendorRepository.GetItemCategory().ToList();
+           
+            if (Model.CategoryId <= 0)
+            {
+                var VendorEvaluation = _reportRepository.GetVendorEvaluation().ToList();
+
+                List<ReportModel> vendorModel = new List<ReportModel>();
+                Model.ItemCategoryList = vendorCategory.Select(x => new SelectListItem
+                {
+                    Value = x.Id.ToString(),
+                    Text = x.CategoryName
+                });
+                var listModel = VendorEvaluation.Select(x => new ReportModel
+                {
+                    VendorId = Convert.ToInt32(x.VendorId.ToString()),
+                    VendorName = x.VendorName,
+                    BestPrice = x.BestPrice + ScoreList.Where(u => u.VendorId == Convert.ToInt32(x.VendorId)).Select(u => u.BestPrice).FirstOrDefault(),
+                    DeliveryTimeFrame = x.DeliveryTimeFrame + ScoreList.Where(u => u.VendorId == Convert.ToInt32(x.VendorId)).Select(u => u.DeliveryTimeFrame).FirstOrDefault(),
+                    CreditFacility = x.CreditFacility + ScoreList.Where(u => u.VendorId == Convert.ToInt32(x.VendorId)).Select(u => u.CreditFacility).FirstOrDefault(),
+                    CustomerCare = x.CustomerCare + ScoreList.Where(u => u.VendorId == Convert.ToInt32(x.VendorId)).Select(u => u.CustomerCare).FirstOrDefault(),
+                    ProductAvailability = x.ProductAvailability + ScoreList.Where(u => u.VendorId == Convert.ToInt32(x.VendorId)).Select(u => u.ProductAvailability).FirstOrDefault(),
+                    ProductQuality = x.ProductQuality + ScoreList.Where(u => u.VendorId == Convert.ToInt32(x.VendorId)).Select(u => u.ProductQuality).FirstOrDefault(),
+                    WarrantySupport = x.WarrantySupport + ScoreList.Where(u => u.VendorId == Convert.ToInt32(x.VendorId)).Select(u => u.WarrantySupport).FirstOrDefault(),
+                    Others = x.Others + ScoreList.Where(u => u.VendorId == Convert.ToInt32(x.VendorId)).Select(u => u.Others).FirstOrDefault(),
+                    CreatedBy = x.CreatedBy,
+                    CreatedDate = x.DateCreated,
+                    Score = ScoreList.Where(u => u.VendorId == Convert.ToInt32(x.VendorId)).Select(u => u.Score).FirstOrDefault(),
+                });
+                vendorModel.AddRange(listModel);
+
+
+                Model.Report = vendorModel;
+            }
+            else
+            {
+                var VendorEvaluation = _reportRepository.GetVendorEvaluationByCategory(Model).ToList();
+                List<ReportModel> vendorModel = new List<ReportModel>();
+                Model.ItemCategoryList = vendorCategory.Select(x => new SelectListItem
+                {
+                    Value = x.Id.ToString(),
+                    Text = x.CategoryName
+                });
+                var listModel = VendorEvaluation.Select(x => new ReportModel
+                {
+                    VendorId = Convert.ToInt32(x.VendorId.ToString()),
+                    VendorName = x.VendorName,
+                    BestPrice = x.BestPrice + ScoreList.Where(u => u.VendorId == Convert.ToInt32(x.VendorId)).Select(u => u.BestPrice).FirstOrDefault(),
+                    DeliveryTimeFrame = x.DeliveryTimeFrame + ScoreList.Where(u => u.VendorId == Convert.ToInt32(x.VendorId)).Select(u => u.DeliveryTimeFrame).FirstOrDefault(),
+                    CreditFacility = x.CreditFacility + ScoreList.Where(u => u.VendorId == Convert.ToInt32(x.VendorId)).Select(u => u.CreditFacility).FirstOrDefault(),
+                    CustomerCare = x.CustomerCare + ScoreList.Where(u => u.VendorId == Convert.ToInt32(x.VendorId)).Select(u => u.CustomerCare).FirstOrDefault(),
+                    ProductAvailability = x.ProductAvailability + ScoreList.Where(u => u.VendorId == Convert.ToInt32(x.VendorId)).Select(u => u.ProductAvailability).FirstOrDefault(),
+                    ProductQuality = x.ProductQuality + ScoreList.Where(u => u.VendorId == Convert.ToInt32(x.VendorId)).Select(u => u.ProductQuality).FirstOrDefault(),
+                    WarrantySupport = x.WarrantySupport + ScoreList.Where(u => u.VendorId == Convert.ToInt32(x.VendorId)).Select(u => u.WarrantySupport).FirstOrDefault(),
+                    Others = x.Others + ScoreList.Where(u => u.VendorId == Convert.ToInt32(x.VendorId)).Select(u => u.Others).FirstOrDefault(),
+                    CreatedBy = x.CreatedBy,
+                    CreatedDate = x.DateCreated,
+                    Score = ScoreList.Where(u => u.VendorId == Convert.ToInt32(x.VendorId)).Select(u => u.Score).FirstOrDefault(),
+
+                });
+                vendorModel.AddRange(listModel);
+
+
+                Model.Report = vendorModel;
+            }
+
+        }
+
         public ActionResult Vendor(RfqGenModel Model)
         {
             try
@@ -476,12 +584,23 @@ namespace E_Procurement.WebUI.Controllers
             }
         }
 
-        //[HttpGet]
-        ////[ValidateAntiForgeryToken]
-        //public ActionResult VendorEvaluation(string selectedValue)
-        //{
-        //    return null;
-        //}
+        public ActionResult VendorEvaluationReport(RfqGenModel Model)
+        {
+
+            try
+            {
+                //RfqGenModel Model = new RfqGenModel();
+
+                VendorEvaluationReportPredefinedInfo(Model);
+
+                return View(Model);
+            }
+            catch (Exception)
+            {
+
+                return View();
+            }
+        }
 
     }
 }

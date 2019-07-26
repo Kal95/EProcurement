@@ -57,6 +57,21 @@ namespace E_Procurement.WebUI.Controllers
             }
         }
 
+        public ActionResult VendorDocuments()
+        {
+            try
+            {
+                var model = _vendorRepository.GetVendors().ToList();
+
+                List<VendorModel> smodel = _mapper.Map<List<VendorModel>>(model);
+                return View(smodel);
+            }
+            catch (Exception)
+            {
+                return View("Error");
+            }
+        }
+
         private void LoadFilePath(VendorModel Model)
         {
             if (Model.BankReference != null || Model.CertificateOfVAT !=null || Model.MemorandumOfAssoociation != null || Model.NoticeOfSituationAddress != null || Model.ParticularsOfDirectors != null || Model.ParticularsOfShareholders != null || Model.Reference != null || Model.TaxClearance != null)
@@ -91,6 +106,7 @@ namespace E_Procurement.WebUI.Controllers
                     //return View(Model);
                 }
 
+                string dbFilePath = "~/upload/VendorDocuments/";
 
                 //var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "upload", imageFilePath);
                 var path1 = Path.Combine(webRootPath, "Uploads", "VendorDocuments", MOAFilePath);
@@ -121,14 +137,14 @@ namespace E_Procurement.WebUI.Controllers
                 using (Stream stream = new FileStream(path7, FileMode.Create)) { Model.CertificateOfVAT.CopyTo(stream); }
                 using (Stream stream = new FileStream(path8, FileMode.Create)) { Model.BankReference.CopyTo(stream); }
 
-                Model.MOAFilePath = path1;
-                Model.NOSFilePath = path2;
-                Model.PODFilePath = path3;
-                Model.POSFilePath = path4;
-                Model.RefFilePath = path5;
-                Model.TaxFilePath = path6;
-                Model.COVFilePath = path7;
-                Model.BankRefFilePath = path8;
+                Model.MOAFilePath = MOAFilePath;
+                Model.NOSFilePath = NOSFilePath;
+                Model.PODFilePath = PODFilePath;
+                Model.POSFilePath = POSFilePath;
+                Model.RefFilePath = RefFilePath;
+                Model.TaxFilePath = TaxFilePath;
+                Model.COVFilePath = COVFilePath;
+                Model.BankRefFilePath = BankRefFilePath;
             }
         }
 

@@ -5,9 +5,8 @@ using System.Threading.Tasks;
 
 namespace E_Procurement.Data.Entity
 {
-    public class ItemCategory
+    public class ItemCategory : BaseEntity.Entity
     {
-            public int Id { get; set; }
             
             public string CategoryName  { get; set; }
          
