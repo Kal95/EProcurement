@@ -75,6 +75,8 @@ namespace E_Procurement.WebUI.Models.RFQModel
         [Required]
         public DateTime EndDate { get; set; }
         public IEnumerable<SelectListItem> CriteriaList { get; set; }
+        public IEnumerable<SelectListItem> PeriodList { get; set; }
+        public int PeriodId { get; set; }
 
     }
 

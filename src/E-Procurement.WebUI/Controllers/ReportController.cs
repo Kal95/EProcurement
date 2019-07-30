@@ -14,11 +14,12 @@ using E_Procurement.WebUI.Models.RFQModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using static E_Procurement.WebUI.Enums.Enums;
 
 namespace E_Procurement.WebUI.Controllers
 {
     [Authorize]
-    public class ReportController : Controller
+    public class ReportController : BaseController
     {
         private readonly IReportRepository _reportRepository;
         private readonly IVendorRepository _vendorRepository;
@@ -247,7 +248,7 @@ namespace E_Procurement.WebUI.Controllers
                 Others = " (" + O.Value+"/5)",
                 CreatedBy = d.CreatedBy,
                 CreatedDate = d.DateCreated,
-                Score = ((Convert.ToInt32(BP.Value) + Convert.ToInt32(DT.Value) + Convert.ToInt32(CF.Value) + Convert.ToInt32(CC.Value) + Convert.ToInt32(PA.Value) + Convert.ToInt32(PQ.Value) + Convert.ToInt32(WS.Value) /*+ Convert.ToInt32(O.Value)*/)*(100/35)).ToString() +"%"
+                Score = ((Convert.ToInt32(BP.Value) + Convert.ToInt32(DT.Value) + Convert.ToInt32(CF.Value) + Convert.ToInt32(CC.Value) + Convert.ToInt32(PA.Value) + Convert.ToInt32(PQ.Value) + Convert.ToInt32(WS.Value))*100/35).ToString() +"%"
 
         }).GroupBy(v => new { v.VendorId, v.Score }).Select(s => s.FirstOrDefault());
 
@@ -449,7 +450,7 @@ namespace E_Procurement.WebUI.Controllers
         private void VendorEvaluationPredefinedInfo(RfqGenModel Model)
         {
             //int CategoryId = Model.VendorCategoryId;
-
+            var period = _reportRepository.GetEvaluationPeriods().ToList();
             var vendorCategory = _vendorRepository.GetItemCategory().ToList();
             if (Model.CategoryId <= 0)
             {
@@ -478,6 +479,12 @@ namespace E_Procurement.WebUI.Controllers
 
                     Value = x.Id.ToString(),
                     Text = x.VendorName
+                });
+
+                Model.PeriodList = period.Where(u => u.EndDate >= DateTime.Now).Select(x => new SelectListItem
+                {
+                    Value = x.Id.ToString(),
+                    Text = x.Period
                 });
                 
             }
@@ -508,6 +515,11 @@ namespace E_Procurement.WebUI.Controllers
 
                     Value = x.Id.ToString(),
                     Text = x.VendorName
+                });
+                Model.PeriodList = period.Where(u => u.EndDate <= DateTime.Now).Select(x => new SelectListItem
+                {
+                    Value = x.Id.ToString(),
+                    Text = x.Period
                 });
             }
 
@@ -599,6 +611,183 @@ namespace E_Procurement.WebUI.Controllers
             {
 
                 return View();
+            }
+        }
+
+        // GET: Evaluation Period
+        public ActionResult EvaluationPeriodIndex()
+        {
+            try
+            {
+                List<ReportModel> poModel = new List<ReportModel>();
+
+                var period = _reportRepository.GetEvaluationPeriods().ToList();
+
+                //var RfqList = _rfqGenRepository.GetRfqGen().OrderBy(u => u.EndDate).ToList();
+                var PeriodList = period.Select(x => new ReportModel
+                {
+                    PeriodId = x.Id,
+                    EvaluationPeriod = x.Period,
+                    StartDate = x.StartDate,
+                    EndDate = x.EndDate,
+                    IsActive = x.IsActive
+                });
+                return View(PeriodList);
+            }
+            catch (Exception)
+            {
+                return View("Error");
+            }
+        }
+
+        // GET: Report/EvaluationPeriodCreate
+        public ActionResult EvaluationPeriodCreate()
+        {
+            return View();
+        }
+
+        // POST: Report/EvaluationPeriodCreate
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult EvaluationPeriodCreate(ReportModel model)
+        {
+            try
+            {
+                string message;
+                model.CreatedBy = User.Identity.Name;
+
+                if (ModelState.IsValid)
+                {
+
+                    var status = _reportRepository.CreateEvaluationPeriod(model, out message);
+
+                    if (Convert.ToDateTime(model.StartDate) >= Convert.ToDateTime(model.EndDate))
+                    {
+                        Alert("Start Date Cannot be Greater or Equal to End Date", NotificationType.error);
+                        return View(model);
+                    }
+                    if (status == true)
+                    {
+
+                        Alert("Evaluation Period Created Successfully", NotificationType.success);
+
+                    }
+
+                    else
+                    {
+                        Alert("This Evaluation Period Already Exists", NotificationType.info);
+                        return View(model);
+                    }
+
+                    return RedirectToAction("EvaluationPeriodIndex", "Report");
+                }
+                else
+                {
+                    ViewBag.StatusCode = 2;
+                    Alert("Evaluation Period Wasn't Created", NotificationType.error);
+
+                    return View(model);
+
+                }
+            }
+
+            catch (Exception)
+            {
+
+                return View("Error");
+            }
+        }
+
+        // GET: Report/EvaluationPeriodEdit
+        public ActionResult EvaluationPeriodEdit(int PeriodId)
+        {
+
+
+            ReportModel Model = new ReportModel();
+
+            try
+            {
+
+                var Period = _reportRepository.GetEvaluationPeriods().Where(u => u.Id == PeriodId).FirstOrDefault();
+
+                if (Period == null)
+                {
+                    Alert("This Period Doesn't Exist", NotificationType.warning);
+
+                    return RedirectToAction("EvaluationPeriodIndex", "Report");
+                }
+
+                Model.PeriodId = Period.Id;
+
+                Model.EvaluationPeriod = Period.Period;
+
+                Model.StartDate = Convert.ToDateTime(Period.StartDate);
+
+                Model.EndDate = Convert.ToDateTime(Period.EndDate);
+               
+
+                return View(Model);
+            }
+            catch (Exception)
+            {
+
+                return View("Error");
+            }
+
+        }
+
+        // POST: Report/EvaluationPeriodEdit
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult EvaluationPeriodEdit(ReportModel Model)
+        {
+            try
+            {
+
+                if (ModelState.IsValid)
+                {
+                    string message;
+
+                    var Period = _reportRepository.GetEvaluationPeriods().FirstOrDefault(u => u.Id == Model.PeriodId);
+
+                    if (Period == null) { Alert("This Evaluation Period Doesn't Exist", NotificationType.warning); return RedirectToAction("EvaluationPeriodIndex", "Report"); }
+
+                    Model.UpdatedBy = User.Identity.Name;
+
+                    var status = _reportRepository.UpdateEvaluationPeriod(Model, out message);
+
+                    if (Convert.ToDateTime(Model.StartDate) >= Convert.ToDateTime(Model.EndDate))
+                    {
+                        Alert("Start Date Cannot be Greater or Equal to End Date", NotificationType.error);
+                        return View(Model);
+                    }
+                    if (status == true)
+                    {
+                        Alert("Evaluation Period Updated Successfully", NotificationType.success);
+
+                    }
+
+                    else
+                    {
+                        Alert("This Evaluation Period Already Exists", NotificationType.info);
+                        return View(Model);
+                    }
+
+                    return RedirectToAction("EvaluationPeriodIndex", "Report");
+                }
+                else
+                {
+                    ViewBag.StatusCode = 2;
+
+                    Alert("Evaluation Period Wasn't Updated", NotificationType.error);
+
+                    return View(Model);
+                }
+            }
+            catch (Exception)
+            {
+
+                return View("Error");
             }
         }
 

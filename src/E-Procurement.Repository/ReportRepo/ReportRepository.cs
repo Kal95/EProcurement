@@ -43,20 +43,21 @@ namespace E_Procurement.Repository.ReportRepo
                     var selected5 = selected1.Zip(selected2, (a, b) => new { A = a, B = b });
                     var selected6 = selected3.Zip(selected4, (a, b) => new { A = a, B = b });
                     var selected7 = selected5.Zip(selected6, (a, b) => new { A = a, B = b });
-                    var selected8 = selected7.Zip(model.Others, (a, b) => new { A = a, B = b });
+                    //var selected8 = selected7.Zip(model.Others, (a, b) => new { A = a, B = b });
                 
-                    var listModel = selected8.Select(x => new VendorEvaluation
+                    var listModel = selected7.Select(x => new VendorEvaluation
                     {
-                        VendorId = x.A.A.A.X.N.ToString(),
-                        VendorName = x.A.A.A.X.M.VendorName,
-                        BestPrice = x.A.A.A.Y,
-                        DeliveryTimeFrame = x.A.A.B.A,
-                        CreditFacility = x.A.A.B.B,
-                        CustomerCare= x.A.B.A.A,
-                        ProductAvailability = x.A.B.A.B,
-                        ProductQuality = x.A.B.B.A,
-                        WarrantySupport = x.A.B.B.B,
-                        Others = x.B,
+                        VendorId = x.A.A.X.N.ToString(),
+                        VendorName = x.A.A.X.M.VendorName,
+                        BestPrice = x.A.A.Y,
+                        DeliveryTimeFrame = x.A.B.A,
+                        CreditFacility = x.A.B.B,
+                        CustomerCare= x.B.A.A,
+                        ProductAvailability = x.B.A.B,
+                        ProductQuality = x.B.B.A,
+                        WarrantySupport = x.B.B.B,
+                        //Others = x.B,
+                        EvaluationPeriodId = model.PeriodId,
                         CreatedBy = model.CreatedBy,
                         DateCreated = DateTime.Now,
                     });
@@ -86,22 +87,26 @@ namespace E_Procurement.Repository.ReportRepo
         {
             return _context.Vendors.OrderByDescending(u => u.Id).ToList();
         }
+
         public IEnumerable<VendorEvaluation> GetVendorEvaluation()
         {
             return _context.VendorEvaluations.OrderByDescending(u => u.Id).ToList();
         }
+
         public List<VendorEvaluation> GetVendorEvaluationByCategory(RfqGenModel model)
         {
             var mapping = _context.VendorMappings.Where(u => u.VendorCategoryId == model.CategoryId).ToList();
             var vendor = _context.VendorEvaluations.OrderByDescending(u => u.Id).ToList();
 
-            var vendorList = vendor.Where(a => mapping.Any(b => b.VendorID == a.Id));
+            var vendorList = vendor.Where(a => mapping.Any(b => b.VendorID == Convert.ToInt32(a.VendorId)));
             return vendorList.ToList();
         }
+
         public IEnumerable<VendorMapping> GetMapping()
         {
             return _context.VendorMappings.OrderByDescending(u => u.Id).ToList();
         }
+
         public List<Vendor> GetVendorsByCategory(RfqGenModel model)
         {
             var mapping = _context.VendorMappings.Where(u => u.VendorCategoryId == model.CategoryId).ToList();
@@ -246,5 +251,105 @@ namespace E_Procurement.Repository.ReportRepo
             //return _context.PoGenerations.OrderByDescending(u => u.Id).ToList();
         }
 
+        public bool CreateEvaluationPeriod(ReportModel model, out string Message)
+        {
+            var confirm = _context.EvaluationPeriodConfigs.Where(x => x.Period == model.EvaluationPeriod && Convert.ToDateTime(x.StartDate) <= Convert.ToDateTime(model.StartDate)).Count();
+
+            EvaluationPeriodConfig Period = new EvaluationPeriodConfig();
+
+            if (confirm == 0)
+            {
+
+                Period.Period = model.EvaluationPeriod;
+
+                Period.StartDate = model.StartDate;
+
+                Period.EndDate = model.EndDate;
+
+                if (Convert.ToDateTime(model.EndDate) >= DateTime.Now)
+                {
+
+                    Period.IsActive = true;
+                }
+                else
+                {
+                    Period.IsActive = false;
+                }
+
+                Period.CreatedBy = model.CreatedBy;
+
+                Period.DateCreated = DateTime.Now;
+
+                _context.Add(Period);
+
+                _context.SaveChanges();
+
+                Message = "Period created successfully";
+
+                return true;
+            }
+            else
+            {
+                Message = "Period already exist";
+
+                return false;
+            }
+
+        }
+
+        public bool UpdateEvaluationPeriod(ReportModel model, out string Message)
+        {
+
+            var confirm = _context.EvaluationPeriodConfigs.Where(x => x.Period == model.EvaluationPeriod && Convert.ToDateTime(x.StartDate) != Convert.ToDateTime(model.StartDate) && Convert.ToDateTime(x.EndDate) != Convert.ToDateTime(model.EndDate)).Count();
+
+            var oldEntry = _context.EvaluationPeriodConfigs.Where(u => u.Id == model.PeriodId).FirstOrDefault();
+
+            if (oldEntry == null)
+            {
+                throw new Exception("No Evaluation Period exists with this Id");
+            }
+
+            if (confirm == 0)
+            {
+
+                oldEntry.Period = model.EvaluationPeriod;
+
+                oldEntry.StartDate = model.StartDate;
+
+                oldEntry.EndDate = model.EndDate;
+
+                if ( Convert.ToDateTime(model.EndDate) >= DateTime.Now)
+                {
+
+                    oldEntry.IsActive = true;
+                }
+                else
+                {
+                    oldEntry.IsActive = false;
+                }
+                
+
+                oldEntry.UpdatedBy = model.CreatedBy;
+
+                oldEntry.LastDateUpdated = DateTime.Now;
+
+                _context.SaveChanges();
+
+                Message = "Period updated successfully";
+
+                return true;
+            }
+            else
+            {
+                Message = "Period already exist";
+
+                return false;
+            }
+
+        }
+        public IEnumerable<EvaluationPeriodConfig> GetEvaluationPeriods()
+        {
+            return _context.EvaluationPeriodConfigs.OrderByDescending(u => u.Id).ToList();
+        }
     }
 }

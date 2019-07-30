@@ -51,5 +51,9 @@ namespace E_Procurement.Repository.ReportRepo
         public string CustomerCare { get; set; }
         public string Others { get; set; }
         public string Score { get; set; }
+
+        public int PeriodId { get; set; }
+        public string EvaluationPeriod { get; set; }
+       
     }
 }

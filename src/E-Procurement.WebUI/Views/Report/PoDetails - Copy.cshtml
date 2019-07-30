@@ -1,0 +1,161 @@
+﻿
+@model E_Procurement.Repository.Dtos.RFQGenerationModel
+@*<html lang="en">
+<head>
+    <title>CyberSpace</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <style>
+        .content {
+            max-width: 1000px;
+            margin: auto;
+        }
+    </style>
+</head>
+
+<body>*@
+<div class="card pd-20 pd-sm-40">
+    <div class="col-md-1" align="left">
+        <input name="b_print" type="button" class="btn btn-outline-info" onClick="printDiv('div_print');" value=" Print Report">
+        @*<a class="btn btn-primary" style="width:100px; height:40px" pull-right" onclick="printDiv()"><i class="fa fa-print"> </i>    Print </a>*@
+    </div>
+    @Html.HiddenFor(model => model.RFQId)
+    <div id="div_print">
+        <div align="center">
+            <img src="~/img/cyb-logo.png" style="max-width:1200px; height:100px;">
+        </div>
+
+        <div class="content">
+            <div class="col-sm-8">
+                <br>
+                <p>@Model.CreatedDate.ToString("dd MMM yyyy")</p>
+                <br>
+                <p><b>The Managing Director</p></b>
+                <p><b> @Html.DisplayFor(model => model.VendorName)</p></b>
+                <p><b> @Html.DisplayFor(model => model.VendorAddress)</p></b>
+                @*<p><b>Sabo Yaba</p></b>
+                    <p><b>Lagos.</p></b>*@
+            </div>
+
+            <div class="col-sm-8">
+                <p>Dear Sir,
+
+                <p><b>OFFER TO SUPPLY</p></b>
+                <p> Reference your Quotation and our negotiation meeting with you, we are pleased to inform you that </p>
+                <p> your company has been selected to carry out the above mentioned under the following terms and conditions:</p>
+            </div>
+
+
+
+            <div class="col-sm-10">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <td>s/n </td>
+                            <td>Item </td>
+                            <td class="col-sm-4">Description </td>
+                            <td> Qty</td>
+                            <td>Unit Price ₦ </td>
+                            <td>Amount ₦ </td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int i = 0;
+                        }
+                        @{
+                            //var RFQDetails = Model.RFQDetails as List<E_Procurement.WebUI.Models.RfqApprovalModel.RFQDetailsViewModel>;
+                            var RFQDetails = Model.RFQDetails as List<E_Procurement.Repository.Dtos.RFQDetailsModel>;
+
+                        }
+                        @foreach (var approvalConfig in RFQDetails)
+                        {
+                        <tr>
+                            <td>@(i = i + 1)</td>
+                            <td>@approvalConfig.ItemName</td>
+                            <td>@approvalConfig.Description</td>
+                            <td>@approvalConfig.QuotedQuantity</td>
+                            <td align="right">@approvalConfig.QuotedAmount</td>
+                            <td align="right">@approvalConfig.QuotedAmount</td>
+                        </tr>
+                        }
+
+
+                        <tr>
+                            <td>Total</td>
+                            <td colspan=3 align="right">  Total</td>
+                            <td align="right"> ₦@Html.DisplayFor(model => model.TotalAmount)</td>
+                        </tr>
+
+
+                </table>
+            </div>
+
+            <div align>
+
+                <p><b>Cost:</b> we are accepting a total sum of <b> ₦@Html.DisplayFor(model => model.TotalAmount) </b>, Vat exclusive but subject to a deduction of withholding tax, for the supply of one Dell inspiron laptop with the above stated configuration</p>
+
+                <p> Please Note that no Variation in price will be entertained after the acceptance of this offer Letter.</p>
+
+                <p><b> Delivery Line:</b> Immediate delivery at our office , 33 saka Tinubu street, victoria Island, Lagos, Upon receipt of this offer letter.Any deffective item shall be replaced at no extra cost to cyverspace Netwrok Limited.
+                <p>
+                    <b>Terms of Delivery: </b>Full Payment of the Total cost shall be made to delivery.
+
+                    if the above terms and conditions are acceptable to you, kindly acknowledge this letter by signing the enclosed copy and returning same to us.
+
+                <p>If the above terms and conditions are acceptable to you, kindly acknowledge this letter by signing the enclosed copy and returning same to us.
+
+                <p>Thank You. </p>
+
+                <p>Yours faithfully,</p>
+                <p>For: <b>CYBERSPACE NETWORK LIMITED</b></p>
+            </div>
+            <BR>
+
+            <div class=row>
+                <div class="col-sm-3">
+                    <p><b>VICTOR ABULELE</b></p>
+                    <p>Authorized Signatory</p>
+                </div>
+                <div class="col-sm">
+
+                </div>
+                <div class="col-sm-2">
+
+                </div>
+                <div class="col-sm-2">
+
+                </div>
+                <div class="col-sm-3">
+                    <p><b>JOE ONWUBUYA</b></p>
+                    <p>Authorized Signatory</p>
+                </div>
+
+
+                <div class="footer"></div>
+                <br>
+
+
+            </div>
+        </div>
+    </div>
+    </div>
+
+    @*</body>
+        </html>*@
+    <script type="text/javascript">
+        function printDiv(printpage) {
+            var headstr = "<html><head><title></title></head><body>";
+            var footstr = "</body>";
+            var newstr = document.all.item(printpage).innerHTML;
+            var oldstr = document.body.innerHTML;
+            document.body.innerHTML = headstr + newstr + footstr;
+            window.print();
+            document.body.innerHTML = oldstr;
+            return false;
+        }
+    </script>
