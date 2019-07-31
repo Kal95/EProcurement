@@ -13,7 +13,12 @@
 <div class="main-card mb-3 card">
 
     <div class="card-body">
-        <a class="btn btn-primary" pull-right" href="@Url.Action("Create", "Country")"><i class="fa fa-plus"> </i>  Add Country</a>
+        
+        <div class="" style="display:flex; justify-content:space-between">
+            <a class="btn btn-primary" pull-right" href="@Url.Action("Create", "Country")"><i class="fa fa-plus"> </i>  Add Country</a>
+
+            <input type="text" id="myInput" style="width:200px; height:40px" onkeyup="myFunction()" class="form-control" placeholder="Search..">
+        </div>
         <br />
         <hr />
         <br />
@@ -32,10 +37,10 @@
                 @foreach (var item in Model)
                 {
                     <tr>
-                        <td>@(rowNo += 1)</td>
+                        <td style="width:50px">@(rowNo += 1)</td>
                         <td>@item.CountryName</td>
 
-                        <td>
+                        <td style="width:100px">
                             @if (item.IsActive)
                             {
                                 <label class="text-success">Active</label>
@@ -46,7 +51,7 @@
 
                             }
                         </td>
-                        <td><a class="mb-2 mr-2 btn-icon btn-shadow btn-outline-2x btn btn-outline-alternate" href="@Url.Action("Edit", "Country",  new { CountryId = item.Id })"><span class="glyphicon btn-glyphicon glyphicon-edit img-circle text-success"></span><i class="pe-7s-edit btn-icon-wrapper"></i> Edit</a></td>
+                        <td style="width:50px"><a class="btn btn-orange" href="@Url.Action("Edit", "Country",  new { CountryId = item.Id })"><span class="fa fa-pencil"></span><i class="pe-7s-edit btn-icon-wrapper"></i> Edit</a></td>
                     </tr>
                 }
 
@@ -54,3 +59,26 @@
         </table>
     </div>
 </div>
+<script>
+    function myFunction() {
+        // Declare variables
+        var input, filter, table, tr, td, i, txtValue;
+        input = document.getElementById("myInput");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("myTable");
+        tr = table.getElementsByTagName("tr");
+
+        // Loop through all table rows, and hide those who don't match the search query
+        for (i = 0; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[1];
+            if (td) {
+                txtValue = td.textContent || td.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+    }
+</script>

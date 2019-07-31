@@ -8,10 +8,11 @@ using E_Procurement.Repository.CountryRepo;
 using AutoMapper;
 using E_Procurement.WebUI.Models.CountryModel;
 using Abp.Web.Mvc.Alerts;
+using static E_Procurement.WebUI.Enums.Enums;
 
 namespace E_Procurement.WebUI.Controllers
 {
-    public class CountryController : Controller
+    public class CountryController : BaseController
     {
         private readonly ICountryRepository _countryRepository;
         private readonly IMapper _mapper;
@@ -64,19 +65,17 @@ namespace E_Procurement.WebUI.Controllers
                 if (ModelState.IsValid)
                 {
                     var status = _countryRepository.CreateCountry(Model, out message);
-
-                    ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
-
+                    
                     if (status == true)
                     {
 
-                        ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
+                        Alert("Country Created Successfully", NotificationType.success);
 
                     }
 
                     else
                     {
-                        ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
+                        Alert("This Country Already Exists", NotificationType.info);
                         return View(Model);
                     }
 
@@ -85,6 +84,8 @@ namespace E_Procurement.WebUI.Controllers
                 else
                 {
                     ViewBag.StatusCode = 2;
+
+                    Alert("Country Wasn't Created", NotificationType.error);
 
                     return View(Model);
 
@@ -111,6 +112,7 @@ namespace E_Procurement.WebUI.Controllers
 
                 if (country == null)
                 {
+                    Alert("This Country Doesn't Exist", NotificationType.warning);
                     return RedirectToAction("Index", "Country");
                 }
 
@@ -143,23 +145,22 @@ namespace E_Procurement.WebUI.Controllers
 
                     var country = _countryRepository.GetCountries().Where(u => u.Id == Model.Id).FirstOrDefault();
 
-                    if (country == null) { return RedirectToAction("Index", "Country"); }
+                    if (country == null) { Alert("This Country Doesn't Exist", NotificationType.warning); return RedirectToAction("Index", "Country"); }
 
                     Model.UpdatedBy = User.Identity.Name;
 
                     var status = _countryRepository.UpdateCountry(Model, out message);
-
-                    ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
+                    
 
                     if (status == true)
                     {
 
-                        ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
+                        Alert("Country Updated Successfully", NotificationType.success);
                     }
 
                     else
                     {
-                        ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
+                        Alert("This Country Already Exists", NotificationType.info);
                         return View(Model);
                     }
 
@@ -169,7 +170,7 @@ namespace E_Procurement.WebUI.Controllers
                 {
                     ViewBag.StatusCode = 2;
 
-                    ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
+                    Alert("Country Wasn't Updated", NotificationType.error);
 
                     return View(Model);
                 }

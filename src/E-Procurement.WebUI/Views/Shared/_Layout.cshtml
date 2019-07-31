@@ -104,23 +104,28 @@
                             <li class="nav-item"><a asp-controller="State" asp-action="Index" class="nav-link">State</a></li>
                             <li class="nav-item"><a asp-controller="Country" asp-action="Index" class="nav-link">Country</a></li>
                             <li class="nav-item"><a asp-controller="Bank" asp-action="Index" class="nav-link active">Bank</a></li>
+                            <li class="nav-item"><a asp-controller="VendorCategory" asp-action="ItemIndex" class="nav-link active">Item</a></li>
+                            <li class="nav-item"><a asp-controller="VendorCategory" asp-action="CategoryIndex" class="nav-link active">Category</a></li>
+                            <li class="nav-item"><a asp-controller="Report" asp-action="EvaluationPeriodIndex" class="nav-link">Evaluation Period</a></li>
                         </ul>
                     </li><!-- nav-item -->
                     @if (User.IsInRole("Admin"))
                     {
-                        <li class="nav-item">
-                            <a href="" class="nav-link with-sub">
-                                <i class="icon ion-ios-filing-outline"></i>
-                                <span>Admin</span>
-                            </a>
-                            <ul class="nav-sub">
-                                <li class="nav-item"><a asp-controller="Account" asp-action="Roles" class="nav-link">Roles</a></li>
-                                <li class="nav-item"><a asp-controller="Account" asp-action="Users" class="nav-link">Users</a></li>
-                                <li class="nav-item"><a asp-controller="Account" asp-action="AssignUserRole" class="nav-link">Assign User Role</a></li>
-                                <li class="nav-item"><a asp-controller="Permission" asp-action="Index" class="nav-link">Permisions</a></li>
-                                <li class="nav-item"><a asp-controller="Permission" asp-action="AssignRolePermissions" class="nav-link">Assign Role Permisions</a></li>
-                                <li class="nav-item"><a asp-controller="RfqApprovalConfig" asp-action="Index" class="nav-link">RFQ Approval Config</a></li>
-                                <li class="nav-item"><a asp-controller="Report" asp-action="VendorEvaluation" class="nav-link">Vendor Evaluation</a></li>
+                    <li class="nav-item">
+                        <a href="" class="nav-link with-sub">
+                            <i class="icon ion-ios-filing-outline"></i>
+                            <span>Admin</span>
+                        </a>
+                        <ul class="nav-sub">
+                            <li class="nav-item"><a asp-controller="Account" asp-action="Roles" class="nav-link">Roles</a></li>
+                            <li class="nav-item"><a asp-controller="Account" asp-action="Users" class="nav-link">Users</a></li>
+                            <li class="nav-item"><a asp-controller="Account" asp-action="AssignUserRole" class="nav-link">Assign User Role</a></li>
+                            <li class="nav-item"><a asp-controller="Permission" asp-action="Index" class="nav-link">Permisions</a></li>
+                            <li class="nav-item"><a asp-controller="Permission" asp-action="AssignRolePermissions" class="nav-link">Assign Role Permisions</a></li>
+                            <li class="nav-item"><a asp-controller="RfqApprovalConfig" asp-action="Index" class="nav-link">RFQ Approval Config</a></li>
+                            <li class="nav-item"><a asp-controller="Report" asp-action="VendorEvaluation" class="nav-link">Vendor Evaluation</a></li>
+                            <li class="nav-item"><a asp-controller="Report" asp-action="VendorEvaluationReport" class="nav-link">Vendor Evaluation Report</a></li>
+                            <li class="nav-item"><a asp-controller="Vendor" asp-action="VendorDocuments" class="nav-link">Vendor Documents</a></li>
 
                             </ul>
                         </li><!-- nav-item -->

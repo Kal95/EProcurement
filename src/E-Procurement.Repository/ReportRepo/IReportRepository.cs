@@ -12,11 +12,17 @@ namespace E_Procurement.Repository.ReportRepo
     {
         List<Vendor> GetVendorsByCategory(RfqGenModel model);
         IEnumerable<Vendor> GetVendors();
+        IEnumerable<VendorEvaluation> GetVendorEvaluation();
+        List<VendorEvaluation> GetVendorEvaluationByCategory(RfqGenModel model);
         IEnumerable<VendorMapping> GetMapping();
         //List<Vendor> GetVendorDetails(RfqGenModel model);
         List<RFQGenerationModel> GetRfqGen();
         List<RFQGenerationModel> GetPoGen();
         List<RFQDetails> GetRFQDetails();
         bool VendorEvaluation(RfqGenModel model, out string Message);
+
+        bool CreateEvaluationPeriod(ReportModel model, out string Message);
+        bool UpdateEvaluationPeriod(ReportModel model, out string Message);
+        IEnumerable<EvaluationPeriodConfig> GetEvaluationPeriods();
     }
 }

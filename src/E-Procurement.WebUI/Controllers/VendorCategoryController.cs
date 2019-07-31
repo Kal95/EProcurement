@@ -8,27 +8,43 @@ using E_Procurement.Repository.VendorCategoryRepo;
 using E_Procurement.WebUI.Models.VendorCategoryModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using static E_Procurement.WebUI.Enums.Enums;
 
 namespace E_Procurement.WebUI.Controllers
 {
-    public class VendorCategoryController : Controller
+    public class VendorCategoryController : BaseController
     {
         private readonly IVendorCategoryRepository _vendorCategoryRepository;
         private readonly IMapper _mapper;
 
-        public VendorCategoryController(IVendorCategoryRepository bankRepository, IMapper mapper)
+        public VendorCategoryController(IVendorCategoryRepository categoryRepository, IMapper mapper)
         {
-            _vendorCategoryRepository = bankRepository;
+            _vendorCategoryRepository = categoryRepository;
             _mapper = mapper;
         }
+        private void LoadPredefinedInfo(CategoryModel Model)
+        {
+            int CategoryId = Model.CategoryId;
+
+
+            var ItemCategory = _vendorCategoryRepository.GetVendorCategories().ToList();
+            
+            Model.ItemCategoryList = ItemCategory.Select(x => new SelectListItem
+            {
+                Value = x.Id.ToString(),
+                Text = x.CategoryName
+            });
+
+        }
         // GET: VendorCategory
-        public ActionResult Index()
+        public ActionResult CategoryIndex()
         {
             try
             {
                 var model = _vendorCategoryRepository.GetVendorCategories().ToList();
 
-                List<VendorCategoryModel> smodel = _mapper.Map<List<VendorCategoryModel>>(model);
+                List<CategoryModel> smodel = _mapper.Map<List<CategoryModel>>(model);
                 return View(smodel);
             }
             catch (Exception)
@@ -37,14 +53,8 @@ namespace E_Procurement.WebUI.Controllers
             }
         }
 
-        // GET: VendorCategory/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
-
         // GET: VendorCategory/Create
-        public ActionResult Create()
+        public ActionResult CategoryCreate()
         {
             return View();
         }
@@ -52,39 +62,39 @@ namespace E_Procurement.WebUI.Controllers
         // POST: VendorCategory/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(VendorCategoryModel Model)
+        public ActionResult CategoryCreate(CategoryModel model)
         {
             try
             {
                 string message;
-                string UserId = User.Identity.Name;
+                model.CreatedBy = User.Identity.Name;
 
                 if (ModelState.IsValid)
                 {
-                    var status = _vendorCategoryRepository.CreateVendorCategory(Model.CategoryName, UserId, out message);
 
-                    ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
+                    var status = _vendorCategoryRepository.CreateVendorCategory(model, out message);
 
                     if (status == true)
                     {
 
-                        ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
+                        Alert("Category Created Successfully", NotificationType.success);
 
                     }
 
                     else
                     {
-                        ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
-                        return View(Model);
+                        Alert("This Category Already Exists", NotificationType.info);
+                        return View(model);
                     }
 
-                    return RedirectToAction("Index", "VendorCategory");
+                    return RedirectToAction("CategoryIndex", "VendorCategory");
                 }
                 else
                 {
                     ViewBag.StatusCode = 2;
+                    Alert("Category Wasn't Created", NotificationType.error);
 
-                    return View(Model);
+                    return View(model);
 
                 }
             }
@@ -96,26 +106,30 @@ namespace E_Procurement.WebUI.Controllers
             }
         }
 
-        // GET: VendorCategory/Edit/5
-        public ActionResult Edit(int CategoryId)
+        // GET: State/Edit/5
+        public ActionResult CategoryEdit(int CategoryId)
         {
-            VendorCategoryModel Model = new VendorCategoryModel();
+
+
+            CategoryModel Model = new CategoryModel();
 
             try
             {
 
-                var country = _vendorCategoryRepository.GetVendorCategories().Where(u => u.Id == CategoryId).FirstOrDefault();
+                var Category = _vendorCategoryRepository.GetVendorCategories().Where(u => u.Id == CategoryId).FirstOrDefault();
 
-                if (country == null)
+                if (Category == null)
                 {
-                    return RedirectToAction("Index", "VendorCategory");
+                    Alert("This Category Doesn't Exist", NotificationType.warning);
+
+                    return RedirectToAction("CategoryIndex", "VendorCategory");
                 }
 
-                Model.Id = country.Id;
+                Model.Id = Category.Id;
 
-                Model.CategoryName = country.CategoryName;
+                Model.CategoryName = Category.CategoryName;
 
-                Model.IsActive = country.IsActive;
+                Model.IsActive = Category.IsActive;
 
                 return View(Model);
             }
@@ -124,12 +138,13 @@ namespace E_Procurement.WebUI.Controllers
 
                 return View("Error");
             }
+
         }
 
-        // POST: VendorCategory/Edit/5
+        // POST: State/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(VendorCategoryModel Model)
+        public ActionResult CategoryEdit(CategoryModel Model)
         {
             try
             {
@@ -138,35 +153,34 @@ namespace E_Procurement.WebUI.Controllers
                 {
                     string message;
 
-                    var category = _vendorCategoryRepository.GetVendorCategories().Where(u => u.Id == Model.Id).FirstOrDefault();
+                    var state = _vendorCategoryRepository.GetVendorCategories().FirstOrDefault(u => u.Id == Model.Id);
 
-                    if (category == null) { return RedirectToAction("Index", "VendorCategory"); }
+                    if (state == null) { Alert("This Category Doesn't Exist", NotificationType.warning); return RedirectToAction("Index", "VendorCategory"); }
 
-                    string UserId = User.Identity.Name;
+                    Model.UpdatedBy = User.Identity.Name;
 
-                    var status = _vendorCategoryRepository.UpdateVendorCategory(Model.Id, Model.CategoryName, Model.IsActive, UserId, out message);
+                    var status = _vendorCategoryRepository.UpdateVendorCategory(Model, out message);
 
-                    ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
 
                     if (status == true)
                     {
+                        Alert("Category Updated Successfully", NotificationType.success);
 
-                        ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
                     }
 
                     else
                     {
-                        ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
+                        Alert("This Category Already Exists", NotificationType.info);
                         return View(Model);
                     }
 
-                    return RedirectToAction("Index", "VendorCategory");
+                    return RedirectToAction("CategoryIndex", "VendorCategory");
                 }
                 else
                 {
                     ViewBag.StatusCode = 2;
 
-                    ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
+                    Alert("Category Wasn't Updated", NotificationType.error);
 
                     return View(Model);
                 }
@@ -178,26 +192,174 @@ namespace E_Procurement.WebUI.Controllers
             }
         }
 
-        // GET: VendorCategory/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: VendorCategory/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult ItemIndex()
         {
             try
             {
-                // TODO: Add delete logic here
+                var model = _vendorCategoryRepository.GetItems_Categories().ToList();
 
-                return RedirectToAction(nameof(Index));
+                List<CategoryModel> smodel = _mapper.Map<List<CategoryModel>>(model);
+                return View(smodel);
             }
-            catch
+            catch (Exception)
             {
+                return View("Error");
+            }
+        }
+
+        // GET: VendorCategory/Create
+        public ActionResult ItemCreate()
+        {
+            try
+            {
+                CategoryModel Model = new CategoryModel();
+
+                LoadPredefinedInfo(Model);
+
+                return View(Model);
+            }
+            catch (Exception)
+            {
+
                 return View();
+            }
+        }
+
+        // POST: VendorCategory/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ItemCreate(CategoryModel model)
+        {
+            try
+            {
+                string message;
+                model.CreatedBy = User.Identity.Name;
+
+                if (ModelState.IsValid)
+                {
+
+                    var status = _vendorCategoryRepository.CreateItem(model, out message);
+
+                    if (status == true)
+                    {
+
+                        Alert("Item Created Successfully", NotificationType.success);
+
+                    }
+
+                    else
+                    {
+                        Alert("This Item Already Exists", NotificationType.info);
+                        return View(model);
+                    }
+
+                    return RedirectToAction("ItemIndex", "VendorCategory");
+                }
+                else
+                {
+                    LoadPredefinedInfo(model);
+                    ViewBag.StatusCode = 2;
+                    Alert("Item Wasn't Created", NotificationType.error);
+
+                    return View(model);
+
+                }
+            }
+
+            catch (Exception)
+            {
+
+                return View("Error");
+            }
+        }
+
+        // GET: State/Edit/5
+        public ActionResult ItemEdit(int ItemId)
+        {
+
+
+            CategoryModel Model = new CategoryModel();
+
+            try
+            {
+
+                var Item = _vendorCategoryRepository.GetItems().Where(u => u.Id == ItemId).FirstOrDefault();
+
+                if (Item == null)
+                {
+                    Alert("This Item Doesn't Exist", NotificationType.warning);
+
+                    return RedirectToAction("ItemIndex", "VendorCategory");
+                }
+
+                Model.Id = Item.Id;
+
+                Model.CategoryId = Item.ItemCategoryId;
+
+                Model.ItemName = Item.ItemName;
+
+                Model.IsActive = Item.IsActive;
+
+                LoadPredefinedInfo(Model);
+                return View(Model);
+            }
+            catch (Exception)
+            {
+
+                return View("Error");
+            }
+
+        }
+
+        // POST: State/Edit/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ItemEdit(CategoryModel Model)
+        {
+            try
+            {
+
+                if (ModelState.IsValid)
+                {
+                    string message;
+
+                    var state = _vendorCategoryRepository.GetItems().FirstOrDefault(u => u.Id == Model.Id);
+
+                    if (state == null) { Alert("This Item Doesn't Exist", NotificationType.warning); return RedirectToAction("ItemIndex", "VendorCategory"); }
+
+                    Model.UpdatedBy = User.Identity.Name;
+
+                    var status = _vendorCategoryRepository.UpdateItem(Model, out message);
+
+
+                    if (status == true)
+                    {
+                        Alert("Item Updated Successfully", NotificationType.success);
+
+                    }
+
+                    else
+                    {
+                        Alert("This Item Already Exists", NotificationType.info);
+                        LoadPredefinedInfo(Model);
+                        return View(Model);
+                    }
+
+                    return RedirectToAction("ItemIndex", "VendorCategory");
+                }
+                else
+                {
+                    ViewBag.StatusCode = 2;
+
+                    Alert("Item Wasn't Updated", NotificationType.error);
+
+                    return View(Model);
+                }
+            }
+            catch (Exception)
+            {
+
+                return View("Error");
             }
         }
     }

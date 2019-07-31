@@ -1,9 +1,10 @@
-﻿@model IEnumerable<E_Procurement.WebUI.Models.StateModel.StateModel>
+﻿@model IEnumerable<E_Procurement.Repository.ReportRepo.ReportModel>
+
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
-    ViewBag.Title = "States";
+    ViewBag.Title = "Vendor Categories";
     ViewBag.FavIcon = "fa fa-street-view";
-    ViewBag.PageDesc = "Manage States";
+    ViewBag.PageDesc = "Manage Vendor Categories";
 }
 
 
@@ -12,20 +13,23 @@
 <div class="main-card mb-3 card">
 
     <div class="card-body">
-        
+
         <div class="" style="display:flex; justify-content:space-between">
-            <a class="btn btn-primary" pull-right" href="@Url.Action("Create", "State")"><i class="fa fa-plus"> </i>  Add State</a>
+            <a class="btn btn-primary" pull-right" href="@Url.Action("EvaluationPeriodCreate", "Report")"><i class="fa fa-plus"> </i>  Add Period</a>
 
             <input type="text" id="myInput" style="width:200px; height:40px" onkeyup="myFunction()" class="form-control" placeholder="Search..">
         </div>
         <br />
         <hr />
         <br />
-        <table style="width: 100%;" id="example" class="table table-hover table-striped table-bordered">
+        <table id="myTable" class="table table-hover table-striped table-bordered">
             <thead>
                 <tr>
                     <th>S/N</th>
-                    <th>State Name </th>
+                    @*<th>Item </th>*@
+                    <th>Evaluation Period </th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
                     <th>Status</th>
                     <th>Action</th>
                 </tr>
@@ -35,23 +39,25 @@
                 @{int rowNo = 0;}
                 @foreach (var item in Model)
                 {
-                    <tr>
-                        <td style="width:50px">@(rowNo += 1)</td>
-                        <td>@item.StateName</td>
+                <tr>
+                    <td style="width:50px">@(rowNo += 1)</td>
+                    @*<td>@item.ItemName</td>*@
+                    <td>@item.EvaluationPeriod</td>
+                    <td style="width:200px">@item.StartDate.ToString("dd-MMM-yyyy")</td>
+                    <td style="width:200px">@item.EndDate.ToString("dd-MMM-yyyy")</td>
+                    <td style="width:100px">
+                        @if (Convert.ToDateTime(item.EndDate) >= DateTime.Now)
+                        {
+                            <label class="text-success">Active</label>
+                        }
+                        else
+                        {
+                            <label class="text-danger">Inactive</label>
 
-                        <td style="width:100px">
-                            @if (item.IsActive)
-                            {
-                                <label class="text-success">Active</label>
-                            }
-                            else
-                            {
-                                <label class="text-danger">Inactive</label>
-
-                            }
-                        </td>
-                        <td style="width:50px"><a class="btn btn-orange" href="@Url.Action("Edit", "State",  new { StateId = item.Id })"><span class="fa fa-pencil"></span><i class="pe-7s-edit btn-icon-wrapper"></i> Edit</a></td>
-                    </tr>
+                        }
+                    </td>
+                    <td style="width:50px"><a class="btn btn-orange" href="@Url.Action("EvaluationPeriodEdit", "Report",  new { PeriodId = item.PeriodId })"><span class="fa fa-pencil"></span><i class="pe-7s-edit btn-icon-wrapper"></i> Edit</a></td>
+                </tr>
                 }
 
             </tbody>
@@ -81,4 +87,3 @@
         }
     }
 </script>
-<!-- ./page-content -->

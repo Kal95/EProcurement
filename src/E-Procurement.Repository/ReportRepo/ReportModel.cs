@@ -41,5 +41,19 @@ namespace E_Procurement.Repository.ReportRepo
         public decimal TotalAmount { get; set; }
         public DateTime ExpectedDeliveryDate { get; set; }
         public int PoId { get; set; }
+     
+        public string BestPrice { get; set; }
+        public string ProductAvailability { get; set; }
+        public string ProductQuality { get; set; }
+        public string DeliveryTimeFrame { get; set; }
+        public string CreditFacility { get; set; }
+        public string WarrantySupport { get; set; }
+        public string CustomerCare { get; set; }
+        public string Others { get; set; }
+        public string Score { get; set; }
+
+        public int PeriodId { get; set; }
+        public string EvaluationPeriod { get; set; }
+       
     }
 }

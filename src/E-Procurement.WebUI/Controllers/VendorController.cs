@@ -17,11 +17,12 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using static E_Procurement.WebUI.Enums.Enums;
 
 namespace E_Procurement.WebUI.Controllers
 {
     [Authorize]
-    public class VendorController : Controller
+    public class VendorController : BaseController
     {
         private readonly IVendorRepository _vendorRepository;
         private readonly ICountryRepository _countryRepository;
@@ -42,6 +43,21 @@ namespace E_Procurement.WebUI.Controllers
             _hostingEnv = hostingEnv;
         }
         public ActionResult Index()
+        {
+            try
+            {
+                var model = _vendorRepository.GetVendors().ToList();
+
+                List<VendorModel> smodel = _mapper.Map<List<VendorModel>>(model);
+                return View(smodel);
+            }
+            catch (Exception)
+            {
+                return View("Error");
+            }
+        }
+
+        public ActionResult VendorDocuments()
         {
             try
             {
@@ -90,6 +106,7 @@ namespace E_Procurement.WebUI.Controllers
                     //return View(Model);
                 }
 
+                string dbFilePath = "~/upload/VendorDocuments/";
 
                 //var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "upload", imageFilePath);
                 var path1 = Path.Combine(webRootPath, "Uploads", "VendorDocuments", MOAFilePath);
@@ -120,14 +137,14 @@ namespace E_Procurement.WebUI.Controllers
                 using (Stream stream = new FileStream(path7, FileMode.Create)) { Model.CertificateOfVAT.CopyTo(stream); }
                 using (Stream stream = new FileStream(path8, FileMode.Create)) { Model.BankReference.CopyTo(stream); }
 
-                Model.MOAFilePath = path1;
-                Model.NOSFilePath = path2;
-                Model.PODFilePath = path3;
-                Model.POSFilePath = path4;
-                Model.RefFilePath = path5;
-                Model.TaxFilePath = path6;
-                Model.COVFilePath = path7;
-                Model.BankRefFilePath = path8;
+                Model.MOAFilePath = MOAFilePath;
+                Model.NOSFilePath = NOSFilePath;
+                Model.PODFilePath = PODFilePath;
+                Model.POSFilePath = POSFilePath;
+                Model.RefFilePath = RefFilePath;
+                Model.TaxFilePath = TaxFilePath;
+                Model.COVFilePath = COVFilePath;
+                Model.BankRefFilePath = BankRefFilePath;
             }
         }
 
@@ -241,19 +258,18 @@ namespace E_Procurement.WebUI.Controllers
                     
                     LoadFilePath(Model);
                     var status = _vendorRepository.CreateVendor(Model, out message);
-
-                    ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
+                    
 
                     if (status == true)
                     {
 
-                        ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
+                        Alert("Vendor Created Successfully", NotificationType.success);
 
                     }
 
                     else
                     {
-                        ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
+                        Alert("Vendor Already Exists", NotificationType.info);
                         return View(Model);
                     }
 
@@ -262,6 +278,7 @@ namespace E_Procurement.WebUI.Controllers
                 else
                 {
                     LoadPredefinedInfo(Model);
+                    Alert("Vendor Wasn't Created", NotificationType.error);
 
                     ViewBag.StatusCode = 2;
 
@@ -293,6 +310,7 @@ namespace E_Procurement.WebUI.Controllers
                 
                 if (vendor == null)
                 {
+                    Alert("This Vendor Doesn't Exist", NotificationType.warning);
                     return RedirectToAction("Index", "Vendor");
                 }
                 Model.SelectedVendorCategories = SelectedCategories.ToList();
@@ -357,24 +375,23 @@ namespace E_Procurement.WebUI.Controllers
 
                     var vendor = _vendorRepository.GetVendors().FirstOrDefault(u => u.Id == Model.Id);
 
-                    if (vendor == null) { return RedirectToAction("Index", "Vendor"); }
+                    if (vendor == null) { Alert("This Vendor Doesn't Exist", NotificationType.warning); return RedirectToAction("Index", "Vendor"); }
 
                     Model.UpdatedBy = User.Identity.Name;
 
                     LoadFilePath(Model);
                     var status = _vendorRepository.UpdateVendor(Model, out message);
-
-                    ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
+                    
 
                     if (status == true)
                     {
 
-                        ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
+                        Alert("Vendor Updated Successfully", NotificationType.success);
                     }
 
                     else
                     {
-                        ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
+                        Alert("This Vendor Already Exists", NotificationType.info);
                         return RedirectToAction("Index", "Vendor");
                     }
 
@@ -384,7 +401,7 @@ namespace E_Procurement.WebUI.Controllers
                 {
                     ViewBag.StatusCode = 2;
 
-                    ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
+                    Alert("Vendor Wasn't Updated", NotificationType.error);
 
                     return View(Model);
                 }

@@ -4,14 +4,16 @@ using E_Procurement.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace E_Procurement.Data.Migrations
 {
     [DbContext(typeof(EProcurementContext))]
-    partial class EProcurementContextModelSnapshot : ModelSnapshot
+    [Migration("20190726111350_EvaluationConfig")]
+    partial class EvaluationConfig
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -133,35 +135,6 @@ namespace E_Procurement.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("EmailSentLogs");
-                });
-
-            modelBuilder.Entity("E_Procurement.Data.Entity.EvaluationPeriodConfig", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("CreatedBy");
-
-                    b.Property<DateTime>("DateCreated");
-
-                    b.Property<DateTime>("EndDate");
-
-                    b.Property<bool>("IsActive");
-
-                    b.Property<bool>("IsDeleted");
-
-                    b.Property<DateTime?>("LastDateUpdated");
-
-                    b.Property<string>("Period");
-
-                    b.Property<DateTime>("StartDate");
-
-                    b.Property<string>("UpdatedBy");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("EvaluationPeriodConfigs");
                 });
 
             modelBuilder.Entity("E_Procurement.Data.Entity.GRNGeneration", b =>

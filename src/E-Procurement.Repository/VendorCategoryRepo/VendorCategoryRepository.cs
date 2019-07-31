@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using E_Procurement.Data;
 using E_Procurement.Data.Entity;
+using E_Procurement.WebUI.Models.VendorCategoryModel;
 
 namespace E_Procurement.Repository.VendorCategoryRepo
 {
@@ -16,20 +17,20 @@ namespace E_Procurement.Repository.VendorCategoryRepo
         {
             _context = context;
         }
-        public bool CreateVendorCategory(string CategoryName, string UserId, out string Message)
+        public bool CreateVendorCategory(CategoryModel model, out string Message)
         {
-            var confirm = _context.VendorCategories.Where(x => x.CategoryName == CategoryName).Count();
+            var confirm = _context.ItemCategories.Where(x => x.CategoryName == model.CategoryName).Count();
 
-            VendorCategory category = new VendorCategory();
+            ItemCategory category = new ItemCategory();
 
             if (confirm == 0)
             {
 
-                category.CategoryName = CategoryName;
+                category.CategoryName = model.CategoryName;
 
                 category.IsActive = true;
 
-                category.CreatedBy = UserId;
+                category.CreatedBy = model.CreatedBy;
 
                 category.DateCreated = DateTime.Now;
 
@@ -50,12 +51,12 @@ namespace E_Procurement.Repository.VendorCategoryRepo
 
         }
 
-        public bool UpdateVendorCategory(int Id, string CategoryName, bool IsActive, string UserId, out string Message)
+        public bool UpdateVendorCategory(CategoryModel model, out string Message)
         {
 
-            var confirm = _context.VendorCategories.Where(x => x.CategoryName == CategoryName && x.IsActive == IsActive).Count();
+            var confirm = _context.ItemCategories.Where(x => x.CategoryName == model.CategoryName && x.IsActive == model.IsActive).Count();
 
-            var oldEntry = _context.VendorCategories.Where(u => u.Id == Id).FirstOrDefault();
+            var oldEntry = _context.ItemCategories.Where(u => u.Id == model.Id).FirstOrDefault();
 
             if (oldEntry == null)
             {
@@ -65,11 +66,11 @@ namespace E_Procurement.Repository.VendorCategoryRepo
             if (confirm == 0)
             {
 
-                oldEntry.CategoryName = CategoryName;
+                oldEntry.CategoryName = model.CategoryName;
 
-                oldEntry.IsActive = IsActive;
+                oldEntry.IsActive = model.IsActive;
 
-                oldEntry.UpdatedBy = UserId;
+                oldEntry.UpdatedBy = model.CreatedBy;
 
                 oldEntry.LastDateUpdated = DateTime.Now;
 
@@ -87,10 +88,106 @@ namespace E_Procurement.Repository.VendorCategoryRepo
             }
 
         }
-
-        public IEnumerable<VendorCategory> GetVendorCategories()
+        public bool CreateItem(CategoryModel model, out string Message)
         {
-            return _context.VendorCategories.OrderByDescending(u => u.Id).ToList();
+            var confirm = _context.Items.Where(x => x.ItemName == model.ItemName && x.ItemCategoryId == model.CategoryId).Count();
+
+            Item item = new Item();
+
+            if (confirm == 0)
+            {
+
+                item.ItemCategoryId = model.CategoryId;
+
+                item.ItemName = model.ItemName;
+
+                item.IsActive = true;
+
+                item.CreatedBy = model.CreatedBy;
+
+                item.DateCreated = DateTime.Now;
+
+                _context.Add(item);
+
+                _context.SaveChanges();
+
+                Message = "Item created successfully";
+
+                return true;
+            }
+            else
+            {
+                Message = "Item already exist";
+
+                return false;
+            }
+
+        }
+
+        public bool UpdateItem(CategoryModel model, out string Message)
+        {
+
+            var confirm = _context.Items.Where(x => x.ItemName == model.ItemName && x.ItemCategoryId == model.CategoryId && x.IsActive == model.IsActive).Count();
+
+            var oldEntry = _context.Items.Where(u => u.Id == model.Id).FirstOrDefault();
+
+            if (oldEntry == null)
+            {
+                throw new Exception("No Item exists with this Id");
+            }
+
+            if (confirm == 0)
+            {
+
+                oldEntry.ItemCategoryId = model.CategoryId;
+
+                oldEntry.ItemName = model.ItemName;
+
+                oldEntry.IsActive = true;
+
+                oldEntry.CreatedBy = model.CreatedBy;
+
+                oldEntry.DateCreated = DateTime.Now;
+
+                _context.SaveChanges();
+
+                Message = "Item updated successfully";
+
+                return true;
+            }
+            else
+            {
+                Message = "Item already exist";
+
+                return false;
+            }
+
+        }
+
+        public IEnumerable<ItemCategory> GetVendorCategories()
+        {
+            return _context.ItemCategories.OrderByDescending(u => u.Id).ToList();
+        }
+        public IEnumerable<Item> GetItems()
+        {
+            return _context.Items.OrderByDescending(u => u.Id).ToList();
+        }
+        public List<CategoryModel>GetItems_Categories()
+        {
+            var query = (from item in _context.Items
+                         join category in _context.ItemCategories on item.ItemCategoryId equals category.Id
+
+                         orderby item.Id descending
+                         select new CategoryModel()
+                         {
+                             Id = item.Id,
+                             CategoryId = category.Id,
+                             ItemName = item.ItemName,
+                             CategoryName = category.CategoryName,
+                             IsActive = item.IsActive
+                             
+                         }).ToList();
+            return query;
         }
     }
 }

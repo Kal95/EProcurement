@@ -11,10 +11,11 @@ using E_Procurement.Repository.VendoRepo;
 using E_Procurement.WebUI.Models.RFQModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using static E_Procurement.WebUI.Enums.Enums;
 
 namespace E_Procurement.WebUI.Controllers
 {
-    public class RfqGenController : Controller
+    public class RfqGenController : BaseController
     {
         private readonly IRfqGenRepository _rfqGenRepository;
         private readonly IMapper _mapper;
@@ -125,18 +126,18 @@ namespace E_Procurement.WebUI.Controllers
 
                     var status = _rfqGenRepository.CreateRfqGen(Model, out message);
 
-                    ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
+                    
 
                     if (status == true)
                     {
 
-                        ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
+                        Alert("RFQ Generated Successfully", NotificationType.success);
 
                     }
 
                     else
                     {
-                        ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
+                        Alert("This RFQ Already Exists", NotificationType.info);
                         return View(Model);
                     }
 
@@ -147,6 +148,8 @@ namespace E_Procurement.WebUI.Controllers
                     LoadPredefinedInfo(Model);
 
                     ViewBag.StatusCode = 2;
+
+                    Alert("RFQ Wasn't Generated", NotificationType.error);
 
                     return View(Model);
 
@@ -171,6 +174,7 @@ namespace E_Procurement.WebUI.Controllers
 
                 if (rfq == null)
                 {
+                    Alert("This RFQ Doesn't Exist", NotificationType.warning);
                     return RedirectToAction("Index", "RfqGen");
                 }
 
@@ -210,23 +214,22 @@ namespace E_Procurement.WebUI.Controllers
 
                     var rfq = _rfqGenRepository.GetRfqGen().Where(u => u.RFQId == Model.Id).FirstOrDefault();
 
-                    if (rfq == null) { return RedirectToAction("Index", "RfqGen"); }
+                    if (rfq == null) { Alert("This RFQ Doesn't Exist", NotificationType.warning); return RedirectToAction("Index", "RfqGen"); }
 
                     Model.UpdatedBy = User.Identity.Name;
 
                     var status = _rfqGenRepository.UpdateRfqGen(Model, out message);
-
-                    ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
+                    
 
                     if (status == true)
                     {
 
-                        ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
+                        Alert("RFQ Updated Successfully", NotificationType.success);
                     }
 
                     else
                     {
-                        ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
+                        Alert("This RFQ Already Exists", NotificationType.info);
                         return View(Model);
                     }
 
@@ -236,7 +239,7 @@ namespace E_Procurement.WebUI.Controllers
                 {
                     ViewBag.StatusCode = 2;
 
-                    ViewBag.Message = TempData["MESSAGE"] as AlertMessage;
+                    Alert("RFQ Wasn't Generated", NotificationType.error);
 
                     return View(Model);
                 }
