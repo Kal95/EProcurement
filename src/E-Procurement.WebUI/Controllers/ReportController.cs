@@ -516,7 +516,7 @@ namespace E_Procurement.WebUI.Controllers
                     Value = x.Id.ToString(),
                     Text = x.VendorName
                 });
-                Model.PeriodList = period.Where(u => u.EndDate <= DateTime.Now).Select(x => new SelectListItem
+                Model.PeriodList = period.Where(u => u.EndDate >= DateTime.Now).Select(x => new SelectListItem
                 {
                     Value = x.Id.ToString(),
                     Text = x.Period
