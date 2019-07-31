@@ -73,9 +73,7 @@ namespace E_Procurement.WebUI.Controllers
                 if (ModelState.IsValid)
                 {
                     string message;
-
-                    //foreach (var Id in RFQId)
-                    //{
+                    
                     var quote = _quoteSendingRepository.GetRfqDetails().Where(u => u.Id == DetailsId[0]).FirstOrDefault();
 
                     if (quote == null) {
@@ -84,7 +82,6 @@ namespace E_Procurement.WebUI.Controllers
                     }
 
                     var status = _quoteSendingRepository.UpdateQuote(DetailsId, agreedAmount, out message);
-
                     if(status)
                     {
                         Alert("Quote updated successfully.", NotificationType.success);
@@ -94,16 +91,11 @@ namespace E_Procurement.WebUI.Controllers
                     {
                         Alert("Quote updated successfully.", NotificationType.error);
                         return View();
-                    }
-              
-
-
+                    }             
                 }
                 else
-                {
-                  
+                {                  
                         Alert("Error!! Please try again later.", NotificationType.error);
-
                     return View();
                 }
             }
