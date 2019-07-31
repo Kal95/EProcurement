@@ -132,11 +132,8 @@ namespace E_Procurement.WebUI
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-            app.UseCookiePolicy();
 
-            app.UseAuthentication();
-
-        
+            app.UseAuthentication();        
 
             app.UseMvc(routes =>
             {
@@ -146,6 +143,7 @@ namespace E_Procurement.WebUI
                
             });
 
+            app.UseCookiePolicy();
            CreateUserRoles(services).Wait();
             appLifetime.ApplicationStopped.Register(() => ApplicationContainer.Dispose());
         
