@@ -119,9 +119,15 @@ namespace E_Procurement.WebUI.Controllers
                 Model.Reference = GenerateRfqReference();
                 string message;
                 string UserId = User.Identity.Name;
-                if (Convert.ToDateTime(Model.StartDate) >= Convert.ToDateTime(Model.EndDate))
+                if (ModelState.IsValid && Convert.ToDateTime(Model.StartDate) > Convert.ToDateTime(Model.EndDate))
                 {
-                    Alert("Start Date Cannot be Greater or Equal to End Date", NotificationType.error);
+                    Alert("Start Date Cannot be Later Than End Date", NotificationType.error);
+                    LoadPredefinedInfo(Model);
+                    return View(Model);
+                }
+                if (ModelState.IsValid && Convert.ToDateTime(Model.EndDate) < Convert.ToDateTime(DateTime.Now))
+                {
+                    Alert("You Selected An End Date That Is In The Past", NotificationType.error);
                     LoadPredefinedInfo(Model);
                     return View(Model);
                 }
