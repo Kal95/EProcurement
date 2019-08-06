@@ -43,5 +43,11 @@ namespace E_Procurement.Repository.Dtos
             public DateTime DnUploadedDate { get; set; }
             public string DnUploadedBy { get; set; }
 
+            public string GRNNo { get; set; }
+            public string GRNFilePath { get; set; }
+            public byte GRNFileBlob { get; set; }
+            public DateTime GRNUploadedDate { get; set; }
+            public string GRNUploadedBy { get; set; }
+
     }
 }

@@ -1,6 +1,6 @@
 ﻿@model E_Procurement.WebUI.Models.AccountModel.RoleViewModel
 @{
-    ViewData["Title"] = "Edit Users";
+    ViewData["Title"] = "Edit Roles";
 }
 
 <div class="row row-sm mg-t-20">
@@ -20,7 +20,7 @@
                 <input asp-for="Id" class="form-control" type="hidden" placeholder="Confirm Password">
                 <div class="form-layout-footer mg-t-30">
                     <button class="btn btn-info mg-r-5">Submit Form</button>
-                    <button class="btn btn-secondary">Cancel</button>
+                    <a class="btn btn-secondary" asp-controller="Account" asp-action="Roles">Cancel</a>
                 </div><!-- form-layout-footer -->
             </form>
         </div><!-- card -->

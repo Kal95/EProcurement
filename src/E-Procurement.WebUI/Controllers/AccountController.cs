@@ -116,10 +116,21 @@ namespace E_Procurement.WebUI.Controllers
                         {
                             claimsIdentity.AddClaims(claims);
                         }
-                        await _signInManager.Context.SignInAsync(IdentityConstants.ApplicationScheme,
-                            claimsPrincipal,
-                            new AuthenticationProperties { IsPersistent = true });
-                        return RedirectToAction("Index", "Home");
+
+
+                    //await _signInManager.Context.SignInAsync(IdentityConstants.ApplicationScheme,
+                    //    claimsPrincipal,
+                    //    new AuthenticationProperties { IsPersistent = true });
+
+                    var props = new AuthenticationProperties();
+                    props.IsPersistent = true;
+
+                    await _signInManager.Context.SignInAsync(
+                       CookieAuthenticationDefaults.
+                       AuthenticationScheme,
+                       claimsPrincipal, props);
+
+                    return RedirectToAction("Index", "Home");
                     }
                     else
                     {

@@ -98,7 +98,8 @@ namespace E_Procurement.WebUI
             ctext.LoadUnmanagedLibrary(wkHtmlToPdfPath);
             services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
 
-
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            .AddCookie();
 
             var builder = new ContainerBuilder();
             builder.Populate(services);

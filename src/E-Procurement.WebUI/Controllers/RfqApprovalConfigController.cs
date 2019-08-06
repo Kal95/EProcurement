@@ -7,12 +7,14 @@ using E_Procurement.Data.Entity;
 using E_Procurement.Repository.AccountRepo;
 using E_Procurement.Repository.ApprovalRepo;
 using E_Procurement.WebUI.Models.RfqApprovalModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using static E_Procurement.WebUI.Enums.Enums;
 
 namespace E_Procurement.WebUI.Controllers
 {
+    [Authorize]
     public class RfqApprovalConfigController : BaseController
     {
         private readonly IRfqApprovalConfigRepository _RfqApprovalConfigRepository;
@@ -68,16 +70,16 @@ namespace E_Procurement.WebUI.Controllers
                 RfqApprovalConfig.Email = user.Email;
 
                 var userApprovalCheck = await _RfqApprovalConfigRepository.CheckUserApprovalAsync(RfqApprovalConfig.UserId);
-                if (userApprovalCheck != null)
+                if (userApprovalCheck.Count() > 0)
                 {
-                    Alert("Can not create multiple approval level for the selected user!! </br> Please try again.", NotificationType.info);
+                    Alert("Can not create multiple approval level for the selected user!! Please try again.", NotificationType.info);
                     return View(RfqApprovalConfig);
                 }
 
                 var finalApprovalCheck = await _RfqApprovalConfigRepository.GetFinalApprovalAsync();
-                if (finalApprovalCheck != null)
+                if (finalApprovalCheck.Count() > 0)
                 {
-                    Alert("Can not assign final approval to multiple user!! </br> Please try again.", NotificationType.info);
+                    Alert("Cannot create new approval level because Final Approval has already been assigned!! Please try again.", NotificationType.info);
                     return View(RfqApprovalConfig);
                 }
 
@@ -177,7 +179,7 @@ namespace E_Procurement.WebUI.Controllers
             
                 if (result)
                 {
-                    Alert("Permission deleted successfully.", NotificationType.success);
+                    Alert("Approval Config deleted successfully.", NotificationType.success);
                     return RedirectToAction("Index");
                 }
                 else
