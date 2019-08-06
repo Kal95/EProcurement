@@ -65,7 +65,7 @@ namespace E_Procurement.Repository.RfqApprovalConfigRepository
 
         public async Task<bool> DeleteApprovalConfigAsync(int Id)
         {
-            var rfqApprovalConfig = _context.RfqApprovalConfigs.FindAsync(Id);
+            var rfqApprovalConfig = _context.RfqApprovalConfigs.Where(x=>x.Id == Id).FirstOrDefault();
             if (rfqApprovalConfig != null)
             {
                  _context.Remove(rfqApprovalConfig);

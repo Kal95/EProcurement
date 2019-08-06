@@ -98,7 +98,7 @@
                     @if (User.IsInRole("Procurement") || User.IsInRole("Admin"))
                     {
                         <li class="nav-item">
-                            <a href="" class="nav-link with-sub active show-sub">
+                            <a href="" class="nav-link with-sub">
                                 <i class="icon ion-ios-gear-outline"></i>
                                 <span>Setup</span>
                             </a>
@@ -145,6 +145,7 @@
                                 <ul class="nav-sub">
                                     <li class="nav-item"><a href="@Url.Action("Index", "RfqGen")" class="nav-link">Generated List</a></li>
                                     <li class="nav-item"><a href="@Url.Action("Create", "RfqGen")" class="nav-link">Generate RFQ</a></li>
+                                    <li class="nav-item"><a asp-controller="GRN" asp-action="Index" class="nav-link">Upload GRN</a></li>
                                 </ul>
                             </li>
                         }

@@ -7,12 +7,14 @@ using E_Procurement.Data.Entity;
 using E_Procurement.Repository.AccountRepo;
 using E_Procurement.Repository.PermissionRepo;
 using E_Procurement.WebUI.Models.PermissionModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using static E_Procurement.WebUI.Enums.Enums;
 
 namespace E_Procurement.WebUI.Controllers
 {
+    [Authorize]
     public class PermissionController :  BaseController
     {
         private readonly IPermissionRepository _permissionRepository;

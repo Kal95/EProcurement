@@ -108,12 +108,7 @@
             <input asp-for="VendorEmail" type="hidden" />
             <input asp-for="TotalAmount" type="hidden" />
             <div class="row mg-t-20">
-                <label class="col-sm-2 form-control-label"><b> Recieved By: </b></label>
-                <div class="col-sm-2 mg-t-10 mg-sm-t-0">
-                    <input asp-for="DnRecievedBy" type="text" class="form-control">
-                </div>
-                <label class="col-sm-2 form-control-label"><b> Select Invoice : </b></label>
-               
+                <label class="col-sm-2 form-control-label"><b> Select GRN : </b></label>
                 <div class="col-lg-4 mg-t-20 mg-lg-t-0">
                     <label class="custom-file">
                         <input asp-for="InvoiceFilePath" type="file" class="custom-file-input" required>
@@ -124,7 +119,7 @@
 
             <div class="form-layout-footer mg-t-30">
                 <button class="btn btn-info mg-r-5">Save</button>
-                <a class="btn btn-secondary" asp-controller="Invoice" asp-action="Index">Cancel</a>
+                <a class="btn btn-secondary" asp-controller="GRN" asp-action="Index">Cancel</a>
             </div><!-- form-layout-footer -->
         </form>
 
