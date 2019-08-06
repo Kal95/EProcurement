@@ -8,6 +8,7 @@ using E_Procurement.Data;
 using E_Procurement.Data.Entity;
 using E_Procurement.Repository.Interface;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 
 namespace E_Procurement.Repository.VendoRepo
@@ -17,12 +18,14 @@ namespace E_Procurement.Repository.VendoRepo
         private readonly EProcurementContext _context;
         private readonly ISMTPService _emailSender;
         private readonly IHttpContextAccessor _contextAccessor;
+        private IConfiguration _config;
 
-        public VendorRepository(EProcurementContext context, ISMTPService emailSender, IHttpContextAccessor contextAccessor)
+        public VendorRepository(EProcurementContext context, IConfiguration config, ISMTPService emailSender, IHttpContextAccessor contextAccessor)
         {
             _context = context;
             _emailSender = emailSender;
             _contextAccessor = contextAccessor;
+            _config = config;
         }
         public bool CreateVendor(VendorModel model, out string Message)
         {
@@ -192,7 +195,8 @@ namespace E_Procurement.Repository.VendoRepo
         {
             using (HttpClient client = new HttpClient())
             {
-                client.BaseAddress = new Uri("https://localhost:44395");
+                var requisitionURL = _config.GetSection("ExternalAPI:RequisitionURL").Value;
+                client.BaseAddress = new Uri(requisitionURL);
 
                 MediaTypeWithQualityHeaderValue contentType = new MediaTypeWithQualityHeaderValue("application/json");
                 client.DefaultRequestHeaders.Accept.Add(contentType);

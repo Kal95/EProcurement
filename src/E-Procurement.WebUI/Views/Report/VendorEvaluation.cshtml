@@ -18,9 +18,9 @@
 
             @*<input name="b_print" type="button" class="btn btn-outline-info" onClick="printDiv('div_print');" value=" Print Report">*@
 
-            @Html.DropDownListFor(model => model.CategoryId, Model.ItemCategoryList, "-- All Categories --", htmlAttributes: new { id = "CategoryId", @class = "form-control", style = "width:300px; height:40px", onchange = "DoPostBack();" @*onchange = "return fetchData();"*@})
+            @Html.DropDownListFor(model => model.CategoryId, Model.ItemCategoryList, "-- Select Category --", htmlAttributes: new { id = "CategoryId", @class = "form-control", style = "width:300px; height:40px", onchange = "DoPostBack();" @*onchange = "return fetchData();"*@})
 
-            @Html.DropDownListFor(model => model.PeriodId, Model.PeriodList, "-- Select Period --", htmlAttributes: new { id = "PeriodId", @class = "form-control", style = "width:200px; height:40px", required = "required" })
+            @Html.DropDownListFor(model => model.PeriodId, Model.PeriodList, "-- Select Period --", htmlAttributes: new { id = "PeriodId", @class = "form-control", style = "width:200px; height:40px", required = "required", onchange = "DoPostBack2();" })
 
             <button type="submit" class="btn btn-info mg-r-5"><span class="glyphicon glyphicon-send"></span>  Submit</button>
 
@@ -135,6 +135,22 @@
 
     function DoPostBack() {
         var select = document.getElementById("CategoryId");
+        var option = select.options[select.selectedIndex];
+        if (option.value != "") {
+            var Table = document.getElementById("example");
+            Table.innerHTML = "";
+            document.forms[1].action = "/Report/VendorEvaluation";
+            document.forms[1].submit();
+        }
+        else {
+            var Table = document.getElementById("example");
+            Table.innerHTML = "";
+            document.forms[1].action = "/Report/VendorEvaluation";
+            document.forms[1].submit();
+        }
+    }
+    function DoPostBack2() {
+        var select = document.getElementById("PeriodId");
         var option = select.options[select.selectedIndex];
         if (option.value != "") {
             var Table = document.getElementById("example");

@@ -15,6 +15,7 @@ using E_Procurement.Repository.Interface;
 using E_Procurement.WebUI.Models.RFQModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 
 namespace E_Procurement.Repository.RFQGenRepo
@@ -25,13 +26,15 @@ namespace E_Procurement.Repository.RFQGenRepo
         private readonly ISMTPService _emailSender;
         private readonly IHttpContextAccessor _contextAccessor;
         private IConvertViewToPDF _pdfConverter;
+        private IConfiguration _config;
 
-        public RfqGenRepository(EProcurementContext context, ISMTPService emailSender, IHttpContextAccessor contextAccessor, IConvertViewToPDF pdfConverter)
+        public RfqGenRepository(EProcurementContext context, IConfiguration config, ISMTPService emailSender, IHttpContextAccessor contextAccessor, IConvertViewToPDF pdfConverter)
         {
             _context = context;
             _emailSender = emailSender;
             _contextAccessor = contextAccessor;
             _pdfConverter = pdfConverter;
+            _config = config;
         }
 
 
@@ -296,7 +299,8 @@ namespace E_Procurement.Repository.RFQGenRepo
 
             using (HttpClient client = new HttpClient())
             {
-                client.BaseAddress = new Uri("https://localhost:44395");
+                var requisitionURL = _config.GetSection("ExternalAPI:RequisitionURL").Value;
+                client.BaseAddress = new Uri(requisitionURL);
 
                 MediaTypeWithQualityHeaderValue contentType = new MediaTypeWithQualityHeaderValue("application/json");
                 client.DefaultRequestHeaders.Accept.Add(contentType);
@@ -310,7 +314,8 @@ namespace E_Procurement.Repository.RFQGenRepo
         {
             using (HttpClient client = new HttpClient())
             {
-                client.BaseAddress = new Uri("https://localhost:44395");
+                var requisitionURL = _config.GetSection("ExternalAPI:RequisitionURL").Value;
+                client.BaseAddress = new Uri(requisitionURL);
 
                 MediaTypeWithQualityHeaderValue contentType = new MediaTypeWithQualityHeaderValue("application/json");
                 client.DefaultRequestHeaders.Accept.Add(contentType);

@@ -119,7 +119,11 @@ namespace E_Procurement.WebUI.Controllers
                 Model.Reference = GenerateRfqReference();
                 string message;
                 string UserId = User.Identity.Name;
-
+                if (Convert.ToDateTime(Model.StartDate) >= Convert.ToDateTime(Model.EndDate))
+                {
+                    Alert("Start Date Cannot be Greater or Equal to End Date", NotificationType.error);
+                    return View(Model);
+                }
                 if (ModelState.IsValid)
                 {
                     Model.CreatedBy = UserId;
@@ -208,6 +212,11 @@ namespace E_Procurement.WebUI.Controllers
         {
             try
             {
+                if (Convert.ToDateTime(Model.StartDate) >= Convert.ToDateTime(Model.EndDate))
+                {
+                    Alert("Start Date Cannot be Greater or Equal to End Date", NotificationType.error);
+                    return View(Model);
+                }
                 if (ModelState.IsValid)
                 {
                     string message;

@@ -222,35 +222,37 @@ namespace E_Procurement.WebUI.Controllers
                 list.Add(new SelectListItem() { Text = "Good", Value = "3" });
                 list.Add(new SelectListItem() { Text = "Fair", Value = "2" });
                 list.Add(new SelectListItem() { Text = "Poor", Value = "1" });
-           
-           
-            var ScoreList = (from d in EvaluationScore
-                              join BP in list on d.BestPrice equals BP.Text
-                              join DT in list on d.DeliveryTimeFrame equals DT.Text
-                              join CF in list on d.CreditFacility equals CF.Text
-                              join CC in list on d.CustomerCare equals CC.Text
-                              join PA in list on d.ProductAvailability equals PA.Text
-                              join PQ in list on d.ProductQuality equals PQ.Text
-                              join WS in list on d.WarrantySupport equals WS.Text
-                              join O in list on d.Others equals O.Text
-                            
-                              select new ReportModel()
-            {
-                VendorId = Convert.ToInt32(d.VendorId.ToString()),
-                VendorName = d.VendorName,
-                BestPrice = " (" + BP.Value+"/5)",
-                DeliveryTimeFrame = " (" + DT.Value+"/5)",
-                CreditFacility = " (" + CF.Value+"/5)",
-                CustomerCare = " (" + CC.Value+"/5)",
-                ProductAvailability = " (" + PA.Value+"/5)",
-                ProductQuality = " (" + PQ.Value+"/5)",
-                WarrantySupport = " (" + WS.Value+"/5)",
-                Others = " (" + O.Value+"/5)",
-                CreatedBy = d.CreatedBy,
-                CreatedDate = d.DateCreated,
-                Score = ((Convert.ToInt32(BP.Value) + Convert.ToInt32(DT.Value) + Convert.ToInt32(CF.Value) + Convert.ToInt32(CC.Value) + Convert.ToInt32(PA.Value) + Convert.ToInt32(PQ.Value) + Convert.ToInt32(WS.Value))*100/35).ToString() +"%"
 
-        }).GroupBy(v => new { v.VendorId, v.Score }).Select(s => s.FirstOrDefault());
+
+            var ScoreList = (from d in EvaluationScore
+                             join BP in list on d.BestPrice equals BP.Text
+                             join DT in list on d.DeliveryTimeFrame equals DT.Text
+                             join CF in list on d.CreditFacility equals CF.Text
+                             join CC in list on d.CustomerCare equals CC.Text
+                             join PA in list on d.ProductAvailability equals PA.Text
+                             join PQ in list on d.ProductQuality equals PQ.Text
+                             join WS in list on d.WarrantySupport equals WS.Text
+                             //join O in list on d.Others equals O.Text
+
+                             select new ReportModel()
+                             {
+                                 EvaluationId = d.Id,
+                                 PeriodId = d.EvaluationPeriodId,
+                                 VendorId = Convert.ToInt32(d.VendorId.ToString()),
+                                 VendorName = d.VendorName,
+                                 BestPrice = " (" + BP.Value + "/5)",
+                                 DeliveryTimeFrame = " (" + DT.Value + "/5)",
+                                 CreditFacility = " (" + CF.Value + "/5)",
+                                 CustomerCare = " (" + CC.Value + "/5)",
+                                 ProductAvailability = " (" + PA.Value + "/5)",
+                                 ProductQuality = " (" + PQ.Value + "/5)",
+                                 WarrantySupport = " (" + WS.Value + "/5)",
+                                 //Others = " (" + O.Value+"/5)",
+                                 CreatedBy = d.CreatedBy,
+                                 CreatedDate = d.DateCreated,
+                                 Score = ((Convert.ToInt32(BP.Value) + Convert.ToInt32(DT.Value) + Convert.ToInt32(CF.Value) + Convert.ToInt32(CC.Value) + Convert.ToInt32(PA.Value) + Convert.ToInt32(PQ.Value) + Convert.ToInt32(WS.Value)) * 100 / 35).ToString() + "%"
+
+                             });//.GroupBy(v => new { v.EvaluationId, v.Score }).Select(s => s.FirstOrDefault());
 
             
             var vendorCategory = _vendorRepository.GetItemCategory().ToList();
@@ -267,19 +269,21 @@ namespace E_Procurement.WebUI.Controllers
                 });
                 var listModel = VendorEvaluation.Select(x => new ReportModel
                 {
+                    EvaluationId = x.Id,
+                    PeriodId = x.EvaluationPeriodId,
                     VendorId = Convert.ToInt32(x.VendorId.ToString()),
                     VendorName = x.VendorName,
-                    BestPrice = x.BestPrice + ScoreList.Where(u => u.VendorId == Convert.ToInt32(x.VendorId)).Select(u => u.BestPrice).FirstOrDefault(),
-                    DeliveryTimeFrame = x.DeliveryTimeFrame + ScoreList.Where(u => u.VendorId == Convert.ToInt32(x.VendorId)).Select(u => u.DeliveryTimeFrame).FirstOrDefault(),
-                    CreditFacility = x.CreditFacility + ScoreList.Where(u => u.VendorId == Convert.ToInt32(x.VendorId)).Select(u => u.CreditFacility).FirstOrDefault(),
-                    CustomerCare = x.CustomerCare + ScoreList.Where(u => u.VendorId == Convert.ToInt32(x.VendorId)).Select(u => u.CustomerCare).FirstOrDefault(),
-                    ProductAvailability = x.ProductAvailability + ScoreList.Where(u => u.VendorId == Convert.ToInt32(x.VendorId)).Select(u => u.ProductAvailability).FirstOrDefault(),
-                    ProductQuality = x.ProductQuality + ScoreList.Where(u => u.VendorId == Convert.ToInt32(x.VendorId)).Select(u => u.ProductQuality).FirstOrDefault(),
-                    WarrantySupport = x.WarrantySupport + ScoreList.Where(u => u.VendorId == Convert.ToInt32(x.VendorId)).Select(u => u.WarrantySupport).FirstOrDefault(),
-                    Others = x.Others + ScoreList.Where(u => u.VendorId == Convert.ToInt32(x.VendorId)).Select(u => u.Others).FirstOrDefault(),
+                    BestPrice = x.BestPrice + ScoreList.Where(u => u.VendorId == Convert.ToInt32(x.VendorId) && u.EvaluationId == x.Id).Select(u => u.BestPrice).FirstOrDefault(),
+                    DeliveryTimeFrame = x.DeliveryTimeFrame + ScoreList.Where(u => u.VendorId == Convert.ToInt32(x.VendorId) && u.EvaluationId == x.Id).Select(u => u.DeliveryTimeFrame).FirstOrDefault(),
+                    CreditFacility = x.CreditFacility + ScoreList.Where(u => u.VendorId == Convert.ToInt32(x.VendorId) && u.EvaluationId == x.Id).Select(u => u.CreditFacility).FirstOrDefault(),
+                    CustomerCare = x.CustomerCare + ScoreList.Where(u => u.VendorId == Convert.ToInt32(x.VendorId) && u.EvaluationId == x.Id).Select(u => u.CustomerCare).FirstOrDefault(),
+                    ProductAvailability = x.ProductAvailability + ScoreList.Where(u => u.VendorId == Convert.ToInt32(x.VendorId) && u.EvaluationId == x.Id).Select(u => u.ProductAvailability).FirstOrDefault(),
+                    ProductQuality = x.ProductQuality + ScoreList.Where(u => u.VendorId == Convert.ToInt32(x.VendorId) && u.EvaluationId == x.Id).Select(u => u.ProductQuality).FirstOrDefault(),
+                    WarrantySupport = x.WarrantySupport + ScoreList.Where(u => u.VendorId == Convert.ToInt32(x.VendorId) && u.EvaluationId == x.Id).Select(u => u.WarrantySupport).FirstOrDefault(),
+                    Others = x.Others + ScoreList.Where(u => u.VendorId == Convert.ToInt32(x.VendorId) && u.EvaluationId == x.Id).Select(u => u.Others).FirstOrDefault(),
                     CreatedBy = x.CreatedBy,
                     CreatedDate = x.DateCreated,
-                    Score = ScoreList.Where(u => u.VendorId == Convert.ToInt32(x.VendorId)).Select(u => u.Score).FirstOrDefault(),
+                    Score = ScoreList.Where(u => u.VendorId == Convert.ToInt32(x.VendorId) && u.EvaluationId == x.Id).Select(u => u.Score).FirstOrDefault(),
                 });
                 vendorModel.AddRange(listModel);
 
@@ -297,19 +301,21 @@ namespace E_Procurement.WebUI.Controllers
                 });
                 var listModel = VendorEvaluation.Select(x => new ReportModel
                 {
+                    EvaluationId = x.Id,
+                    PeriodId = x.EvaluationPeriodId,
                     VendorId = Convert.ToInt32(x.VendorId.ToString()),
                     VendorName = x.VendorName,
-                    BestPrice = x.BestPrice + ScoreList.Where(u => u.VendorId == Convert.ToInt32(x.VendorId)).Select(u => u.BestPrice).FirstOrDefault(),
-                    DeliveryTimeFrame = x.DeliveryTimeFrame + ScoreList.Where(u => u.VendorId == Convert.ToInt32(x.VendorId)).Select(u => u.DeliveryTimeFrame).FirstOrDefault(),
-                    CreditFacility = x.CreditFacility + ScoreList.Where(u => u.VendorId == Convert.ToInt32(x.VendorId)).Select(u => u.CreditFacility).FirstOrDefault(),
-                    CustomerCare = x.CustomerCare + ScoreList.Where(u => u.VendorId == Convert.ToInt32(x.VendorId)).Select(u => u.CustomerCare).FirstOrDefault(),
-                    ProductAvailability = x.ProductAvailability + ScoreList.Where(u => u.VendorId == Convert.ToInt32(x.VendorId)).Select(u => u.ProductAvailability).FirstOrDefault(),
-                    ProductQuality = x.ProductQuality + ScoreList.Where(u => u.VendorId == Convert.ToInt32(x.VendorId)).Select(u => u.ProductQuality).FirstOrDefault(),
-                    WarrantySupport = x.WarrantySupport + ScoreList.Where(u => u.VendorId == Convert.ToInt32(x.VendorId)).Select(u => u.WarrantySupport).FirstOrDefault(),
-                    Others = x.Others + ScoreList.Where(u => u.VendorId == Convert.ToInt32(x.VendorId)).Select(u => u.Others).FirstOrDefault(),
+                    BestPrice = x.BestPrice + ScoreList.Where(u => u.VendorId == Convert.ToInt32(x.VendorId) && u.EvaluationId == x.Id).Select(u => u.BestPrice).FirstOrDefault(),
+                    DeliveryTimeFrame = x.DeliveryTimeFrame + ScoreList.Where(u => u.VendorId == Convert.ToInt32(x.VendorId) && u.EvaluationId == x.Id).Select(u => u.DeliveryTimeFrame).FirstOrDefault(),
+                    CreditFacility = x.CreditFacility + ScoreList.Where(u => u.VendorId == Convert.ToInt32(x.VendorId) && u.EvaluationId == x.Id).Select(u => u.CreditFacility).FirstOrDefault(),
+                    CustomerCare = x.CustomerCare + ScoreList.Where(u => u.VendorId == Convert.ToInt32(x.VendorId) && u.EvaluationId == x.Id).Select(u => u.CustomerCare).FirstOrDefault(),
+                    ProductAvailability = x.ProductAvailability + ScoreList.Where(u => u.VendorId == Convert.ToInt32(x.VendorId) && u.EvaluationId == x.Id).Select(u => u.ProductAvailability).FirstOrDefault(),
+                    ProductQuality = x.ProductQuality + ScoreList.Where(u => u.VendorId == Convert.ToInt32(x.VendorId) && u.EvaluationId == x.Id).Select(u => u.ProductQuality).FirstOrDefault(),
+                    WarrantySupport = x.WarrantySupport + ScoreList.Where(u => u.VendorId == Convert.ToInt32(x.VendorId) && u.EvaluationId == x.Id).Select(u => u.WarrantySupport).FirstOrDefault(),
+                    Others = x.Others + ScoreList.Where(u => u.VendorId == Convert.ToInt32(x.VendorId) && u.EvaluationId == x.Id).Select(u => u.Others).FirstOrDefault(),
                     CreatedBy = x.CreatedBy,
                     CreatedDate = x.DateCreated,
-                    Score = ScoreList.Where(u => u.VendorId == Convert.ToInt32(x.VendorId)).Select(u => u.Score).FirstOrDefault(),
+                    Score = ScoreList.Where(u => u.VendorId == Convert.ToInt32(x.VendorId) && u.EvaluationId == x.Id).Select(u => u.Score).FirstOrDefault(),
 
                 });
                 vendorModel.AddRange(listModel);
@@ -319,6 +325,189 @@ namespace E_Procurement.WebUI.Controllers
             }
 
         }
+        private void VendorEvaluationPredefinedInfo(RfqGenModel Model)
+        {
+            //int CategoryId = Model.VendorCategoryId;
+            var user = User.Identity.Name;
+            var userId = _reportRepository.GetUser().Where(u => u.UserName == user).FirstOrDefault();
+            var config = _reportRepository.GetUserToCategoryConfig().ToList();
+            var evaluator = config.Where(a => a.UserId == userId.Id).ToList();
+            var period = _reportRepository.GetEvaluationPeriods().ToList();
+            var evaluated = _reportRepository.GetEvaluationByPeriod(Model).ToList();
+            var evaluated2 = _reportRepository.GetVendorEvaluation().ToList();
+            var vendorCategory = _vendorRepository.GetItemCategory().Where(a => evaluator.Any(b => b.CategoryId == a.Id)).ToList();
+
+            //if (Model.CategoryId <= 0)
+            //{
+            //    var Vendor = _reportRepository.GetVendors().ToList();
+            //    var EvaluatedVendors = Vendor.Where(a => evaluated.Any(b => Convert.ToInt32(b.VendorId) == a.Id)).ToList();
+            //    var EvaluatedVendors2 = Vendor.Where(a => evaluated2.Any(b => Convert.ToInt32(b.VendorId) == a.Id)).ToList();
+            //    var NotEvaluated = Vendor.Except(EvaluatedVendors);
+            //    var NotEvaluated2 = Vendor.Except(EvaluatedVendors2);
+            //    List<ReportModel> vendorModel = new List<ReportModel>();
+            //    Model.ItemCategoryList = vendorCategory.Select(x => new SelectListItem
+            //    {
+            //        Value = x.Id.ToString(),
+            //        Text = x.CategoryName
+            //    });
+
+            //    List<SelectListItem> list = new List<SelectListItem>();
+            //    list.Add(new SelectListItem(){ Text = "Excellent", Value = "Excellent"});
+            //    list.Add(new SelectListItem() { Text = "Very Good", Value = "Very Good" });
+            //    list.Add(new SelectListItem() { Text = "Good", Value = "Good" });
+            //    list.Add(new SelectListItem() { Text = "Fair", Value = "Fair" });
+            //    list.Add(new SelectListItem() { Text = "Poor", Value = "Poor" });
+            //    Model.CriteriaList = list.Select(x => new SelectListItem
+            //    {
+            //        Value = x.Value.ToString(),
+            //        Text = x.Text
+            //    });
+
+
+            //    Model.PeriodList = period.Where(u => u.EndDate >= DateTime.Now).Select(x => new SelectListItem
+            //    {
+            //        Value = x.Id.ToString(),
+            //        Text = x.Period
+            //    });
+            //    if (Model.PeriodId <= 0)
+            //    {
+            //        Model.VendorList = NotEvaluated2.Select(x => new SelectListItem
+            //        {
+
+            //            Value = x.Id.ToString(),
+            //            Text = x.VendorName
+            //        });
+            //    }
+            //    else
+            //    {
+            //        Model.VendorList = NotEvaluated.Select(x => new SelectListItem
+            //        {
+
+            //            Value = x.Id.ToString(),
+            //            Text = x.VendorName
+            //        });
+            //    }
+
+            //}
+            //else
+            //{
+            var Vendor = _reportRepository.GetVendorsByCategory(Model).ToList();
+            var EvaluatedVendors = Vendor.Where(a => evaluated.Any(b => Convert.ToInt32(b.VendorId) == a.Id)).ToList();
+            var EvaluatedVendors2 = Vendor.Where(a => evaluated2.Any(b => Convert.ToInt32(b.VendorId) == a.Id)).ToList();
+            var NotEvaluated = Vendor.Except(EvaluatedVendors);
+            var NotEvaluated2 = Vendor.Except(EvaluatedVendors2);
+
+            List<ReportModel> vendorModel = new List<ReportModel>();
+            Model.ItemCategoryList = vendorCategory.Select(x => new SelectListItem
+            {
+                Value = x.Id.ToString(),
+                Text = x.CategoryName
+            });
+            List<SelectListItem> list = new List<SelectListItem>();
+            list.Add(new SelectListItem() { Text = "Excellent", Value = "Excellent" });
+            list.Add(new SelectListItem() { Text = "Very Good", Value = "Very Good" });
+            list.Add(new SelectListItem() { Text = "Good", Value = "Good" });
+            list.Add(new SelectListItem() { Text = "Fair", Value = "Fair" });
+            list.Add(new SelectListItem() { Text = "Poor", Value = "Poor" });
+            Model.CriteriaList = list.Select(x => new SelectListItem
+            {
+                Value = x.Value.ToString(),
+                Text = x.Text
+            });
+
+
+            Model.PeriodList = period.Where(u => u.EndDate >= DateTime.Now).Select(x => new SelectListItem
+            {
+                Value = x.Id.ToString(),
+                Text = x.Period
+            });
+
+            if (Model.PeriodId <= 0)
+            {
+                Model.VendorList = NotEvaluated2.Select(x => new SelectListItem
+                {
+
+                    Value = x.Id.ToString(),
+                    Text = x.VendorName
+                });
+            }
+            else
+            {
+                Model.VendorList = NotEvaluated.Select(x => new SelectListItem
+                {
+
+                    Value = x.Id.ToString(),
+                    Text = x.VendorName
+                });
+            }
+            //}
+
+        }
+        private void ConfigPredefinedInfo(VendorModel Model)
+        {
+            var vendorCategory = _vendorRepository.GetItemCategory().ToList();
+
+            var config = _reportRepository.GetUserToCategoryConfig().Where(u => u.UserId == Model.UserId).ToList();
+
+            var config2 = _reportRepository.GetUserToCategoryConfig().Where(u => u.UserId != Model.UserId && u.UserId.ToString() != null).ToList();
+
+            var user = _reportRepository.GetUser().ToList();
+
+            var user2 = _reportRepository.GetUser().Where(a => _reportRepository.GetUserToCategoryConfig().Any(b => b.UserId == a.Id)).ToList();
+
+            var user3 = _reportRepository.GetUser().Where(a => a.Id == Model.UserId).ToList();
+
+            var user4 = user2.Except(user3);
+
+            var user5 = user.Except(user4);
+
+            var SelectedCategories = vendorCategory.Where(a => config.Any(b => b.CategoryId == a.Id)).ToList();
+
+            var SelectedCategories2 = vendorCategory.Where(a => config2.Any(b => b.CategoryId == a.Id)).ToList();
+            
+            var NewCategories = vendorCategory.Except(SelectedCategories);//.Where(a => mapping.Any(b => b.VendorCategoryId != a.Id)).ToList();
+
+            var NewCategories2 = NewCategories.Except(SelectedCategories2);
+
+            var vendorCategory2 = vendorCategory.Except(SelectedCategories2); 
+
+            if (SelectedCategories.ToList().Count == 0)
+            {
+                Model.VendorCategoryList = vendorCategory2.Select(x => new SelectListItem
+                {
+                    Value = x.Id.ToString(),
+                    Text = x.CategoryName,
+                    Selected = false
+                });
+            }
+            else
+            {
+                Model.VendorCategoryList = NewCategories2.Select(x => new SelectListItem
+                {
+                    Value = x.Id.ToString(),
+                    Text = x.CategoryName,
+
+                    Selected = false
+                });
+
+                Model.CurrentVendorCategoryList = SelectedCategories.Select(x => new SelectListItem
+                {
+                    Value = x.Id.ToString(),
+                    Text = x.CategoryName,
+
+                    Selected = true
+                });
+            }
+            Model.UserList = user5.Select(x => new SelectListItem
+            {
+
+                Value = (x.Id).ToString(),
+                Text = x.FullName
+            });
+
+        }
+
+
 
         public ActionResult Vendor(RfqGenModel Model)
         {
@@ -342,7 +531,11 @@ namespace E_Procurement.WebUI.Controllers
             try
             {
                 //RfqGenModel Model = new RfqGenModel();
-
+                if (Convert.ToDateTime(Model.StartDate) > Convert.ToDateTime(Model.EndDate))
+                {
+                    Alert("Start Date Should not be Greater Than End Date", NotificationType.error);
+                    // return View(Model);
+                }
                 RfqPredefinedInfo(Model);
 
                 return View(Model);
@@ -359,7 +552,11 @@ namespace E_Procurement.WebUI.Controllers
             try
             {
                 //RfqGenModel Model = new RfqGenModel();
-
+                if (Convert.ToDateTime(Model.StartDate) > Convert.ToDateTime(Model.EndDate))
+                {
+                    Alert("Start Date Should not be Greater Than End Date", NotificationType.error);
+                   // return View(Model);
+                }
                 POPredefinedInfo(Model);
 
                 return View(Model);
@@ -447,83 +644,8 @@ namespace E_Procurement.WebUI.Controllers
 
             return View(model2);
         }
-        private void VendorEvaluationPredefinedInfo(RfqGenModel Model)
-        {
-            //int CategoryId = Model.VendorCategoryId;
-            var period = _reportRepository.GetEvaluationPeriods().ToList();
-            var vendorCategory = _vendorRepository.GetItemCategory().ToList();
-            if (Model.CategoryId <= 0)
-            {
-                var Vendor = _reportRepository.GetVendors().ToList();
-                List<ReportModel> vendorModel = new List<ReportModel>();
-                Model.ItemCategoryList = vendorCategory.Select(x => new SelectListItem
-                {
-                    Value = x.Id.ToString(),
-                    Text = x.CategoryName
-                });
+       
 
-                List<SelectListItem> list = new List<SelectListItem>();
-                list.Add(new SelectListItem(){ Text = "Excellent", Value = "Excellent"});
-                list.Add(new SelectListItem() { Text = "Very Good", Value = "Very Good" });
-                list.Add(new SelectListItem() { Text = "Good", Value = "Good" });
-                list.Add(new SelectListItem() { Text = "Fair", Value = "Fair" });
-                list.Add(new SelectListItem() { Text = "Poor", Value = "Poor" });
-                Model.CriteriaList = list.Select(x => new SelectListItem
-                {
-                    Value = x.Value.ToString(),
-                    Text = x.Text
-                });
-
-                Model.VendorList = Vendor.Select(x => new SelectListItem
-                {
-
-                    Value = x.Id.ToString(),
-                    Text = x.VendorName
-                });
-
-                Model.PeriodList = period.Where(u => u.EndDate >= DateTime.Now).Select(x => new SelectListItem
-                {
-                    Value = x.Id.ToString(),
-                    Text = x.Period
-                });
-                
-            }
-            else
-            {
-                var Vendor = _reportRepository.GetVendorsByCategory(Model).ToList();
-                
-                List<ReportModel> vendorModel = new List<ReportModel>();
-                Model.ItemCategoryList = vendorCategory.Select(x => new SelectListItem
-                {
-                    Value = x.Id.ToString(),
-                    Text = x.CategoryName
-                });
-                List<SelectListItem> list = new List<SelectListItem>();
-                list.Add(new SelectListItem() { Text = "Excellent", Value = "Excellent" });
-                list.Add(new SelectListItem() { Text = "Very Good", Value = "Very Good" });
-                list.Add(new SelectListItem() { Text = "Good", Value = "Good" });
-                list.Add(new SelectListItem() { Text = "Fair", Value = "Fair" });
-                list.Add(new SelectListItem() { Text = "Poor", Value = "Poor" });
-                Model.CriteriaList = list.Select(x => new SelectListItem
-                {
-                    Value = x.Value.ToString(),
-                    Text = x.Text
-                });
-
-                Model.VendorList = Vendor.Select(x => new SelectListItem
-                {
-
-                    Value = x.Id.ToString(),
-                    Text = x.VendorName
-                });
-                Model.PeriodList = period.Where(u => u.EndDate >= DateTime.Now).Select(x => new SelectListItem
-                {
-                    Value = x.Id.ToString(),
-                    Text = x.Period
-                });
-            }
-
-        }
 
         [HttpGet]
         public ActionResult VendorEvaluation()
@@ -614,6 +736,9 @@ namespace E_Procurement.WebUI.Controllers
             }
         }
 
+
+
+
         // GET: Evaluation Period
         public ActionResult EvaluationPeriodIndex()
         {
@@ -656,16 +781,25 @@ namespace E_Procurement.WebUI.Controllers
                 string message;
                 model.CreatedBy = User.Identity.Name;
 
+                var period = _reportRepository.GetEvaluationPeriods().ToList();
+
+                if (period.Any(u => u.StartDate <= Convert.ToDateTime(model.StartDate) &&  u.EndDate >= Convert.ToDateTime(model.EndDate)))
+                {
+                    Alert("An Evaluation Period Already Exists Within This DateRange", NotificationType.error);
+                    return View(model);
+                }
+
+                if (Convert.ToDateTime(model.StartDate) >= Convert.ToDateTime(model.EndDate))
+                {
+                    Alert("Start Date Cannot be Greater or Equal to End Date", NotificationType.error);
+                    return View(model);
+                }
+
                 if (ModelState.IsValid)
                 {
 
                     var status = _reportRepository.CreateEvaluationPeriod(model, out message);
-
-                    if (Convert.ToDateTime(model.StartDate) >= Convert.ToDateTime(model.EndDate))
-                    {
-                        Alert("Start Date Cannot be Greater or Equal to End Date", NotificationType.error);
-                        return View(model);
-                    }
+                   
                     if (status == true)
                     {
 
@@ -743,6 +877,19 @@ namespace E_Procurement.WebUI.Controllers
         {
             try
             {
+                var period = _reportRepository.GetEvaluationPeriods().ToList();
+
+                if (period.Any(u => u.StartDate <= Convert.ToDateTime(Model.StartDate) && u.EndDate >= Convert.ToDateTime(Model.EndDate)))
+                {
+                    Alert("An Evaluation Period Already Exists Within This DateRange", NotificationType.error);
+                    return View(Model);
+                }
+
+                if (Convert.ToDateTime(Model.StartDate) >= Convert.ToDateTime(Model.EndDate))
+                {
+                    Alert("Start Date Cannot be Greater or Equal to End Date", NotificationType.error);
+                    return View(Model);
+                }
 
                 if (ModelState.IsValid)
                 {
@@ -756,11 +903,7 @@ namespace E_Procurement.WebUI.Controllers
 
                     var status = _reportRepository.UpdateEvaluationPeriod(Model, out message);
 
-                    if (Convert.ToDateTime(Model.StartDate) >= Convert.ToDateTime(Model.EndDate))
-                    {
-                        Alert("Start Date Cannot be Greater or Equal to End Date", NotificationType.error);
-                        return View(Model);
-                    }
+                   
                     if (status == true)
                     {
                         Alert("Evaluation Period Updated Successfully", NotificationType.success);
@@ -789,6 +932,197 @@ namespace E_Procurement.WebUI.Controllers
 
                 return View("Error");
             }
+        }
+
+        // GET: Evaluation Period
+        public ActionResult UserToCategoryIndex()
+        {
+            try
+            {
+                List<ReportModel> poModel = new List<ReportModel>();
+
+                var config = _reportRepository.GetUserToCategoryList().ToList();
+
+                //var RfqList = _rfqGenRepository.GetRfqGen().OrderBy(u => u.EndDate).ToList();
+                var ConfigList = config.Select(x => new ReportModel
+                {
+                    ConfigId = x.ConfigId,
+                    UserId = x.UserId,
+                    CategoryId = x.CategoryId,
+                    UserName = x.UserName,
+                    CategoryName = x.CategoryName,
+                    CreatedDate = x.CreatedDate,
+                    IsActive = x.IsActive
+                });
+                return View(ConfigList);
+            }
+            catch (Exception)
+            {
+                return View("Error");
+            }
+        }
+
+       
+
+
+        // GET: Config/Create
+        public ActionResult UserToCategoryCreate()
+        {
+
+            try
+            {
+                VendorModel Model = new VendorModel();
+
+                ConfigPredefinedInfo(Model);
+
+                return View(Model);
+            }
+            catch (Exception)
+            {
+
+                return View("Error");
+            }
+        }
+
+        // POST: Config/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult UserToCategoryCreate(VendorModel Model)
+        {
+            try
+            {
+                string message;
+                string UserId = User.Identity.Name;
+
+                if (ModelState.IsValid)
+                {
+                    Model.CreatedBy = UserId;
+
+                    var status = _reportRepository.CreateUserToCategory(Model, out message);
+
+
+                    if (status == true)
+                    {
+
+                        Alert("Config Created Successfully", NotificationType.success);
+
+                    }
+
+                    else
+                    {
+                        Alert("Config Already Exists", NotificationType.info);
+                        return View(Model);
+                    }
+
+                    return RedirectToAction("UserToCategoryIndex", "Report");
+                }
+                else
+                {
+                    ConfigPredefinedInfo(Model);
+                    Alert("Config Wasn't Created", NotificationType.error);
+
+                    ViewBag.StatusCode = 2;
+
+                    return View(Model);
+
+                }
+            }
+
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", ex.Message);
+                return View(ex.Message);
+            }
+        }
+
+        public ActionResult UserToCategoryEdit(int UserId)
+        {
+
+            VendorModel Model = new VendorModel();
+
+            try
+            {
+                //var categories = _reportRepository.GetUserToCategoryConfig().ToList();
+
+                var config = _reportRepository.GetUserToCategoryConfig().Where(u => u.UserId == UserId).FirstOrDefault();
+
+               // var mapping = _vendorRepository.GetMapping().Where(u => u.VendorID == vendor.Id).ToList();
+
+               // var SelectedCategories = categories.Where(a => mapping.Any(b => b.VendorCategoryId == a.Id)).Select(u => u.Id).ToList();
+
+                if (config == null)
+                {
+                    Alert("This Config Doesn't Exist", NotificationType.warning);
+                    return RedirectToAction("UserToCategoryIndex", "Report");
+                }
+                //Model.SelectedVendorCategories = SelectedCategories.ToList();
+
+
+                //List<VendorModel> selcat = new List<VendorModel>();
+
+                Model.UserId = config.UserId;
+                Model.IsActive = config.IsActive;
+                ConfigPredefinedInfo(Model);
+
+
+                return View(Model);
+
+            }
+            catch (Exception)
+            {
+
+                return View("Error");
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult UserToCategoryEdit(VendorModel Model)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    string message;
+
+                    var config = _reportRepository.GetUserToCategoryConfig().FirstOrDefault(u => u.UserId == Model.UserId);
+
+                    if (config == null) { Alert("This Config Doesn't Exist", NotificationType.warning); return RedirectToAction("UserToCategoryIndex", "Report"); }
+
+                    Model.UpdatedBy = User.Identity.Name;
+                    
+                    var status = _reportRepository.UpdateUserToCategory(Model, out message);
+
+
+                    if (status == true)
+                    {
+
+                        Alert("Config Updated Successfully", NotificationType.success);
+                    }
+
+                    else
+                    {
+                        Alert("This Config Already Exists", NotificationType.info);
+                        return RedirectToAction("UserToCategoryIndex", "Report");
+                    }
+
+                    return RedirectToAction("UserToCategoryIndex", "Report");
+                }
+                else
+                {
+                    ViewBag.StatusCode = 2;
+
+                    Alert("Config Wasn't Updated", NotificationType.error);
+
+                    return View(Model);
+                }
+            }
+            catch (Exception)
+            {
+
+                return View("Error");
+            }
+
         }
 
     }

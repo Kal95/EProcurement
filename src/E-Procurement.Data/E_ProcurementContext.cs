@@ -44,6 +44,7 @@ namespace E_Procurement.Data
         public DbSet<VendorMapping> VendorMappings { get; set; }
         public DbSet<VendorEvaluation> VendorEvaluations { get; set; }
         public DbSet<EvaluationPeriodConfig> EvaluationPeriodConfigs { get; set; }
+        public DbSet<UserToCategoryConfig> UserToCategoryConfigs { get; set; }
 
 
         public DbSet<Permission> Permissions { get; set; }
