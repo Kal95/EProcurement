@@ -122,6 +122,7 @@ namespace E_Procurement.WebUI.Controllers
                 if (Convert.ToDateTime(Model.StartDate) >= Convert.ToDateTime(Model.EndDate))
                 {
                     Alert("Start Date Cannot be Greater or Equal to End Date", NotificationType.error);
+                    LoadPredefinedInfo(Model);
                     return View(Model);
                 }
                 if (ModelState.IsValid)
@@ -163,7 +164,8 @@ namespace E_Procurement.WebUI.Controllers
             catch (Exception)
             {
 
-                return View("Error");
+                LoadPredefinedInfo(Model);
+                return View(Model);
             }
         }
 
@@ -215,6 +217,7 @@ namespace E_Procurement.WebUI.Controllers
                 if (Convert.ToDateTime(Model.StartDate) >= Convert.ToDateTime(Model.EndDate))
                 {
                     Alert("Start Date Cannot be Greater or Equal to End Date", NotificationType.error);
+                    LoadPredefinedInfo(Model);
                     return View(Model);
                 }
                 if (ModelState.IsValid)
