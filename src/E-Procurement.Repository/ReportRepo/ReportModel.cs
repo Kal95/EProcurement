@@ -54,6 +54,12 @@ namespace E_Procurement.Repository.ReportRepo
 
         public int PeriodId { get; set; }
         public string EvaluationPeriod { get; set; }
-       
+        public int EvaluationId { get; set; }
+
+        public int UserId { get; set; }
+        public int CategoryId { get; set; }
+        public string UserName { get; set; }
+        public int ConfigId { get; set; }
+
     }
 }

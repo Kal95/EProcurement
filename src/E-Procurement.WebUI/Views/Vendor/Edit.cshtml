@@ -27,7 +27,7 @@
                             </div>
                             <div class="col-md-4" style="margin-top:10px">
                                 <label for="Email">Email:</label>
-                                @Html.EditorFor(model => model.Email, new { htmlAttributes = new { id = "Email", @class = "form-control", @type = "text", required = "required", style = "width:300px; height:40px", } })
+                                @Html.EditorFor(model => model.Email, new { htmlAttributes = new { id = "Email", @class = "form-control", @type = "email", pattern = "[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,}+.[A-Z]{2,}", required = "required", style = "width:300px; height:40px", } })
                                 @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
                             </div>
                             <div class="col-md-4" style="margin-top:10px">
@@ -39,7 +39,7 @@
                         <div class="row mg-t-20">
                             <div class="col-md-4" style="margin-top:10px">
                                 <label for="WebsiteAddress">Website Address:</label>
-                                @Html.EditorFor(model => model.WebsiteAddress, new { htmlAttributes = new { id = "WebsiteAddress", @class = "form-control", @type = "text", required = "required", style = "width:300px; height:40px" } })
+                                @Html.EditorFor(model => model.WebsiteAddress, new { htmlAttributes = new { id = "WebsiteAddress", @class = "form-control", @type = "website", name = "website", pattern = "((https?|ftp|smtp)://)?(www.)?[a-z0-9]+(/)?(.)?[a-zA-Z0-9]+(/)?(.)?[a-zA-Z0-9#]+/?", required = "required", style = "width:300px; height:40px" } })
                                 @Html.ValidationMessageFor(model => model.WebsiteAddress, "", new { @class = "text-danger" })
                             </div>
                             <div class="col-md-4" style="margin-top:10px">
@@ -49,7 +49,7 @@
                             </div>
                             <div class="col-md-4" style="margin-top:10px">
                                 <label for="PhoneNumber">Phone Number:</label>
-                                @Html.EditorFor(model => model.PhoneNumber, new { htmlAttributes = new { id = "PhoneNumber", @class = "form-control", @type = "text", required = "required", style = "width:300px; height:40px", } })
+                                @Html.EditorFor(model => model.PhoneNumber, new { htmlAttributes = new { id = "PhoneNumber", @class = "form-control", @type = "tel", pattern = "[0-9]{3}[0-9]{3}[0-9]{5}", required = "required", style = "width:300px; height:40px", } })
                                 @Html.ValidationMessageFor(model => model.PhoneNumber, "", new { @class = "text-danger" })
                             </div>
                         </div>
@@ -83,7 +83,7 @@
                             </div>
                             <div class="col-md-4" style="margin-top:10px">
                                 <label for="AccountNo">Account Number:</label>
-                                @Html.EditorFor(model => model.AccountNo, new { htmlAttributes = new { id = "AccountNo", @class = "form-control", @type = "text", required = "required", style = "width:300px; height:40px" } })
+                                @Html.EditorFor(model => model.AccountNo, new { htmlAttributes = new { id = "AccountNo", @class = "form-control", @type = "text", pattern = "[0-9]{10}", required = "required", style = "width:300px; height:40px" } })
                                 @Html.ValidationMessageFor(model => model.AccountNo, "", new { @class = "text-danger" })
                             </div>
                         </div>

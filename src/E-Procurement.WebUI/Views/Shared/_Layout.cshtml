@@ -95,7 +95,7 @@
                             <span>Dashboard</span>
                         </a>
                     </li><!-- nav-item -->
-                    @if (User.IsInRole("Procurement"))
+                    @if (User.IsInRole("Procurement") || User.IsInRole("Admin"))
                     {
                         <li class="nav-item">
                             <a href="" class="nav-link with-sub active show-sub">
@@ -109,6 +109,7 @@
                                 <li class="nav-item"><a asp-controller="VendorCategory" asp-action="ItemIndex" class="nav-link active">Item</a></li>
                                 <li class="nav-item"><a asp-controller="VendorCategory" asp-action="CategoryIndex" class="nav-link active">Category</a></li>
                                 <li class="nav-item"><a asp-controller="Report" asp-action="EvaluationPeriodIndex" class="nav-link">Evaluation Period</a></li>
+                                <li class="nav-item"><a asp-controller="Report" asp-action="UserToCategoryIndex" class="nav-link">Evaluator Config</a></li>
                             </ul>
                         </li><!-- nav-item -->
                     }
@@ -129,11 +130,12 @@
                                     <li class="nav-item"><a asp-controller="Report" asp-action="VendorEvaluation" class="nav-link">Vendor Evaluation</a></li>
                                     <li class="nav-item"><a asp-controller="Report" asp-action="VendorEvaluationReport" class="nav-link">Vendor Evaluation Report</a></li>
                                     <li class="nav-item"><a asp-controller="Vendor" asp-action="VendorDocuments" class="nav-link">Vendor Documents</a></li>
+                                    <li class="nav-item"><a asp-controller="Vendor" asp-action="Index" class="nav-link">Vendor List</a></li>
 
                                 </ul>
                             </li><!-- nav-item -->
                         }
-                        @if (User.IsInRole("Procurement"))
+                        @if (User.IsInRole("Procurement") || User.IsInRole("Admin"))
                         {
                             <li class="nav-item">
                                 <a href="" class="nav-link with-sub">
@@ -146,7 +148,7 @@
                                 </ul>
                             </li>
                         }
-                        @if (User.IsInRole("Vendor User"))
+                        @if (User.IsInRole("Vendor User") || User.IsInRole("Admin"))
                         {
                             <li class="nav-item">
                                 <a href="" class="nav-link with-sub">
@@ -173,7 +175,7 @@
 
                 </ul>
             </li>*@
-                        @if (User.IsInRole("Approval"))
+                        @if (User.IsInRole("Approval") || User.IsInRole("Admin"))
                         {
                             <li class="nav-item">
                                 <a href="" class="nav-link with-sub">
@@ -188,7 +190,7 @@
                                 </ul>
                             </li><!-- nav-item -->
                         }
-                        @if (User.IsInRole("Report"))
+                        @if (User.IsInRole("Report") || User.IsInRole("Admin"))
                         {
                             <li class="nav-item">
                                 <a href="" class="nav-link with-sub">

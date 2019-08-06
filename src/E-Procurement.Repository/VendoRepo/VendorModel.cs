@@ -63,10 +63,13 @@ namespace E_Procurement.Repository.VendoRepo
         public List<int> SelectedVendorCategories { get; set; }
         public int MappingId { get; set; }
         public int VendorId { get; set; }
+        public int UserId { get; set; }
+        public int ConfigId { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public List<VendorModel> VendorDetails { get; set; }
         public bool CurrentCategories { get; set; }
+        public IEnumerable<SelectListItem> UserList { get; set; }
         public VendorModel()
         {
             VendorCategoryList = new List<SelectListItem>();

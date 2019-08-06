@@ -1,0 +1,92 @@
+﻿@model E_Procurement.Repository.VendoRepo.VendorModel
+
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Vendor";
+    ViewBag.PageDesc = "Edit Vendor";
+    ViewBag.FavIcon = "fa fa-street-view";
+}
+<div class="row row-sm mg-t-20">
+    <div class="col-xl-12">
+        <div class="card pd-20 pd-sm-40 form-layout form-layout-4">
+            <h6 class="card-body-title">User To Category</h6>
+            <p class="mg-b-20 mg-sm-b-30">Edit</p>
+
+            <form class="form-horizontal" action="@Url.Action("UserToCategoryEdit","Report")" method="post" enctype="multipart/form-data">
+                <div class="row mg-t-20" style="display:flex; justify-content:space-between">
+                    <div class="col-md-6" style="margin-top:10px">
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(model => model.UserId)
+
+                        <div class="row mg-t-20">
+                            <div class="col-md-4" style="margin-top:10px">
+                                <label for="UserId">User:</label>
+                                @Html.DropDownListFor(model => model.UserId, Model.UserList, "-- Select User --", htmlAttributes: new { id = "UserId", style = "width:400px; height:40px", @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.UserId, "", new { @class = "text-danger" })
+                            </div>
+
+                        </div>
+
+                      
+
+                    </div>
+                    
+                    <div class="col-md-6" style="margin-top:10px">
+
+                        <div class="row mg-t-20">
+                            <div class="col-md-6" style="margin-top:10px">
+                                <label for="AatAmount">Select Categories:</label>
+                                @foreach (var category in Model.CurrentVendorCategoryList)
+                                {
+                                    //foreach (var selected in Model.SelectedVendorCategories.Where(u => u.ToString() == category.Value))
+                                    //{
+
+                                    <div class="form-horizontal" style="width:450px; height:20px; margin-top:5px">
+                                        <input type="checkbox" value="@category.Value" checked="@category.Selected" name="SelectedVendorCategories" id="@category.Value" />
+                                        <label for="@category.Text">@category.Text</label>
+                                        <input type="hidden" id="@category.Value" />
+                                    </div>
+                                }
+                                @foreach (var category in Model.VendorCategoryList)
+                                {
+                                    //foreach (var selected in Model.SelectedVendorCategories.Where(u => u.ToString() == category.Value))
+                                    //{
+
+                                    <div class="form-horizontal" style="width:450px; height:20px; margin-top:5px">
+                                        <input type="checkbox" value="@category.Value" checked="@category.Selected" name="SelectedVendorCategories" id="@category.Value" />
+                                        <label for="@category.Text">@category.Text</label>
+                                        <input type="hidden" id="@category.Value" />
+                                    </div>
+
+                                }
+                                    <br />
+                                    @*<hr style="border-width:3px"/>*@
+                                    <br />
+                                    <div class="form-horizontal" style="width:450px; height:20px; margin-top:5px">
+                                        @Html.CheckBoxFor(model => model.IsActive, new { @*Style = "opacity:10; left:0px;",*@ htmlAttributes = new { id = "active", @type = "checkbox", @class = "form-control" } })
+                                        <label for="IsActive">Is Active?</label>
+                                        @Html.ValidationMessageFor(model => model.IsActive, "", new { @class = "text-danger" })
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                    <br />
+                    <!-- Button -->
+                    <div class="form-group">
+                        <label class="col-md-8 control-label"></label>
+                        <div class="col-md-4">
+
+                            <button type="submit" class="btn btn-info mg-r-5"><span class="glyphicon glyphicon-send"></span>  Submit</button>
+
+                            <a href="@Url.Action("UserToCategoryIndex","Report")" class="btn btn-secondary"><span class="glyphicon glyphicon-remove"></span> Back</a>
+                        </div>
+
+                    </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+

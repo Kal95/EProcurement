@@ -4,6 +4,7 @@ using System.Text;
 using E_Procurement.Data.Entity;
 using E_Procurement.Repository.Dtos;
 using E_Procurement.Repository.Interface;
+using E_Procurement.Repository.VendoRepo;
 using E_Procurement.WebUI.Models.RFQModel;
 
 namespace E_Procurement.Repository.ReportRepo
@@ -24,5 +25,11 @@ namespace E_Procurement.Repository.ReportRepo
         bool CreateEvaluationPeriod(ReportModel model, out string Message);
         bool UpdateEvaluationPeriod(ReportModel model, out string Message);
         IEnumerable<EvaluationPeriodConfig> GetEvaluationPeriods();
+        List<VendorEvaluation> GetEvaluationByPeriod(RfqGenModel model);
+        bool CreateUserToCategory(VendorModel model, out string Message);
+        bool UpdateUserToCategory(VendorModel model, out string Message);
+        IEnumerable<UserToCategoryConfig> GetUserToCategoryConfig();
+        IEnumerable<User> GetUser();
+        List<ReportModel> GetUserToCategoryList();
     }
 }

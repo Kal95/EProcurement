@@ -6,8 +6,10 @@ using E_Procurement.Data;
 using E_Procurement.Data.Entity;
 using E_Procurement.Repository.Dtos;
 using E_Procurement.Repository.Interface;
+using E_Procurement.Repository.VendoRepo;
 using E_Procurement.WebUI.Models.RFQModel;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 
 namespace E_Procurement.Repository.ReportRepo
 {
@@ -17,12 +19,14 @@ namespace E_Procurement.Repository.ReportRepo
         private readonly ISMTPService _emailSender;
         private readonly IHttpContextAccessor _contextAccessor;
         private IConvertViewToPDF _pdfConverter;
-        public ReportRepository(EProcurementContext context, ISMTPService emailSender, IHttpContextAccessor contextAccessor, IConvertViewToPDF pdfConverter)
+        private readonly UserManager<User> _userManager;
+        public ReportRepository(EProcurementContext context, UserManager<User> userManager, ISMTPService emailSender, IHttpContextAccessor contextAccessor, IConvertViewToPDF pdfConverter)
         {
             _context = context;
             _emailSender = emailSender;
             _contextAccessor = contextAccessor;
             _pdfConverter = pdfConverter;
+            _userManager = userManager;
         }
         public bool VendorEvaluation(RfqGenModel model, out string Message)
         {
@@ -253,7 +257,7 @@ namespace E_Procurement.Repository.ReportRepo
 
         public bool CreateEvaluationPeriod(ReportModel model, out string Message)
         {
-            var confirm = _context.EvaluationPeriodConfigs.Where(x => x.Period == model.EvaluationPeriod && Convert.ToDateTime(x.StartDate) <= Convert.ToDateTime(model.StartDate)).Count();
+            var confirm = _context.EvaluationPeriodConfigs.Where(x => x.Period == model.EvaluationPeriod && Convert.ToDateTime(x.StartDate) == Convert.ToDateTime(model.StartDate) && Convert.ToDateTime(x.EndDate) == Convert.ToDateTime(model.EndDate)).Count();
 
             EvaluationPeriodConfig Period = new EvaluationPeriodConfig();
 
@@ -300,7 +304,7 @@ namespace E_Procurement.Repository.ReportRepo
         public bool UpdateEvaluationPeriod(ReportModel model, out string Message)
         {
 
-            var confirm = _context.EvaluationPeriodConfigs.Where(x => x.Period == model.EvaluationPeriod && Convert.ToDateTime(x.StartDate) != Convert.ToDateTime(model.StartDate) && Convert.ToDateTime(x.EndDate) != Convert.ToDateTime(model.EndDate)).Count();
+            var confirm = _context.EvaluationPeriodConfigs.Where(x => x.Period == model.EvaluationPeriod && Convert.ToDateTime(x.StartDate) == Convert.ToDateTime(model.StartDate) && Convert.ToDateTime(x.EndDate) == Convert.ToDateTime(model.EndDate)).Count();
 
             var oldEntry = _context.EvaluationPeriodConfigs.Where(u => u.Id == model.PeriodId).FirstOrDefault();
 
@@ -350,6 +354,161 @@ namespace E_Procurement.Repository.ReportRepo
         public IEnumerable<EvaluationPeriodConfig> GetEvaluationPeriods()
         {
             return _context.EvaluationPeriodConfigs.OrderByDescending(u => u.Id).ToList();
+        }
+        public List<VendorEvaluation> GetEvaluationByPeriod(RfqGenModel model)
+        {
+            var period = _context.EvaluationPeriodConfigs.Where(u => u.Id == model.PeriodId).ToList();
+            var eva = _context.VendorEvaluations.OrderByDescending(u => u.Id).ToList();
+
+            var evaList = eva.Where(a => period.Any(b => b.Id == a.EvaluationPeriodId));
+            return evaList.ToList();
+        }
+
+        public bool CreateUserToCategory(VendorModel model, out string Message)
+        {
+            var confirm = _context.UserToCategoryConfigs.Where(x => x.UserId == model.UserId).Count();
+            
+            if (confirm == 0)
+            {
+                foreach (var category in model.SelectedVendorCategories)
+                {
+                    UserToCategoryConfig config = new UserToCategoryConfig();
+                    config.CategoryId = Convert.ToInt32(category.ToString());
+                    config.UserId = model.UserId;
+                    config.CreatedBy = model.CreatedBy;
+                    config.DateCreated = DateTime.Now;
+                    config.IsActive = true;
+                    _context.Add(config);
+                }
+                _context.SaveChanges();
+
+                Message = "Config created successfully";
+
+                return true;
+            }
+            else
+            {
+                Message = "Config already exist";
+
+                return false;
+            }
+
+        }
+
+        public bool UpdateUserToCategory(VendorModel model, out string Message)
+        {
+            var confirm4 = _context.UserToCategoryConfigs.Where(u => u.UserId == model.UserId).Count();
+            var confirm5 = model.SelectedVendorCategories.Count();
+            var confirm = _context.UserToCategoryConfigs.Where(x => x.UserId == model.UserId && x.IsActive == model.IsActive && confirm4 == confirm5).Count();
+
+            var oldEntry = _context.UserToCategoryConfigs.Where(u => u.UserId == model.UserId).FirstOrDefault();
+
+            if (oldEntry == null)
+            {
+                throw new Exception("No Config exists with this Id");
+            }
+
+            if (confirm == 0)
+            {
+                foreach (var category in model.SelectedVendorCategories)
+                {
+                    var confirm2 = _context.UserToCategoryConfigs.Where(u => u.UserId == model.UserId).Count();
+
+                    if (confirm2 == model.SelectedVendorCategories.Count())
+                    {
+                        var oldEntry2 = _context.UserToCategoryConfigs.Where(u => u.UserId == model.UserId).FirstOrDefault();
+
+                        oldEntry2.CategoryId = category;
+                        oldEntry2.UserId = model.UserId;
+                        oldEntry2.UpdatedBy = model.UpdatedBy;
+                        oldEntry2.LastDateUpdated = DateTime.Now;
+                        oldEntry2.IsActive = model.IsActive;
+
+                    }
+                    else if (confirm2 != model.SelectedVendorCategories.Count())
+                    {
+                        foreach (var category2 in _context.UserToCategoryConfigs.Where(u => u.UserId == model.UserId /*&& u.VendorCategoryId != category*/))
+                        {
+                            _context.UserToCategoryConfigs.Remove(category2);
+
+                        }
+                        UserToCategoryConfig config = new UserToCategoryConfig();
+                        config.CategoryId = Convert.ToInt32(category.ToString());
+                        config.UserId = model.UserId;
+                        config.UpdatedBy = model.UpdatedBy;
+                        config.DateCreated = DateTime.Now;
+                        config.IsActive = model.IsActive;
+                        _context.Add(config);
+
+                    }
+
+                }
+
+                _context.SaveChanges();
+
+                Message = "Config updated successfully";
+
+                return true;
+            }
+            else
+            {
+                Message = "Config already exist";
+
+                return false;
+            }
+
+        }
+        public IEnumerable<UserToCategoryConfig> GetUserToCategoryConfig()
+        {
+            return _context.UserToCategoryConfigs.OrderByDescending(u => u.Id).ToList();
+        }
+        public IEnumerable<User> GetUser()
+        {
+            return _userManager.Users.OrderByDescending(u => u.Id).ToList();
+        }
+        public List<ReportModel> GetUserToCategoryList()
+        {
+
+            var ven = GetUser().ToList();
+            var cat = _context.ItemCategories.ToList();
+            var des = _context.UserToCategoryConfigs.ToList();
+
+            var desList = (from d in des
+                          join c in cat on d.CategoryId equals c.Id
+                          select new ReportModel()
+           {
+                UserId = d.UserId,
+                CategoryId = d.CategoryId,
+                CategoryName = c.CategoryName,
+            }).GroupBy(v => new { v.UserId, v.CategoryName }).Select(s => s.FirstOrDefault());
+
+
+            var vendList = (from d in des
+                            join v in ven on d.UserId equals v.Id
+                            select new ReportModel()
+                            {
+                                UserId = d.UserId,
+                                CategoryId = d.CategoryId,
+                                UserName = v.FullName
+                            }).GroupBy(v => new { v.UserId, v.UserName }).Select(s => s.FirstOrDefault());
+
+
+            var query = (from config in _context.UserToCategoryConfigs         
+                         orderby config.Id, config.DateCreated descending
+                         select new ReportModel()
+                         {
+                             ConfigId = config.Id,
+                             CategoryName = string.Join(", ", desList.Where(u => u.UserId == config.UserId).Select(u => u.CategoryName)),
+                             IsActive = config.IsActive,
+                             CreatedDate = config.DateCreated,
+                             UserName = vendList.Where(u => u.UserId == config.UserId).Select(u => u.UserName).FirstOrDefault(),
+                             UserId = vendList.Where(u => u.UserId == config.UserId).Select(u => u.UserId).FirstOrDefault(),
+                             //VendorAddress = vend.VendorAddress,
+                             //VendorStatus = vend.VendorStatus,
+                             //ContactName = vend.ContactName
+                         }).GroupBy(v => new { v.UserId, v.UserName }).Select(s => s.FirstOrDefault()).ToList();//.Distinct().ToList();
+
+            return query;//.OrderByDescending(u => u.EndDate).ToList();
         }
     }
 }
