@@ -9,12 +9,14 @@ using E_Procurement.Repository.Dtos;
 using E_Procurement.Repository.RFQGenRepo;
 using E_Procurement.Repository.VendoRepo;
 using E_Procurement.WebUI.Models.RFQModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using static E_Procurement.WebUI.Enums.Enums;
 
 namespace E_Procurement.WebUI.Controllers
 {
+    [Authorize]
     public class RfqGenController : BaseController
     {
         private readonly IRfqGenRepository _rfqGenRepository;

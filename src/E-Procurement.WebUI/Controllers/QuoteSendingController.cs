@@ -3,6 +3,7 @@ using AutoMapper;
 using E_Procurement.Repository.AccountRepo;
 using E_Procurement.Repository.QuoteSendingRepo;
 using E_Procurement.WebUI.Models.RfqApprovalModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,7 @@ using static E_Procurement.WebUI.Enums.Enums;
 
 namespace E_Procurement.WebUI.Controllers
 {
+    [Authorize]
     public class QuoteSendingController : BaseController
     {
         private readonly IQuoteSendingRepository _quoteSendingRepository;

@@ -77,12 +77,14 @@ namespace E_Procurement.Repository.VendoRepo
                     mapping.VendorID = vendor.Id;
                     vendor.VendorMapping.Add(mapping);
                 }
+                var requisitionURL = _config.GetSection("ExternalAPI:RequisitionURL").Value;
+
                 var subject = "SIGNUP NOTIFICATION";
 
                 var message = "</br><b> Dear </b>" + model.ContactName.ToString();
                 message += "</br><b> Your company: </b>" + model.VendorName;
                 message += "</br>has been registered successful on Cyberspace E-procurement Portal.</br>";
-                message += "</br>Kindly, log in and validate the required documents.";
+                message += "</br>Kindly, log in via " + requisitionURL +" and validate the required documents.";
                 message += "</br>Regards";
 
                 _emailSender.SendEmailAsync(vendor.Email, subject, message,"");

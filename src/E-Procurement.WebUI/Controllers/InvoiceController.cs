@@ -11,6 +11,7 @@ using E_Procurement.Repository.DINRepo;
 using E_Procurement.Repository.Dtos;
 using E_Procurement.Repository.PORepo;
 using E_Procurement.WebUI.Models.RfqApprovalModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -19,6 +20,7 @@ using static E_Procurement.WebUI.Enums.Enums;
 
 namespace E_Procurement.WebUI.Controllers
 {
+    [Authorize]
     public class InvoiceController : BaseController
     {
         //private readonly IRfqApprovalRepository _RfqApprovalRepository;

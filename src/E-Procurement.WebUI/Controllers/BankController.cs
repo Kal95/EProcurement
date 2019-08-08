@@ -9,9 +9,11 @@ using E_Procurement.Repository.BankRepo;
 using E_Procurement.WebUI.Models.BankModel;
 using Abp.Web.Mvc.Alerts;
 using static E_Procurement.WebUI.Enums.Enums;
+using Microsoft.AspNetCore.Authorization;
 
 namespace E_Procurement.WebUI.Controllers
 {
+    [Authorize]
     public class BankController : BaseController
     {
         private readonly IBankRepository _bankRepository;

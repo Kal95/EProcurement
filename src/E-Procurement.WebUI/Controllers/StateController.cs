@@ -12,9 +12,11 @@ using E_Procurement.WebUI.Models.StateModel;
 using Microsoft.VisualStudio.Web.CodeGeneration.Contracts.Messaging;
 using Microsoft.IdentityModel.Tokens;
 using static E_Procurement.WebUI.Enums.Enums;
+using Microsoft.AspNetCore.Authorization;
 
 namespace E_Procurement.WebUI.Controllers
 {
+    [Authorize]
     public class StateController : BaseController
     {
         private readonly IStateRepository _stateRepository;
