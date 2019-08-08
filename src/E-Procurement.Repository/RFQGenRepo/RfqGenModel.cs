@@ -25,9 +25,13 @@ namespace E_Procurement.WebUI.Models.RFQModel
         public string CreatedBy { get; set; }
         public bool IsActive { get; set; }
         public string UpdatedBy { get; set; }
+        
         public int Quantity { get; set; }
+        
         public string Description { get; set; }
+        [Required]
         public List<string> Descriptions { get; set; }
+        [Required]
         public List<int> Quantities { get; set; }
         //public List<string> VendorName { get; set; }
         public List<ReportModel> Report { get; set; }

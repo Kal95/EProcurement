@@ -27,14 +27,14 @@
                         <div class="row mg-t-0">
                             <div class="col-md-4">
                                 <label for="StartDate">Start Date:</label>
-                                @Html.TextBoxFor(model => model.StartDate, new { @class = "form-control datepicker", @placeholder = "Start Date", @Id = "StartDate", type = "date", style = "width:150px; height:40px" })
+                                @Html.TextBoxFor(model => model.StartDate, new { @class = "form-control datepicker", @placeholder = "Start Date", @Id = "StartDate", required = "required", type = "date", style = "width:150px; height:40px" })
 
                                 @*@Html.ValidationMessageFor(m => m.StartDate, "", new { @class = "text-danger" })*@
 
                             </div>
                             <div class="col-md-4">
                                 <label for="EndDate">End Date:</label>
-                                @Html.TextBoxFor(model => model.EndDate, new { @class = "form-control datepicker", @placeholder = "End Date", @Id = "EndDate", type = "date", style = "width:150px; height:40px" })
+                                @Html.TextBoxFor(model => model.EndDate, new { @class = "form-control datepicker", @placeholder = "End Date", @Id = "EndDate", required = "required", type = "date", style = "width:150px; height:40px" })
 
                                 @*@Html.ValidationMessageFor(m => m.EndDate, "", new { @class = "text-danger" })*@
 
@@ -70,13 +70,13 @@
 
                                         <td>
                                             <div class="">
-                                                @Html.TextAreaFor(model => model.Descriptions, new { htmlAttributes = new { id = "Descriptions", @class = "form-control", @type = "text", required = "required" } })
+                                                @Html.TextAreaFor(model => model.Descriptions, htmlAttributes: new { id = "Descriptions", @style = "width:300px; height:40px", @class = "form-control", @type = "text", required = "required" })
                                                 @*@Html.ValidationMessageFor(model => model.Descriptions, "", new { @class = "text-danger" })*@
                                             </div>
                                         </td>
                                         <td>
                                             <div class="" >
-                                                @Html.TextBoxFor(model => model.Quantities, new { htmlAttributes = new { id = "Quantities", @style = "width:5px", @class = "form-control", @type = "text", required = "required" } })
+                                                @Html.TextBoxFor(model => model.Quantities, htmlAttributes: new { id = "Quantities", @style = "width:60px; height:40px", @class = "form-control", @type = "text", required = "required" })
                                                 @*@Html.ValidationMessageFor(model => model.Quantities, "", new { @class = "text-danger" })*@
                                             </div>
                                         </td>
