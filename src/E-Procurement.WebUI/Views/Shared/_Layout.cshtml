@@ -27,6 +27,7 @@
     <link href="/lib/datatables/jquery.dataTables.css" rel="stylesheet">
     <!-- Amanda CSS -->
     <link rel="stylesheet" href="/css/amanda.css">
+    <link rel="stylesheet" href="/css/loading.css">
     <link href="~/sweetAlert/sweetalert.css" rel="stylesheet" />
     <script src="~/sweetAlert/sweetalert.min.js"></script>
 </head>
@@ -53,15 +54,16 @@
                         <li><a href=""><i class="icon ion-ios-gear-outline"></i> Settings</a></li>
                         <li><a href=""><i class="icon ion-ios-download-outline"></i> Downloads</a></li>
                         <li><a href=""><i class="icon ion-ios-star-outline"></i> Favorites</a></li>
-                        <li><a href=""><i class="icon ion-ios-folder-outline"></i> Collections</a></li>-->                    
+                        <li><a href=""><i class="icon ion-ios-folder-outline"></i> Collections</a></li>-->
+                        <li><a href="" class="btn" data-toggle="modal" data-target="#modaldemo1">Change Password</a></li>
                         <li>
-                        @*<a asp-controller="Account" asp-action="Logout"><i class="icon ion-power"></i> Sign Out</a>*@
-                        <form asp-area="" asp-controller="Account" asp-action="Logout" method="post">
-                            <button type="submit">
-                                <i class="icon ion-power"></i>
-                                <span>Logout</span>
-                            </button>
-                        </form>
+                            @*<a asp-controller="Account" asp-action="Logout"><i class="icon ion-power"></i> Sign Out</a>*@
+                            <form asp-area="" asp-controller="Account" asp-action="Logout" method="post">
+                                <button type="submit" class="danger">
+                                    <i class="icon ion-power"></i>
+                                    <span>Logout</span>
+                                </button>
+                            </form>
                         </li>
                     </ul>
                 </div><!-- dropdown-menu -->
@@ -90,7 +92,7 @@
             <div id="mainMenu" class="tab-pane active">
                 <ul class="nav am-sideleft-menu">
                     <li class="nav-item">
-                        <a href="index.html" class="nav-link">
+                        <a asp-controller="Home" asp-action="Index" class="nav-link">
                             <i class="icon ion-ios-home-outline"></i>
                             <span>Dashboard</span>
                         </a>
@@ -98,7 +100,7 @@
                     @if (User.IsInRole("Procurement") || User.IsInRole("Admin"))
                     {
                         <li class="nav-item">
-                            <a href="" class="nav-link with-sub">
+                            <a href="" class="nav-link with-sub active show">
                                 <i class="icon ion-ios-gear-outline"></i>
                                 <span>Setup</span>
                             </a>
@@ -113,112 +115,112 @@
                             </ul>
                         </li><!-- nav-item -->
                     }
-                        @if (User.IsInRole("Admin"))
-                        {
-                            <li class="nav-item">
-                                <a href="" class="nav-link with-sub">
-                                    <i class="icon ion-ios-filing-outline"></i>
-                                    <span>Admin</span>
-                                </a>
-                                <ul class="nav-sub">
-                                    <li class="nav-item"><a asp-controller="Account" asp-action="Roles" class="nav-link">Roles</a></li>
-                                    <li class="nav-item"><a asp-controller="Account" asp-action="Users" class="nav-link">Users</a></li>
-                                    <li class="nav-item"><a asp-controller="Account" asp-action="AssignUserRole" class="nav-link">Assign User Role</a></li>
-                                    <li class="nav-item"><a asp-controller="Permission" asp-action="Index" class="nav-link">Permisions</a></li>
-                                    <li class="nav-item"><a asp-controller="Permission" asp-action="AssignRolePermissions" class="nav-link">Assign Role Permisions</a></li>
-                                    <li class="nav-item"><a asp-controller="RfqApprovalConfig" asp-action="Index" class="nav-link">RFQ Approval Config</a></li>
-                                    <li class="nav-item"><a asp-controller="Report" asp-action="VendorEvaluation" class="nav-link">Vendor Evaluation</a></li>
-                                    <li class="nav-item"><a asp-controller="Report" asp-action="VendorEvaluationReport" class="nav-link">Vendor Evaluation Report</a></li>
-                                    <li class="nav-item"><a asp-controller="Vendor" asp-action="VendorDocuments" class="nav-link">Vendor Documents</a></li>
-                                    <li class="nav-item"><a asp-controller="Vendor" asp-action="Index" class="nav-link">Vendor List</a></li>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <li class="nav-item">
+                            <a href="" class="nav-link with-sub">
+                                <i class="icon ion-ios-filing-outline"></i>
+                                <span>Admin</span>
+                            </a>
+                            <ul class="nav-sub">
+                                <li class="nav-item"><a asp-controller="Account" asp-action="Roles" class="nav-link">Roles</a></li>
+                                <li class="nav-item"><a asp-controller="Account" asp-action="Users" class="nav-link">Users</a></li>
+                                <li class="nav-item"><a asp-controller="Account" asp-action="AssignUserRole" class="nav-link">Assign User Role</a></li>
+                                <li class="nav-item"><a asp-controller="Permission" asp-action="Index" class="nav-link">Permisions</a></li>
+                                <li class="nav-item"><a asp-controller="Permission" asp-action="AssignRolePermissions" class="nav-link">Assign Role Permisions</a></li>
+                                <li class="nav-item"><a asp-controller="RfqApprovalConfig" asp-action="Index" class="nav-link">RFQ Approval Config</a></li>
+                                <li class="nav-item"><a asp-controller="Report" asp-action="VendorEvaluation" class="nav-link">Vendor Evaluation</a></li>
+                                <li class="nav-item"><a asp-controller="Report" asp-action="VendorEvaluationReport" class="nav-link">Vendor Evaluation Report</a></li>
+                                <li class="nav-item"><a asp-controller="Vendor" asp-action="VendorDocuments" class="nav-link">Vendor Documents</a></li>
+                                <li class="nav-item"><a asp-controller="Vendor" asp-action="Index" class="nav-link">Vendor List</a></li>
 
-                                </ul>
-                            </li><!-- nav-item -->
-                        }
-                        @if (User.IsInRole("Procurement") || User.IsInRole("Admin"))
-                        {
-                            <li class="nav-item">
-                                <a href="" class="nav-link with-sub">
-                                    <i class="icon ion-ios-filing-outline"></i>
-                                    <span>RFQ</span>
-                                </a>
-                                <ul class="nav-sub">
-                                    <li class="nav-item"><a href="@Url.Action("Index", "RfqGen")" class="nav-link">Generated List</a></li>
-                                    <li class="nav-item"><a href="@Url.Action("Create", "RfqGen")" class="nav-link">Generate RFQ</a></li>
-                                    <li class="nav-item"><a asp-controller="GRN" asp-action="Index" class="nav-link">Upload GRN</a></li>
-                                </ul>
-                            </li>
-                        }
-                        @if (User.IsInRole("Vendor User") || User.IsInRole("Admin"))
-                        {
-                            <li class="nav-item">
-                                <a href="" class="nav-link with-sub">
-                                    <i class="icon ion-ios-filing-outline"></i>
-                                    <span>Vendor</span>
-                                </a>
-                                <ul class="nav-sub">
-                                    @*<li class="nav-item"><a href="@Url.Action("Index", "VendorCategory")" class="nav-link">Category</a></li>*@
-                                    <li class="nav-item"><a href="@Url.Action("Index", "QuoteSending")" class="nav-link">Send Quote</a></li>
-                                    <li class="nav-item"><a href="@Url.Action("Index", "POAcceptance")" class="nav-link">PO Acceptance</a></li>
-                                    <li class="nav-item"><a href="@Url.Action("Index", "Invoice")" class="nav-link">Invoice Upload</a></li>
+                            </ul>
+                        </li><!-- nav-item -->
+                    }
+                    @if (User.IsInRole("Procurement") || User.IsInRole("Admin"))
+                    {
+                        <li class="nav-item">
+                            <a href="" class="nav-link with-sub">
+                                <i class="icon ion-ios-filing-outline"></i>
+                                <span>RFQ</span>
+                            </a>
+                            <ul class="nav-sub">
+                                <li class="nav-item"><a href="@Url.Action("Index", "RfqGen")" class="nav-link">Generated List</a></li>
+                                <li class="nav-item"><a href="@Url.Action("Create", "RfqGen")" class="nav-link">Generate RFQ</a></li>
+                                <li class="nav-item"><a asp-controller="GRN" asp-action="Index" class="nav-link">Upload GRN</a></li>
+                            </ul>
+                        </li>
+                    }
+                    @if (User.IsInRole("Vendor User") || User.IsInRole("Admin"))
+                    {
+                        <li class="nav-item">
+                            <a href="" class="nav-link with-sub">
+                                <i class="icon ion-ios-filing-outline"></i>
+                                <span>Vendor</span>
+                            </a>
+                            <ul class="nav-sub">
+                                @*<li class="nav-item"><a href="@Url.Action("Index", "VendorCategory")" class="nav-link">Category</a></li>*@
+                                <li class="nav-item"><a href="@Url.Action("Index", "QuoteSending")" class="nav-link">Send Quote</a></li>
+                                <li class="nav-item"><a href="@Url.Action("Index", "POAcceptance")" class="nav-link">PO Acceptance</a></li>
+                                <li class="nav-item"><a href="@Url.Action("Index", "Invoice")" class="nav-link">Invoice Upload</a></li>
 
-                                </ul>
-                            </li><!-- nav-item -->
-                        }
-                        <!-- nav-item -->
-                        @*<li class="nav-item">
-                <a href="" class="nav-link with-sub">
-                    <i class="icon ion-ios-filing-outline"></i>
-                    <span>Quote Sending</span>
-                </a>
-                <ul class="nav-sub">
+                            </ul>
+                        </li><!-- nav-item -->
+                    }
+                    <!-- nav-item -->
+                    @*<li class="nav-item">
+                            <a href="" class="nav-link with-sub">
+                                <i class="icon ion-ios-filing-outline"></i>
+                                <span>Quote Sending</span>
+                            </a>
+                            <ul class="nav-sub">
 
+
+                            </ul>
+                        </li>*@
+                    @if (User.IsInRole("Approval") || User.IsInRole("Admin"))
+                    {
+                        <li class="nav-item">
+                            <a href="" class="nav-link with-sub">
+                                <i class="icon ion-ios-filing-outline"></i>
+                                <span>RFQ Approval</span>
+                            </a>
+                            <ul class="nav-sub">
+                                <li class="nav-item"><a asp-controller="RfqApproval" asp-action="Index" class="nav-link">List</a></li>
+                                <li class="nav-item"><a asp-controller="RfqApproval" asp-action="PendingApproval" class="nav-link">Pending Approval</a></li>
+                                <li class="nav-item"><a asp-controller="PO" asp-action="Index" class="nav-link">Approved RFQ</a></li>
+
+                            </ul>
+                        </li><!-- nav-item -->
+                    }
+                    @if (User.IsInRole("Report") || User.IsInRole("Admin"))
+                    {
+                        <li class="nav-item">
+                            <a href="" class="nav-link with-sub">
+                                <i class="icon ion-ios-analytics-outline"></i>
+                                <span>Reports</span>
+                            </a>
+                            <ul class="nav-sub">
+                                <li class="nav-item"><a href="@Url.Action("Vendor", "Report")" class="nav-link">Vendor Report</a></li>
+                                <li class="nav-item"><a href="@Url.Action("RfqGen", "Report")" class="nav-link">RFQ Generation Report</a></li>
+                                <li class="nav-item"><a href="@Url.Action("PoGen", "Report")" class="nav-link">PO Generation</a></li>
+                            </ul>
+                        </li><!-- nav-item -->
+                    }
+                    <!-- nav-item -->
+                    @*<li class="nav-item">
+                            <a href="" class="nav-link with-sub">
+                                <i class="icon ion-ios-list-outline"></i>
+                                <span>Tables</span>
+                            </a>
+                            <ul class="nav-sub">
+                                <li class="nav-item"><a href="table-basic.html" class="nav-link">Basic Table</a></li>
+                                <li class="nav-item"><a href="table-datatable.html" class="nav-link">Data Table</a></li>
+                            </ul>
+                        </li><!-- nav-item -->
+                        <!-- nav-item -->*@
 
                 </ul>
-            </li>*@
-                        @if (User.IsInRole("Approval") || User.IsInRole("Admin"))
-                        {
-                            <li class="nav-item">
-                                <a href="" class="nav-link with-sub">
-                                    <i class="icon ion-ios-filing-outline"></i>
-                                    <span>RFQ Approval</span>
-                                </a>
-                                <ul class="nav-sub">
-                                    <li class="nav-item"><a asp-controller="RfqApproval" asp-action="Index" class="nav-link">List</a></li>
-                                    <li class="nav-item"><a asp-controller="RfqApproval" asp-action="PendingApproval" class="nav-link">Pending Approval</a></li>
-                                    <li class="nav-item"><a asp-controller="PO" asp-action="Index" class="nav-link">Approved RFQ</a></li>
-
-                                </ul>
-                            </li><!-- nav-item -->
-                        }
-                        @if (User.IsInRole("Report") || User.IsInRole("Admin"))
-                        {
-                            <li class="nav-item">
-                                <a href="" class="nav-link with-sub">
-                                    <i class="icon ion-ios-analytics-outline"></i>
-                                    <span>Reports</span>
-                                </a>
-                                <ul class="nav-sub">
-                                    <li class="nav-item"><a href="@Url.Action("Vendor", "Report")" class="nav-link">Vendor Report</a></li>
-                                    <li class="nav-item"><a href="@Url.Action("RfqGen", "Report")" class="nav-link">RFQ Generation Report</a></li>
-                                    <li class="nav-item"><a href="@Url.Action("PoGen", "Report")" class="nav-link">PO Generation</a></li>
-                                </ul>
-                            </li><!-- nav-item -->
-                        }
-                        <!-- nav-item -->
-                        @*<li class="nav-item">
-                <a href="" class="nav-link with-sub">
-                    <i class="icon ion-ios-list-outline"></i>
-                    <span>Tables</span>
-                </a>
-                <ul class="nav-sub">
-                    <li class="nav-item"><a href="table-basic.html" class="nav-link">Basic Table</a></li>
-                    <li class="nav-item"><a href="table-datatable.html" class="nav-link">Data Table</a></li>
-                </ul>
-            </li><!-- nav-item -->
-            <!-- nav-item -->*@
-
-                    </ul>
             </div><!-- #mainMenu -->
 
         </div><!-- tab-content -->
@@ -234,12 +236,14 @@
             <partial name="_NotificationPanel" />
             @*@Html.Partial("_NotificationPanel")*@
             @RenderBody()
+            <partial name="_Loading" />
         </div><!-- am-pagebody -->
         <div class="am-footer">
             <span>Copyright &copy;.</span>
         </div><!-- am-footer -->
     </div><!-- am-mainpanel -->
 
+    <partial name="_ChangePasswordPartial" />
     <script src="/lib/jquery/jquery.js"></script>
     <script src="/lib/popper.js/popper.js"></script>
     <script src="/lib/bootstrap/bootstrap.js"></script>
@@ -256,12 +260,19 @@
     <script src="/lib/Flot/jquery.flot.pie.js"></script>
     <script src="/lib/Flot/jquery.flot.resize.js"></script>
     <script src="/lib/flot-spline/jquery.flot.spline.js"></script>
-   
+
 
     <script src="/js/amanda.js"></script>
     <script src="/js/ResizeSensor.js"></script>
     <script src="/js/dashboard.js"></script>
 
-   
+    <script type="text/javascript">
+        $(document).on('submit', 'form', function () {
+            displayBusyIndicator();
+        });
+        function displayBusyIndicator() {
+            $('.loading').show();
+        }
+    </script>
 </body>
 </html>

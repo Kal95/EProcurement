@@ -31,6 +31,7 @@ namespace E_Procurement.WebUI.Controllers
         private readonly RoleManager<Role> _roleManager;
         private readonly UserManager<User> _userManager;
         private readonly IPermissionRepository _permissionRepository;
+        private readonly IHttpContextAccessor _contextAccessor;
 
         //[Route("Identity/Account/Login")]
         //public IActionResult LoginRedirect(string ReturnUrl)
@@ -41,7 +42,8 @@ namespace E_Procurement.WebUI.Controllers
                                 RoleManager<Role> roleManager,
                                 UserManager<User> userManager, 
                                 IAccountManager accountManager, 
-                                IMapper mapper, 
+                                IMapper mapper,
+                                IHttpContextAccessor contextAccessor,
                                 IPermissionRepository permissionRepository)
         {
             _accountManager = accountManager;
@@ -49,6 +51,7 @@ namespace E_Procurement.WebUI.Controllers
             _signInManager = signInManager;
             _roleManager = roleManager;
             _userManager = userManager;
+            _contextAccessor = contextAccessor;
             _permissionRepository = permissionRepository;
         }
 
@@ -65,7 +68,7 @@ namespace E_Procurement.WebUI.Controllers
         }
         [HttpPost]
         [AllowAnonymous]
-        [ValidateAntiForgeryToken]
+       // [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginModel loginViewModel)
         {
       
@@ -76,8 +79,8 @@ namespace E_Procurement.WebUI.Controllers
                     //var user = await _accountManager.GetUserByEmailAsync(loginViewModel.Email);
                     if (user == null)
                     {
-                        //ModelState.AddModelError("", "Email/password not found");
-                        Alert("Invalid Email/password.", NotificationType.error);
+                        ModelState.AddModelError("", "Email/password not found");
+                        //Alert("Invalid Email/password.", NotificationType.error);
                         return View(loginViewModel);
                     }
 
@@ -134,22 +137,22 @@ namespace E_Procurement.WebUI.Controllers
                     }
                     else
                     {
-                        Alert("Incorrect Email/password.", NotificationType.error);
-                        return View(loginViewModel);
+                        ModelState.AddModelError("", "Email/password not found");
+                        View(loginViewModel);
                     }
 
 
 
                 }
-            Alert("Email/password not found", NotificationType.error);
-            return View(loginViewModel);
+            ModelState.AddModelError("", "Email/password not found");
+            return  View(loginViewModel);
         }
 
 
         [HttpPost]
         public async Task<IActionResult> Logout()
         {
-            await _signInManager.SignOutAsync();
+            await _signInManager.Context.SignOutAsync();
             return RedirectToAction("Login", "Account");
         }
 
@@ -285,44 +288,50 @@ namespace E_Procurement.WebUI.Controllers
         //[PermissionValidation("can_create_user", "can_assign_permission")]
         public async Task<IActionResult> AssignUserRole(string Id, List<UserRoleViewModel> UserRole)
         {
+            try { 
 
-            if (!string.IsNullOrEmpty(Id))
-            {
-                var roles = await _accountManager.GetRoles();
-                var users = await _accountManager.GetUsers();
-                //var currentRoles = await _accountManager.GetUserAndRolesAsync(Convert.ToInt16(Id));
-
-                var user = await _userManager.FindByIdAsync(Id);
-                var currentRoles = await _userManager.GetRolesAsync(user);
-
-                var userList = users.Select(a => new SelectListItem()
+                if (!string.IsNullOrEmpty(Id))
                 {
-                    Value = a.Id.ToString(),
-                    Text = a.FullName
-                }).ToList();
+                    var roles = await _accountManager.GetRoles();
+                    var users = await _accountManager.GetUsers();
+                    //var currentRoles = await _accountManager.GetUserAndRolesAsync(Convert.ToInt16(Id));
 
-                List<UserRoleViewModel> userRoleVM = new List<UserRoleViewModel>();
-                foreach (var item in roles)
-                {
-                    var isRoleAssigned = currentRoles.Any(x => x.Contains(item.Name));
-                    if (isRoleAssigned)
+                    var user = await _userManager.FindByIdAsync(Id.ToString());
+                    var currentRoles = await _userManager.GetRolesAsync(user);
+
+                    var userList = users.Select(a => new SelectListItem()
                     {
-                        userRoleVM.Add(new UserRoleViewModel { SelectedRole = true, Role = item.Name });
-                    }
-                    else
+                        Value = a.Id.ToString(),
+                        Text = a.FullName
+                    }).ToList();
+
+                    List<UserRoleViewModel> userRoleVM = new List<UserRoleViewModel>();
+                    foreach (var item in roles)
                     {
-                        userRoleVM.Add(new UserRoleViewModel { SelectedRole = false, Role = item.Name });
+                        var isRoleAssigned = currentRoles.Any(x => x.Contains(item.Name));
+                        if (isRoleAssigned)
+                        {
+                            userRoleVM.Add(new UserRoleViewModel { SelectedRole = true, Role = item.Name });
+                        }
+                        else
+                        {
+                            userRoleVM.Add(new UserRoleViewModel { SelectedRole = false, Role = item.Name });
+                        }
+                        //userRoleVM.Add(new UserRoleViewModel { Role = item.Name });
                     }
-                    //userRoleVM.Add(new UserRoleViewModel { Role = item.Name });
+
+                    ViewBag.roles = userRoleVM;
+                    ViewBag.users = userList;
+
+                    return View();
+
+
+
                 }
-
-                ViewBag.roles = userRoleVM;
-                ViewBag.users = userList;
-
-                return View();
-
-
-
+        }
+            catch (Exception ex)
+            {
+                throw ex;
             }
             Alert("Please select user.", NotificationType.error);
             return View();
@@ -330,7 +339,7 @@ namespace E_Procurement.WebUI.Controllers
 
         [HttpPost]
         [PermissionValidation("can_create_user")]
-        public async Task<IActionResult> CreateUserRole(string Id, List<UserRoleViewModel> UserRole)
+        public async Task<IActionResult> CreateUserRole(UserViewModel assignUser, List<UserRoleViewModel> UserRole)
         {
 
             if (ModelState.IsValid)
@@ -362,7 +371,7 @@ namespace E_Procurement.WebUI.Controllers
                 }
 
 
-                var result = await _accountManager.AssignUserRoleAsync(Id, selectecRoles);
+                var result = await _accountManager.AssignUserRoleAsync(assignUser.Id, selectecRoles);
 
                 if (result)
                 {
@@ -379,6 +388,49 @@ namespace E_Procurement.WebUI.Controllers
             Alert("Invalid entries. Please, try again.", NotificationType.info);
             return View("AssignUserRole");
         }
+
+        [HttpPost]
+        public async Task<IActionResult> ChangePassword([Bind]ChangePasswordModel changePassword)
+        {
+            if (!ModelState.IsValid)
+            {
+                Alert("User not found", NotificationType.error);
+                return RedirectToAction("Index", "Home");
+
+            }
+            if (ModelState.IsValid)
+            {
+
+                //var currentUser = _contextAccessor.HttpContext.User.Identity;
+                 var currentUser = _contextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+                var user = await _userManager.FindByIdAsync(currentUser.ToString());
+                if (user == null)
+                {
+                    Alert("Could not retrive user details. Please try again.", NotificationType.error);
+                    return RedirectToAction("Index", "Home");
+                }
+                var changpawd = await _userManager.RemovePasswordAsync(user);
+                if (!changpawd.Succeeded)
+                {
+                    Alert("Can not change password.Please try again later.", NotificationType.error);
+                    return RedirectToAction("Index", "Home");
+                }
+                var result = await _userManager.AddPasswordAsync(user, changePassword.Password);
+                if (result.Succeeded)
+                {
+                    Alert("Password updated sucsessfully.", NotificationType.success);
+                }
+                else
+                {
+                    Alert("Can not change password. Please try again later.", NotificationType.error);                  
+                }
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
+
+
         #endregion
 
 

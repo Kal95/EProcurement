@@ -1,7 +1,7 @@
 ﻿@model E_Procurement.WebUI.Models.AccountModel.UserViewModel
-@{
+@*@{
     ViewData["Title"] = "Users";
-}
+}*@
 
 <div class="row row-sm mg-t-20">
     <div class="col-xl-12">
@@ -63,10 +63,14 @@
     function DoPostBack() {
         var select = document.getElementById("Id");
         var option = select.options[select.selectedIndex];
+       // alert(option.value); //CreateUserRole
+
+        // var project = $("#MarketerName").val();
         if (option.value != "") {
             var Table = document.getElementById("tblUserEdit");
             Table.innerHTML = "";
-            document.forms[1].action = "/Account/AssignUserRole";
+            document.forms[1].action = "/Account/AssignUserRole/";
+            document.forms[1].method = "POST";
             document.forms[1].submit();
         }
     }

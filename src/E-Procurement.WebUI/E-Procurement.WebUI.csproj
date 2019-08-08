@@ -8,10 +8,22 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Models\BankModel\**" />
+    <Compile Remove="Models\CountryModel\**" />
     <Compile Remove="Models\RFQModel\**" />
+    <Compile Remove="Models\StateModel\**" />
+    <Content Remove="Models\BankModel\**" />
+    <Content Remove="Models\CountryModel\**" />
     <Content Remove="Models\RFQModel\**" />
+    <Content Remove="Models\StateModel\**" />
+    <EmbeddedResource Remove="Models\BankModel\**" />
+    <EmbeddedResource Remove="Models\CountryModel\**" />
     <EmbeddedResource Remove="Models\RFQModel\**" />
+    <EmbeddedResource Remove="Models\StateModel\**" />
+    <None Remove="Models\BankModel\**" />
+    <None Remove="Models\CountryModel\**" />
     <None Remove="Models\RFQModel\**" />
+    <None Remove="Models\StateModel\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -72,9 +84,6 @@
 
 
   <ItemGroup>
-    <Folder Include="Models\BankModel\" />
-    <Folder Include="Models\CountryModel\" />
-    <Folder Include="Models\StateModel\" />
     <Folder Include="Service\Interface\" />
     <Folder Include="wwwroot\Uploads\Invoice\" />
     <Folder Include="wwwroot\Uploads\GRN\" />
