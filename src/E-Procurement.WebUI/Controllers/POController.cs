@@ -12,10 +12,12 @@ using E_Procurement.WebUI.Models.RfqApprovalModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Authorization;
 using static E_Procurement.WebUI.Enums.Enums;
 
 namespace E_Procurement.WebUI.Controllers
 {
+    [Authorize]
     public class POController : BaseController
     {
         //private readonly IRfqApprovalRepository _RfqApprovalRepository;
@@ -54,7 +56,7 @@ namespace E_Procurement.WebUI.Controllers
         }
 
 
-        [HttpPost]
+        [System.Web.Mvc.HttpPost]
         public async Task<IActionResult> RFQDetails(RFQGenerationModel rfqApproval)
         {
 

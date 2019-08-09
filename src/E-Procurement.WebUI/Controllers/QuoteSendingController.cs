@@ -8,10 +8,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using static E_Procurement.WebUI.Enums.Enums;
 
 namespace E_Procurement.WebUI.Controllers
 {
+    [Authorize]
     public class QuoteSendingController : BaseController
     {
         private readonly IQuoteSendingRepository _quoteSendingRepository;
@@ -65,7 +67,7 @@ namespace E_Procurement.WebUI.Controllers
             return View(QuoteDetails);
         }
          
-        public ActionResult Update(int[] DetailsId, decimal[] agreedAmount)
+        public IActionResult Update(int[] DetailsId, decimal[] agreedAmount)
         {
             try
             {

@@ -112,9 +112,9 @@ namespace E_Procurement.WebUI.Controllers
                         {
                             claims.Add(new Claim("Permissions", claim.PermissionName));
                         }
+                        claims.Add(new Claim("Email", user.Email));
 
-
-                        var claimsPrincipal = await _signInManager.CreateUserPrincipalAsync(user);
+                    var claimsPrincipal = await _signInManager.CreateUserPrincipalAsync(user);
                         if ( claimsPrincipal?.Identity is ClaimsIdentity claimsIdentity)
                         {
                             claimsIdentity.AddClaims(claims);

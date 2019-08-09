@@ -8,10 +8,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using static E_Procurement.WebUI.Enums.Enums;
 
 namespace E_Procurement.WebUI.Controllers
 {
+    [Authorize]
     public class POAcceptanceController : BaseController
     {
         private readonly IPOAcceptanceRepository _pOAcceptaceRepository;
@@ -44,7 +46,7 @@ namespace E_Procurement.WebUI.Controllers
             return View(PODetails);
         }
 
-        public ActionResult UpdatePO(int Id, DateTime ExpectedDeliveryDate)
+        public IActionResult UpdatePO(int Id, DateTime ExpectedDeliveryDate)
         {
             try
             {

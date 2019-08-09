@@ -11,6 +11,7 @@ using E_Procurement.Repository.DINRepo;
 using E_Procurement.Repository.Dtos;
 using E_Procurement.Repository.PORepo;
 using E_Procurement.WebUI.Models.RfqApprovalModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -19,6 +20,7 @@ using static E_Procurement.WebUI.Enums.Enums;
 
 namespace E_Procurement.WebUI.Controllers
 {
+    [Authorize]
     public class InvoiceController : BaseController
     {
         //private readonly IRfqApprovalRepository _RfqApprovalRepository;
@@ -69,13 +71,13 @@ namespace E_Procurement.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> PODetails(RFQGenerationModel rfqApproval)
         {
-
+            var RfqApprovalDetails = await _dinRepository.GetInvoiceDetailsAsync(rfqApproval.RFQId);
             try
             {
                 if (string.IsNullOrEmpty(rfqApproval.RFQStatus) || rfqApproval.RFQStatus != "Approved")
                 {
-                    Alert("Can not upload invoic. Please try again later.", NotificationType.warning);
-                    return View(rfqApproval);
+                    Alert("Can not upload invoice. Please try again later.", NotificationType.warning);
+                    return View(RfqApprovalDetails);
                 }
                 if (ModelState.IsValid)
                 {
@@ -90,7 +92,7 @@ namespace E_Procurement.WebUI.Controllers
                         if (!allowedExtensions.Contains(checkextension))
                         {
                             Alert("Invalid file extention.", NotificationType.error);
-                            return View(rfqApproval);
+                            return View(RfqApprovalDetails);
                         }
                    
 
@@ -116,18 +118,18 @@ namespace E_Procurement.WebUI.Controllers
                         else
                         {
                             Alert("Can not upload invoice at this time. Please try again later.", NotificationType.error);
-                            return View(rfqApproval);
+                            return View(RfqApprovalDetails);
                         }
                     }
                 }
                
                 Alert("Can not upload invoice at this time. Please try again later.", NotificationType.error);
-                return View(rfqApproval);
+                return View(RfqApprovalDetails);
             }
             catch (Exception ex)
             {
                 Alert("Can not upload invoice at this time. Please try again later.", NotificationType.error);
-                return View(rfqApproval);
+                return View(RfqApprovalDetails);
             }
 
         }

@@ -7,22 +7,27 @@ using E_Procurement.Data;
 using E_Procurement.Repository.Dtos;
 using Microsoft.EntityFrameworkCore;
 using E_Procurement.Data.Entity;
+using Microsoft.AspNetCore.Http;
 
 namespace E_Procurement.Repository.QuoteSendingRepo
 {
     public class QuoteSendingRepository : IQuoteSendingRepository
     {
         private readonly EProcurementContext _context;
-        public QuoteSendingRepository(EProcurementContext context)
+        private readonly IHttpContextAccessor _contextAccessor;
+        public QuoteSendingRepository(EProcurementContext context, IHttpContextAccessor contextAccessor)
         {
             _context = context;
+            _contextAccessor = contextAccessor;
         }
         public async Task<IEnumerable<RFQGenerationModel>> GetQuoteAsync()
         {
+
+            var currentUser = _contextAccessor.HttpContext.User.FindFirst("Email").Value;
             var query = await (from rfq in _context.RfqGenerations
                                join rfqDetails in _context.RfqDetails on rfq.Id equals rfqDetails.RFQId
                                join vend in _context.Vendors on rfqDetails.VendorId equals vend.Id
-                               where rfq.EndDate >= DateTime.Now && rfq.RFQStatus == null
+                               where rfq.EndDate >= DateTime.Now && rfq.RFQStatus == null && vend.Email == currentUser
                                orderby rfq.Id, rfq.EndDate descending
                                select new RFQGenerationModel()
                                {

@@ -7,24 +7,28 @@ using E_Procurement.Data.Entity;
 using E_Procurement.Repository.Dtos;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http;
 
 namespace E_Procurement.Repository.PoAcceptanceRepo
 {
     public class POAcceptanceRepository : IPOAcceptanceRepository
     {
         private readonly EProcurementContext _context;
+        private readonly IHttpContextAccessor _contextAccessor;
 
-        public POAcceptanceRepository(EProcurementContext context)
+        public POAcceptanceRepository(EProcurementContext context, IHttpContextAccessor contextAccessor)
         {
             _context = context;
+            _contextAccessor = contextAccessor;
         }
 
         public async Task<IEnumerable<POAcceptanceModel>> GetAllPO()
         {
+            var currentUser = _contextAccessor.HttpContext.User.FindFirst("Email").Value;
             var query = await (from poa in _context.PoGenerations
                                join vendor in _context.Vendors on poa.VendorId equals vendor.Id
                                join rfqDetails in _context.RfqDetails on poa.RFQId equals rfqDetails.RFQId
-                               where poa.POStatus == "Generated"
+                               where poa.POStatus == "Generated" && vendor.Email == currentUser
                                orderby poa.Id descending
                                select new POAcceptanceModel()
                                {

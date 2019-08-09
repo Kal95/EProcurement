@@ -111,11 +111,14 @@ namespace E_Procurement.Repository.DINRepo
 
         public async Task<IEnumerable<RFQGenerationModel>> GetPOAsync()
         {
+           // var currentUser = _contextAccessor.HttpContext.User.Identity.Name;
+            var currentUser = _contextAccessor.HttpContext.User.FindFirst("Email").Value;
             var query = await (from po in _context.PoGenerations
                                join vend in _context.Vendors on po.VendorId equals vend.Id
                                join rfq in _context.RfqGenerations on po.RFQId equals rfq.Id
                                //join dn in _context.DnGenerations on po.Id equals dn.PoId
-                              // where !(from dn in _context.DnGenerations select dn.PoId).Contains(po.Id)
+                               where !(from dn in _context.DnGenerations select dn.PoId).Contains(po.Id)
+                               && vend.Email== currentUser
                                orderby po.Id, rfq.EndDate descending
                                select new RFQGenerationModel()
                                {
