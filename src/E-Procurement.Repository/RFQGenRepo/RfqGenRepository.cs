@@ -136,15 +136,18 @@ namespace E_Procurement.Repository.RFQGenRepo
                 //var selected3 = model.SelectedVendors.Zip(model.SelectedItems, (x, y) => new { X = x, Y = y });
                 foreach (var entry in vendorList)
                 {
-                    
+                    var requisitionURL = _config.GetSection("ExternalAPI:RequisitionURL").Value;
+
                     var message = "</br><b> Dear </b>" + entry.ContactName;
                     message += "</br><b> Your company: </b>" + entry.VendorName;
 
-                    message += "<br>has been chosen to supply the following items: " + string.Join(", ", itemList.Select(u => u.ItemName));
+                    message += "<br>has been chosen to supply the following items: ";
 
-                    message += "<br>in the following quantities " + string.Join(", ", model.Quantities) + " respectively";
+                    message += "<br> "    +string.Join(", ", itemList.Select(u => u.ItemName));
 
-                    message += "</br>Kindly respond promptly.";
+                    message += " in the following quantities " + string.Join(", ", model.Quantities) + " respectively.";
+
+                    message += "</br>Kindly Login to our E-Procurement Platform via " +requisitionURL/*+"/QuoteSending"*/ +" to respond.";
                     message += "</br>Regards";
 
                     RFQGenerationModel model2 = new RFQGenerationModel();

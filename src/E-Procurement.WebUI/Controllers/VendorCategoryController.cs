@@ -6,6 +6,7 @@ using Abp.Web.Mvc.Alerts;
 using AutoMapper;
 using E_Procurement.Repository.VendorCategoryRepo;
 using E_Procurement.WebUI.Models.VendorCategoryModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -13,6 +14,7 @@ using static E_Procurement.WebUI.Enums.Enums;
 
 namespace E_Procurement.WebUI.Controllers
 {
+    [Authorize]
     public class VendorCategoryController : BaseController
     {
         private readonly IVendorCategoryRepository _vendorCategoryRepository;

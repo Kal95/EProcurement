@@ -3,6 +3,7 @@ using AutoMapper;
 using E_Procurement.Repository.AccountRepo;
 using E_Procurement.Repository.QuoteSendingRepo;
 using E_Procurement.WebUI.Models.RfqApprovalModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;

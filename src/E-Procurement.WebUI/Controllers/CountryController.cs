@@ -9,9 +9,11 @@ using AutoMapper;
 using E_Procurement.WebUI.Models.CountryModel;
 using Abp.Web.Mvc.Alerts;
 using static E_Procurement.WebUI.Enums.Enums;
+using Microsoft.AspNetCore.Authorization;
 
 namespace E_Procurement.WebUI.Controllers
 {
+    [Authorize]
     public class CountryController : BaseController
     {
         private readonly ICountryRepository _countryRepository;
