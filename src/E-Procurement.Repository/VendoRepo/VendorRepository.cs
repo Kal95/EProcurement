@@ -117,7 +117,7 @@ namespace E_Procurement.Repository.VendoRepo
                 throw new Exception("No Vendor exists with this Id");
             }
 
-            if (confirm == 0)
+            if (confirm >= 0)
             {
                 oldEntry.VendorName = model.VendorName;
 
