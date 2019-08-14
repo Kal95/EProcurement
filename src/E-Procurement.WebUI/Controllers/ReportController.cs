@@ -878,8 +878,8 @@ namespace E_Procurement.WebUI.Controllers
             try
             {
                 var period = _reportRepository.GetEvaluationPeriods().ToList();
-
-                if (period.Any(u => u.StartDate <= Convert.ToDateTime(Model.StartDate) && u.EndDate >= Convert.ToDateTime(Model.EndDate)))
+                var period2 = period.Where(u => u.StartDate <= Convert.ToDateTime(Model.StartDate) && u.EndDate >= Convert.ToDateTime(Model.EndDate)).ToList();
+                if (period.Any(u => u.StartDate <= Convert.ToDateTime(Model.StartDate) && u.EndDate >= Convert.ToDateTime(Model.EndDate)) && period2.Any(u => u.Id != Model.PeriodId))
                 {
                     Alert("An Evaluation Period Already Exists Within This DateRange", NotificationType.error);
                     return View(Model);
