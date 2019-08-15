@@ -13,6 +13,8 @@ using E_Procurement.Repository.Interface;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 using System.Numerics;
+using System.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 
 namespace E_Procurement.Repository.RfqApprovalConfigRepository
 {
@@ -21,11 +23,13 @@ namespace E_Procurement.Repository.RfqApprovalConfigRepository
         private readonly EProcurementContext _context;
         private readonly ISMTPService _emailSender;
         private readonly IHttpContextAccessor _contextAccessor;
+        private IConfiguration _config;
 
-        public RfqApprovalRepository(EProcurementContext context, ISMTPService emailSender, IHttpContextAccessor contextAccessor)
+        public RfqApprovalRepository(EProcurementContext context, IConfiguration config, ISMTPService emailSender, IHttpContextAccessor contextAccessor)
         {
             _context = context;
             _emailSender = emailSender;
+            _config = config;
             _contextAccessor = contextAccessor;
         }
 
@@ -33,7 +37,7 @@ namespace E_Procurement.Repository.RfqApprovalConfigRepository
         {
             try
             {
-
+                string approvallimit = _config.GetSection("Approval:Limit").Value;
                 // create a transaction scope
 
                 using (var transaction = await _context.Database.BeginTransactionAsync(System.Data.IsolationLevel.ReadUncommitted))
@@ -51,6 +55,8 @@ namespace E_Procurement.Repository.RfqApprovalConfigRepository
                         Comments = rFQApproval.Comments
                     };
 
+              
+
                     await _context.AddAsync(rfqTransaction);
 
                     // add to approval status
@@ -59,7 +65,12 @@ namespace E_Procurement.Repository.RfqApprovalConfigRepository
                         CurrentApprovalLevel = rfqLevel.ApprovalLevel,
                         RFQId = rFQApproval.RFQId
                     };
-                    
+                    if (rFQApproval.TotalAmount <= Convert.ToInt32(approvallimit))
+                    {
+                        rfqstatus.CurrentApprovalLevel = 2;
+                        rfqTransaction.ApprovalLevel = 2;
+                    }
+
                     await _context.AddAsync(rfqstatus);
 
 
@@ -192,26 +203,52 @@ namespace E_Procurement.Repository.RfqApprovalConfigRepository
                              Description = rfq.Description,
                              StartDate = rfq.StartDate,
                              EndDate = rfq.EndDate,
-                             RFQStatus = rfq.RFQStatus,
-                             VendorId = vend.Id,
-                             VendorName = vend.VendorName,
-                             VendorAddress = vend.VendorAddress,
-                             VendorStatus = vend.VendorStatus,
-                             ContactName = vend.ContactName
+                             RFQStatus = rfq.RFQStatus
                          }).Distinct().ToListAsync();
 
 
             return  query;
         }
 
-        public async Task<RFQGenerationModel> GetRFQDetailsAsync(int RFQId)
+        public async Task<IEnumerable<RFQGenerationModel>> GetRFQByVendorsAsync(int RFQId)
         {
-            var Item = await _context.RfqDetails.Where(x => x.RFQId == RFQId).ToListAsync();
+
+            var query = await(from rfq in _context.RfqGenerations
+                              join rfqDetails in _context.RfqDetails on rfq.Id equals rfqDetails.RFQId
+                              join vend in _context.Vendors on rfqDetails.VendorId equals vend.Id
+                              where rfq.EndDate <= DateTime.Now && rfq.RFQStatus == null && rfq.Id == RFQId
+
+                              orderby rfq.Id, rfq.EndDate descending
+                              select new RFQGenerationModel()
+                              {
+                                  RFQId = rfq.Id,
+                                  ProjectId = rfq.ProjectId,
+                                  RequisitionId = rfq.RequisitionId,
+                                  Reference = rfq.Reference,
+                                  Description = rfq.Description,
+                                  StartDate = rfq.StartDate,
+                                  EndDate = rfq.EndDate,
+                                  RFQStatus = rfq.RFQStatus,
+                                  VendorId = vend.Id,
+                                  VendorName = vend.VendorName,
+                                  VendorAddress = vend.VendorAddress,
+                                  VendorStatus = vend.VendorStatus,
+                                  ContactName = vend.ContactName,
+                                  TotalAmount = _context.RfqDetails.Where(it => it.RFQId == rfq.Id && it.VendorId == rfqDetails.VendorId).Select(it => it.QuotedAmount).Sum()
+                              }).ToListAsync();
+
+
+            return query;
+        }
+
+        public async Task<RFQGenerationModel> GetRFQDetailsAsync(int RFQId, int VendorId)
+        {
+            var Item = await _context.RfqDetails.Where(x => x.RFQId == RFQId && x.VendorId == VendorId).ToListAsync();
             var totalAmount = Item.Sum(x => x.QuotedAmount);
             var query = await(from rfq in _context.RfqGenerations
                               join rfqDetails in _context.RfqDetails on rfq.Id equals rfqDetails.RFQId
                               join vend in _context.Vendors on rfqDetails.VendorId equals vend.Id
-                              where rfq.EndDate <= DateTime.Now && rfq.Id== RFQId
+                              where rfq.EndDate <= DateTime.Now && rfq.Id== RFQId && rfqDetails.VendorId == VendorId
                               orderby rfq.Id, rfq.EndDate descending
                               select new RFQGenerationModel()
                               {
@@ -254,55 +291,104 @@ namespace E_Procurement.Repository.RfqApprovalConfigRepository
 
         }
 
+        public async Task<IEnumerable<RFQGenerationModel>> GetRFQPendingApprovalByVendorsAsync(int RFQId)
+        {
+
+            //get current logged on user
+
+            var currentUser = _contextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+
+            /// had to use Stored procedure due to current nature of request.
+            /// creating the sql parameters
+            //var user = new SqlParameter("@p0", currentUser);
+            //var RFQ = new SqlParameter("@p1", RFQId);
+
+            //var pendingApprovalList = await _context.Database.ExecuteSqlCommandAsync<RFQGenerationModel>("exec GetRFQPendingApprovalByVendorsAsync @p0, @p1", parameters: new[] { user, RFQ });
+            // var pendingApprovalList = await _context.Database.ExecuteSqlCommandAsync("exec GetRFQPendingApprovalByVendorsAsync @p0, @p1", parameters: new[] { user, RFQ }).ToListAsync();
+
+
+
+            var query = await (from vend in _context.Vendors
+                               join rfqDetails in _context.RfqDetails on vend.Id equals rfqDetails.VendorId
+                               join transaction in _context.RfqApprovalTransactions on rfqDetails.VendorId equals transaction.VendorId
+                               join approvalStatus in _context.RfqApprovalStatuses on transaction.RFQId equals approvalStatus.RFQId
+                               join config in _context.RfqApprovalConfigs on approvalStatus.CurrentApprovalLevel equals config.ApprovalLevel
+                               join rfq in _context.RfqGenerations on approvalStatus.RFQId equals rfq.Id
+                               where config.UserId == int.Parse(currentUser) && rfq.RFQStatus == "Pending Approval" && rfq.Id == RFQId
+                               orderby rfq.Id, rfq.EndDate descending
+                               select new RFQGenerationModel()
+                               {
+                                   RFQId = rfq.Id,
+                                   ProjectId = rfq.ProjectId,
+                                   RequisitionId = rfq.RequisitionId,
+                                   Reference = rfq.Reference,
+                                   Description = rfq.Description,
+                                   RFQStatus = rfq.RFQStatus,
+                                   VendorId = vend.Id,
+                                   VendorName = vend.VendorName,
+                                   VendorAddress = vend.VendorAddress,
+                                   VendorStatus = vend.VendorStatus,
+                                   ContactName = vend.ContactName,
+                                   TotalAmount = _context.RfqDetails.Where(it => it.RFQId == rfq.Id && it.VendorId == transaction.VendorId).Select(it => it.QuotedAmount).Sum()
+                               }).Distinct().ToListAsync();
+            var vendorId = query.FirstOrDefault().VendorId;
+
+            var query1 = await (from vend in _context.Vendors
+                                join rfqDetails in _context.RfqDetails on vend.Id equals rfqDetails.VendorId
+                                join rfq in _context.RfqGenerations on rfqDetails.RFQId equals rfq.Id
+                                where rfq.Id == RFQId && rfqDetails.VendorId != vendorId
+                                          orderby rfq.Id, rfq.EndDate descending
+                                     select new RFQGenerationModel()
+                                     {
+                                         RFQId = rfq.Id,
+                                         ProjectId = rfq.ProjectId,
+                                         RequisitionId = rfq.RequisitionId,
+                                         Reference = rfq.Reference,
+                                         Description = rfq.Description,
+                                         VendorId = vend.Id,
+                                         VendorName = vend.VendorName,
+                                         VendorAddress = vend.VendorAddress,
+                                         VendorStatus = vend.VendorStatus,
+                                         ContactName = vend.ContactName,
+                                         TotalAmount = _context.RfqDetails.Where(it => it.RFQId == rfq.Id && it.VendorId == vend.Id).Select(it => it.QuotedAmount).Sum()
+                                     }).ToListAsync();
+
+            var retQuery = query.Union(query1);
+           // var returnQ = query.Distinct();
+
+            return retQuery;
+        }
         public async Task<IEnumerable<RFQGenerationModel>> GetRFQPendingApprovalAsync()
         {
-            //dbo.Vendors INNER JOIN
-            //dbo.RfqDetails ON dbo.Vendors.Id = dbo.RfqDetails.VendorId INNER JOIN
-            //dbo.RfqApprovalTransactions INNER JOIN
-            //dbo.RfqApprovalStatuses ON dbo.RfqApprovalTransactions.RFQId = dbo.RfqApprovalStatuses.RFQId INNER JOIN
-            //dbo.RfqApprovalConfigs ON dbo.RfqApprovalStatuses.CurrentApprovalLevel = dbo.RfqApprovalConfigs.ApprovalLevel INNER JOIN
-            //dbo.RfqGenerations ON dbo.RfqApprovalStatuses.RFQId = dbo.RfqGenerations.Id ON dbo.RfqDetails.RFQId = dbo.RfqGenerations.Id
 
             //get current logged on user
             var currentUser = _contextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
 
-            //var currentApprovalLevel = _context.RfqApprovalConfigs.Where(a=> a.);
-            //var query = await(from rfq in _context.RfqGenerations
-            //                  join rfqDetails in _context.RfqDetails on rfq.Id equals rfqDetails.RFQId
-            //                  join vend in _context.Vendors on rfqDetails.VendorId equals vend.Id
-            //                  join transaction in _context.RfqApprovalTransactions on rfqDetails.VendorId equals transaction.Id
-            //                  join approvalStatus in _context.RfqApprovalStatuses on transaction.RFQId equals approvalStatus.RFQId
-            //                  join config in _context.RfqApprovalConfigs on approvalStatus.CurrentApprovalLevel equals config.ApprovalLevel
-           
 
             var query = await (from vend in _context.Vendors
-                               join rfqDetails in _context.RfqDetails on vend.Id  equals rfqDetails.VendorId
+                               join rfqDetails in _context.RfqDetails on vend.Id equals rfqDetails.VendorId
                                join transaction in _context.RfqApprovalTransactions on rfqDetails.VendorId equals transaction.VendorId
                                join approvalStatus in _context.RfqApprovalStatuses on transaction.RFQId equals approvalStatus.RFQId
                                join config in _context.RfqApprovalConfigs on approvalStatus.CurrentApprovalLevel equals config.ApprovalLevel
                                join rfq in _context.RfqGenerations on approvalStatus.RFQId equals rfq.Id
                                where config.UserId == int.Parse(currentUser) && rfq.RFQStatus == "Pending Approval"
                                orderby rfq.Id, rfq.EndDate descending
-                              select new RFQGenerationModel()
-                              {
-                                  RFQId = rfq.Id,
-                                  ProjectId = rfq.ProjectId,
-                                  RequisitionId = rfq.RequisitionId,
-                                  Reference = rfq.Reference,
-                                  Description = rfq.Description,
-                                  StartDate = rfq.StartDate,
-                                  EndDate = rfq.EndDate,
-                                  RFQStatus = rfq.RFQStatus,
-                                  VendorId = vend.Id,
-                                  VendorName = vend.VendorName,
-                                  VendorAddress = vend.VendorAddress,
-                                  VendorStatus = vend.VendorStatus,
-                                  ContactName = vend.ContactName
-                              }).Distinct().ToListAsync();
+                               select new RFQGenerationModel()
+                               {
+                                   RFQId = rfq.Id,
+                                   ProjectId = rfq.ProjectId,
+                                   RequisitionId = rfq.RequisitionId,
+                                   Reference = rfq.Reference,
+                                   Description = rfq.Description,
+                                   StartDate = rfq.StartDate,
+                                   EndDate = rfq.EndDate,
+                                   RFQStatus = rfq.RFQStatus
+                               }).Distinct().ToListAsync();
 
 
             return query;
         }
-    
+
     }
 }

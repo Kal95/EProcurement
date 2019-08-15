@@ -135,7 +135,7 @@ namespace E_Procurement.WebUI.Controllers
             {
                 if (!ModelState.IsValid)
                 {
-                    Alert("Some problems were encountered while trying to perform operation. </br> Please try again.", NotificationType.error);
+                    Alert("Some problems were encountered while trying to perform operation. Please try again.", NotificationType.error);
                     return View(RfqApprovalConfig);
                 }
                 if (ModelState.IsValid)
@@ -144,7 +144,12 @@ namespace E_Procurement.WebUI.Controllers
                     RfqApprovalConfig.Email = user.Email;
                     var getRfqApprovalConfig = await _RfqApprovalConfigRepository.GetApprovalConfigByIdAsync(RfqApprovalConfig.Id);
                     if (getRfqApprovalConfig == null)
+                    {
+                        Alert("Invalid approval config. Please try again.", NotificationType.error);
                         return View(getRfqApprovalConfig);
+                    }
+
+                    getRfqApprovalConfig.UserId = RfqApprovalConfig.UserId;
                     getRfqApprovalConfig.ApprovalLevel = RfqApprovalConfig.ApprovalLevel;
                     getRfqApprovalConfig.Email = RfqApprovalConfig.Email;
                     getRfqApprovalConfig.IsFinalLevel = RfqApprovalConfig.IsFinalLevel;
@@ -158,7 +163,7 @@ namespace E_Procurement.WebUI.Controllers
                     }
                     else
                     {
-                        Alert("Some problems were encountered while trying to perform operation. </br> Please try again.", NotificationType.error);
+                        Alert("Some problems were encountered while trying to perform operation. Please try again.", NotificationType.error);
                         return View(RfqApprovalConfig);
                     }
                 }

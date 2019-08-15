@@ -39,9 +39,11 @@ namespace E_Procurement.WebUI.Controllers
             return View(RfqApproval);
         }
 
-        public async Task<IActionResult> RfqApprovalDetails(int id)
+        //[HttpGet("rfqApproval/RfqApprovalDetails/{id}/{vendorId}")]
+        [HttpGet]
+        public async Task<IActionResult> RfqApprovalDetails(int id, int VendorId)
         {
-            var RfqApprovalDetails = await _RfqApprovalRepository.GetRFQDetailsAsync(id);
+            var RfqApprovalDetails = await _RfqApprovalRepository.GetRFQDetailsAsync(id, VendorId);
 
             //List<RFQDetailsViewModel> rqfDetails = new List<RFQDetailsViewModel>();
 
@@ -76,6 +78,62 @@ namespace E_Procurement.WebUI.Controllers
             return View(RfqApprovalDetails);
         }
 
+        public async Task<IActionResult> RfqVendorsDetails(int id)
+        {
+            var RfqApprovalDetails = await _RfqApprovalRepository.GetRFQByVendorsAsync(id);
+
+           // List<RFQGenerationViewModel> rqfDetails = new List<RFQDetailsViewModel>();
+
+            //foreach (var item in RfqApprovalDetails.RFQDetails)
+            //{
+            //    rqfDetails.Add(new RFQDetailsViewModel
+            //    {
+            //        RFQId = item.RFQId,
+            //        VendorId = item.VendorId,
+            //        ItemId = item.ItemId,
+            //        ItemName = item.ItemName,
+            //        QuotedQuantity = item.QuotedQuantity,
+            //        AgreedQuantity = item.AgreedQuantity,
+            //        QuotedAmount = item.QuotedAmount,
+            //        AgreedAmount = item.AgreedAmount
+            //    });
+            //}
+
+            //ViewBag.RFQDetails = rqfDetails;
+
+
+            List<RFQGenerationViewModel> RfqApproval = _mapper.Map<List<RFQGenerationViewModel>>(RfqApprovalDetails);
+
+            //RfqApproval.RFQDetails = rqfDetails;
+            if (RfqApproval == null)
+            {
+                Alert("Could not load rfq details. Please, try again later.", NotificationType.error);
+                return View();
+            }
+
+
+            return View(RfqApproval);
+        }
+
+        public async Task<IActionResult> RfqVendorsPendingApproval(int id)
+        {
+            var RfqApprovalDetails = await _RfqApprovalRepository.GetRFQPendingApprovalByVendorsAsync(id);
+
+           
+
+
+            List<RFQGenerationViewModel> RfqApproval = _mapper.Map<List<RFQGenerationViewModel>>(RfqApprovalDetails);
+
+            //RfqApproval.RFQDetails = rqfDetails;
+            if (RfqApproval == null)
+            {
+                Alert("Could not load rfq details. Please, try again later.", NotificationType.error);
+                return View();
+            }
+
+
+            return View(RfqApproval);
+        }
 
         public async Task<IActionResult> PendingApproval()
         {
@@ -87,6 +145,7 @@ namespace E_Procurement.WebUI.Controllers
         }
 
 
+      
         [HttpPost]
         public async Task<IActionResult> RfqApprovalDetails(RFQGenerationModel rfqApproval)
         {
