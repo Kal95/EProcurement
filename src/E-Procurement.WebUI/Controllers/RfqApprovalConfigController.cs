@@ -145,6 +145,8 @@ namespace E_Procurement.WebUI.Controllers
                     var getRfqApprovalConfig = await _RfqApprovalConfigRepository.GetApprovalConfigByIdAsync(RfqApprovalConfig.Id);
                     if (getRfqApprovalConfig == null)
                         return View(getRfqApprovalConfig);
+
+                    getRfqApprovalConfig.UserId = RfqApprovalConfig.UserId;
                     getRfqApprovalConfig.ApprovalLevel = RfqApprovalConfig.ApprovalLevel;
                     getRfqApprovalConfig.Email = RfqApprovalConfig.Email;
                     getRfqApprovalConfig.IsFinalLevel = RfqApprovalConfig.IsFinalLevel;

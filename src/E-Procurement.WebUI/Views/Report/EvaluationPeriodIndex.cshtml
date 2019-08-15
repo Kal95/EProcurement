@@ -46,7 +46,7 @@
                     <td style="width:200px">@item.StartDate.ToString("dd-MMM-yyyy")</td>
                     <td style="width:200px">@item.EndDate.ToString("dd-MMM-yyyy")</td>
                     <td style="width:100px">
-                        @if (Convert.ToDateTime(item.EndDate) > DateTime.Now)
+                        @if (Convert.ToDateTime(item.EndDate) >= DateTime.Now.Date)
                         {
                             <label class="text-success">Active</label>
                         }
