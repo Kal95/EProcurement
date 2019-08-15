@@ -114,16 +114,16 @@ namespace E_Procurement.WebUI.Controllers
                         }
                         claims.Add(new Claim("Email", user.Email));
 
-                    var claimsPrincipal = await _signInManager.CreateUserPrincipalAsync(user);
+                        var claimsPrincipal = await _signInManager.CreateUserPrincipalAsync(user);
                         if ( claimsPrincipal?.Identity is ClaimsIdentity claimsIdentity)
                         {
                             claimsIdentity.AddClaims(claims);
                         }
 
 
-                    //await _signInManager.Context.SignInAsync(IdentityConstants.ApplicationScheme,
-                    //    claimsPrincipal,
-                    //    new AuthenticationProperties { IsPersistent = true });
+                        //await _signInManager.Context.SignInAsync(IdentityConstants.ApplicationScheme,
+                        //    claimsPrincipal,
+                        //    new AuthenticationProperties { IsPersistent = true });
 
                     var props = new AuthenticationProperties();
                     props.IsPersistent = true;

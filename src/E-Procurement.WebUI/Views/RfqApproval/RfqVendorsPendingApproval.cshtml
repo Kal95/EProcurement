@@ -1,16 +1,14 @@
 ﻿@model IEnumerable<E_Procurement.WebUI.Models.RfqApprovalModel.RFQGenerationViewModel>
 @{
-    ViewBag.Title = "Pending Approval(s)";
+    ViewBag.Title = "Pending Approval By Vendor(s)";
 }
 
 
 <div class="card pd-20 pd-sm-40">
-    <h6 class="card-body-title">Pending Approval(s)</h6>
+    <h6 class="card-body-title">Pending Approval By Vendor(s)</h6>
     <p class="mg-b-20 mg-sm-b-30"> List </p>
 
-    @*<div class="right">
-        <a asp-controller="RfqApprovalConfig" asp-action="Create" alt="Create" class="btn btn-primary"> Create Approval Config </a>
-    </div>*@
+
     <div class="table-wrapper">
         <table id="datatable1" class="table table-striped display responsive nowrap">
             <thead>
@@ -19,11 +17,10 @@
                     <th class="wd-5p">RFQ No</th>
                     <th class="wd-5p">Proj. ID</th>
                     <th class="wd-5p">Req. ID</th>
-                    <th class="wd-10p">Reference</th>
-                    <th class="wd-15p">Description</th>
-                    <th class="wd-15p">StartDate</th>
-                    <th class="wd-15p">EndDate</th>
-                    <th class="wd-10p">RFQStatus</th>
+                    <th class="wd-10p">Status</th>
+                    <th class="wd-25p">Vendor Name</th>
+                    <th class="wd-25p">Contact</th>
+                    <th class="wd-25p">Amount</th>
                     <th class="wd-10p"></th>
 
 
@@ -42,13 +39,23 @@
                     <td>@approvalConfig.RFQId</td>
                     <td>@approvalConfig.ProjectId</td>
                     <td>@approvalConfig.RequisitionId</td>
-                    <td>@approvalConfig.Reference</td>
-                    <td>@approvalConfig.Description</td>
-                    <td>@approvalConfig.StartDate.ToString("dd MMM yyyy")</td>
-                    <td>@approvalConfig.EndDate.ToString("dd MMM yyyy")</td>
                     <td>@approvalConfig.RFQStatus</td>
-                    <td><a asp-controller="RfqApproval" asp-action="RfqVendorsPendingApproval" asp-route-id="@approvalConfig.RFQId" alt="Edit" class="btn btn-primary btn-icon"> <div><i class="fa fa-pencil"></i></div></a> </td>
+                    <td>@approvalConfig.VendorName</td>
+                    <td>@approvalConfig.ContactName</td>
+                    <td>@approvalConfig.TotalAmount</td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(@approvalConfig.RFQStatus))
+                        {
 
+
+                            @*<a href="/RfqApproval/RfqApprovalDetails/@approvalConfig.RFQId/@approvalConfig.VendorId" alt="Edit" class="btn btn-primary btn-icon"> <div><i class="fa fa-pencil"></i></div></a>*@
+                            <form id="@approvalConfig.RFQId@approvalConfig.VendorId" asp-action="RfqApprovalDetails" method="get">
+                                <input type="hidden" name="id" value="@approvalConfig.RFQId" />
+                                <input type="hidden" name="VendorId" value="@approvalConfig.VendorId" />
+                                <button type="submit" class="btn btn-primary btn-icon"><div><i class="fa fa-pencil"></i></div></button>
+                            </form>
+                        }
+                    </td>
                 </tr>
                 }
             </tbody>

@@ -55,6 +55,7 @@ namespace E_Procurement.Repository.RfqApprovalConfigRepository
         {
             if (rfqApprovalConfig != null)
             {
+
                 _context.Update(rfqApprovalConfig);
                 await _context.SaveChangesAsync();
                 return true;

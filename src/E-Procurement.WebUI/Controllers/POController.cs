@@ -44,9 +44,10 @@ namespace E_Procurement.WebUI.Controllers
             return View(RfqApproval);
         }
 
-        public async Task<IActionResult> RFQDetails(int id)
+        [Route("PO/RFQDetails/{id}/{vendorId}")]
+        public async Task<IActionResult> RFQDetails(int id, int vendorId)
         {
-            var RfqApprovalDetails = await _RfqApprovalRepository.GetRFQDetailsAsync(id);
+            var RfqApprovalDetails = await _RfqApprovalRepository.GetRFQDetailsAsync(id, vendorId);
 
            
             //RfqApproval.RFQDetails = rqfDetails;

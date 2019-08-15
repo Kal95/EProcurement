@@ -16,11 +16,6 @@
             <thead>
                 <tr>
                     <th class="wd-5p">S/N</th>
-                    <td>
-                        <label class="ckbox mg-b-0">
-                            <input type="checkbox"><span></span>
-                        </label>
-                    </td>
                     <th class="wd-5p">RFQ No</th>
                     <th class="wd-5p">Proj. ID</th>
                     <th class="wd-5p">Req. ID</th>
@@ -29,10 +24,6 @@
                     <th class="wd-15p">StartDate</th>
                     <th class="wd-15p">EndDate</th>
                     <th class="wd-10p">RFQStatus</th>
-                    <th class="wd-25p">Vendor Name</th>
-                    <th class="wd-25p">Address</th>
-                    <th class="wd-10p">Status</th>
-                    <th class="wd-25p">Contact</th>
                     <th class="wd-10p"></th>
 
 
@@ -48,11 +39,6 @@
                 {
                 <tr>
                     <td>@(i = i + 1)</td>
-                    <td>
-                        <label class="ckbox mg-b-0">
-                            <input type="checkbox"><span></span>
-                        </label>
-                    </td>
                     <td>@approvalConfig.RFQId</td>
                     <td>@approvalConfig.ProjectId</td>
                     <td>@approvalConfig.RequisitionId</td>
@@ -61,11 +47,7 @@
                     <td>@approvalConfig.StartDate.ToString("dd MMM yyyy")</td>
                     <td>@approvalConfig.EndDate.ToString("dd MMM yyyy")</td>
                     <td>@approvalConfig.RFQStatus</td>
-                    <td>@approvalConfig.VendorName</td>
-                    <td>@approvalConfig.VendorAddress</td>
-                    <td>@approvalConfig.VendorStatus</td>
-                    <td>@approvalConfig.ContactName</td>
-                    <td><a asp-controller="RfqApproval" asp-action="RfqApprovalDetails" asp-route-id="@approvalConfig.RFQId" alt="Edit" class="btn btn-primary btn-icon"> <div><i class="fa fa-pencil"></i></div></a> </td>
+                    <td><a asp-controller="RfqApproval" asp-action="RfqVendorsDetails" asp-route-id="@approvalConfig.RFQId" alt="Edit" class="btn btn-primary btn-icon"> <div><i class="fa fa-pencil"></i></div></a> </td>
 
                 </tr>
                 }

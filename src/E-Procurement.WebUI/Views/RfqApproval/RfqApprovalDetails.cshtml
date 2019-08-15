@@ -51,7 +51,7 @@
             <div class="row mg-t-20">
                 <label class="col-sm-2 form-control-label"><b> Vendor : </b></label>
                 <div class="col-sm-4 mg-t-10 mg-sm-t-0">
-                    From @Html.DisplayFor(model => model.VendorName)
+                     @Html.DisplayFor(model => model.VendorName)
                 </div>
                 <label class="col-sm-2 form-control-label"><b> Address : </b></label>
                 <div class="col-sm-4 mg-t-10 mg-sm-t-0">
@@ -61,7 +61,7 @@
             <div class="row mg-t-20">
                 <label class="col-sm-2 form-control-label"><b> Contact : </b></label>
                 <div class="col-sm-4 mg-t-10 mg-sm-t-0">
-                    From @Html.DisplayFor(model => model.ContactName)
+                     @Html.DisplayFor(model => model.ContactName)
                 </div>
                 <label class="col-sm-2 form-control-label"><b> Vendor Status : </b></label>
                 <div class="col-sm-4 mg-t-10 mg-sm-t-0">
@@ -112,11 +112,12 @@
                 }
             </tbody>
         </table>
-        <form role="form" method="post">
+        <form role="form" method="post" asp-action="RfqApprovalDetails">
             <div asp-validation-summary="All" class="text-danger"></div>
             <input asp-for="RFQId" type="hidden" />
             <input asp-for="RFQStatus" type="hidden" />
             <input asp-for="VendorId" type="hidden" />
+            <input asp-for="TotalAmount" type="hidden" />
             <div class="row mg-t-20">
                 <label class="col-sm-1 form-control-label"><b> Comments : </b></label>
                 <div class="col-sm-11 mg-t-10 mg-sm-t-0">
@@ -124,8 +125,8 @@
                 </div>
             </div><!-- row -->
             <div class="form-layout-footer mg-t-30">
-                <button class="btn btn-info mg-r-5">Send For Approval</button>
-                <button class="btn btn-secondary">Cancel</button>
+                <button type="submit" class="btn btn-info mg-r-5">Send For Approval</button>
+                @*<button class="btn btn-secondary">Cancel</button>*@
             </div><!-- form-layout-footer -->
         </form>
 

@@ -60,6 +60,7 @@ namespace E_Procurement.WebUI.AutoMapperProfile
 
             CreateMap<ReportModel, EvaluationPeriodConfig>().ReverseMap();
 
+
         }
     }
 }
