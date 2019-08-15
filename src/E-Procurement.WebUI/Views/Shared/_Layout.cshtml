@@ -38,7 +38,7 @@
         <div class="am-header-left">
             <a id="naviconLeft" href="" class="am-navicon d-none d-lg-flex"><i class="icon ion-navicon-round"></i></a>
             <a id="naviconLeftMobile" href="" class="am-navicon d-lg-none"><i class="icon ion-navicon-round"></i></a>
-            <a href="index.html" class="am-logo">E-Procurement</a>
+            <a asp-controller="Home" asp-action="Index" class="am-logo">E-Procurement</a>
         </div><!-- am-header-left -->
 
         <div class="am-header-right">
@@ -74,7 +74,7 @@
     <div class="am-sideleft">
         <ul class="nav am-sideleft-tab">
             <li class="nav-item">
-                <a href="#mainMenu" class="nav-link active"><i class="icon ion-ios-home-outline tx-24"></i></a>
+                <a  class="nav-link active" asp-controller="Home" asp-action="Index"><i class="icon ion-ios-home-outline tx-24"></i></a>
             </li>
             <li class="nav-item">
                 <a class="nav-link active"></a>

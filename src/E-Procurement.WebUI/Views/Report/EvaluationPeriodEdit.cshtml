@@ -32,9 +32,18 @@
 
                         <div class="col-md-4">
                             <label for="StartDate">Start Date:</label>
-                            @Html.TextBoxFor(model => model.StartDate, new { @class = "form-control datepicker", @placeholder = "Start Date", @Id = "StartDate", type = "date", style = "width:160px; height:40px" })
+
+                            @*<input type="date" value="2019-08-12" name="StartDate" id=model.StartDate style="width:160px; height:40px" class="form-control datepicker">*@
+                            @Html.TextBoxFor(model => model.StartDate, new { @class = "form-control datepicker", @placeholder = "Start Date", @Id = "StartDate", type = "date", @*value = "2019-08-12",*@ style = "width:160px; height:40px" })
 
                             @*@Html.ValidationMessageFor(m => m.StartDate, "", new { @class = "text-danger" })*@
+                            @*<div class="input-group date form_date " data-date=""
+                                 data-date-format="dd MM yyyy" data-link-field="dtp_input2" data-link-format="yyyy-mm-dd">
+                                @Html.TextBoxFor(m => m.StartDate, new { @class = "form-control input-height", placeholder = "Start Date"  })
+                                @Html.ValidationMessageFor(m => m.StartDate, "", new { @class = "text-danger" })
+                                <span class="input-group-addon"><span class="fa fa-remove"></span></span>
+                                <span class="input-group-addon"><span class="fa fa-calendar"></span></span>
+                            </div>*@
 
                         </div>
                         <div class="col-md-4">

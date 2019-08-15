@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 using E_Procurement.Repository.Dtos;
 using E_Procurement.Repository.VendoRepo;
@@ -35,7 +36,9 @@ namespace E_Procurement.Repository.ReportRepo
         public string Description { get; set; }
         public List<string> Descriptions { get; set; }
         public List<int> Quantities { get; set; }
+        [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}", ApplyFormatInEditMode = true)]
         public DateTime StartDate { get; set; }
+        [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}", ApplyFormatInEditMode = true)]
         public DateTime EndDate { get; set; }
         public string PONumber { get; set; }
         public decimal TotalAmount { get; set; }
