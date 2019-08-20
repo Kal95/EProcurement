@@ -48,6 +48,8 @@ namespace E_Procurement.Repository.Dtos
             public byte GRNFileBlob { get; set; }
             public DateTime GRNUploadedDate { get; set; }
             public string GRNUploadedBy { get; set; }
+            public string RFQTitle { get; set; }
+            public string RFQBody { get; set; }
 
     }
 }

@@ -83,14 +83,17 @@ namespace E_Procurement.Repository.RFQGenRepo
 
                     var selected2 = model.SelectedItems.Zip(model.Quantities, (x, y) => new { X = x, Y = y });
                     var selected3 = itemListV.Zip(model.Descriptions, (a, b) => new { A = a, B = b });
-
-                    var selected4 = selected2.Zip(selected3, (o, p) => new { O = o, P = p });
-                    var listModel = selected4.Select(x => new RFQDetails
+                    var selected4 = model.RFQBody.Zip(model.RFQTitle, (n, m) => new { N = n, M = m });
+                    var selected5 = selected2.Zip(selected3, (o, p) => new { O = o, P = p });
+                    var selected6 = selected5.Zip(selected4, (s, t) => new { S = s, T = t });
+                    var listModel = selected6.Select(x => new RFQDetails
                     {
-                        ItemId = Convert.ToInt32(x.O.X.ToString()),
-                        ItemName = x.P.A.ItemName,
-                        QuotedQuantity = x.O.Y,
-                        ItemDescription = x.P.B,
+                        ItemId = Convert.ToInt32(x.S.O.X.ToString()),
+                        ItemName = x.S.P.A.ItemName,
+                        QuotedQuantity = x.S.O.Y,
+                        ItemDescription = x.S.P.B,
+                        RFQTitle = model.RFQTitle,
+                        RFQBody = model.RFQBody,
                         RFQId = rfq.Id,
                         //IsActive = true,
                         UpdatedBy = model.CreatedBy,
@@ -157,7 +160,8 @@ namespace E_Procurement.Repository.RFQGenRepo
                     model2.VendorAddress = entry.VendorAddress;
                     model2.VendorEmail = entry.Email;
                     model2.RFQId = Convert.ToInt32(model.Reference.ToString());
-                   
+                    model2.RFQTitle = model.RFQTitle.ToUpper();
+                    model2.RFQBody = model.RFQBody;
                    
                     List<RFQDetailsModel> rFQDetails = new List<RFQDetailsModel>();
                     var itemV = GetItem(model.CategoryId).ToList();

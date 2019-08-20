@@ -44,8 +44,8 @@
             <div class="col-sm-8">
                 <p>Dear Sir,
 
-                <p><b>NOTIFICATION TO PROVIDE REFERENCE FOR QUOTE</p></b>
-                <p> We are pleased to inform you that your company has been selected to provide for RFQ for the following items: </p>
+                <p><b>@Html.DisplayFor(model => model.RFQTitle)</b></p>
+                <p> @Html.DisplayFor(model => model.RFQBody) </p>
             </div>
 
 
@@ -86,43 +86,45 @@
 
 
                         @*<tr>
-                        <td>Total</td>
-                        <td colspan=3 align="right">  Total</td>
-                        <td> ₦@Html.DisplayFor(model => model.TotalAmount)</td>
-                    </tr>*@
+                    <td>Total</td>
+                    <td colspan=3 align="right">  Total</td>
+                    <td> ₦@Html.DisplayFor(model => model.TotalAmount)</td>
+                </tr>*@
                 </table>
-
-            </div>
-
-            <p>Yours faithfully,</p>
-            <p>For: <b>CYBERSPACE NETWORK LIMITED</b></p>
-            <BR>
-
-            <div class=row>
-                <div class="col-sm-3">
-                    <p><b>VICTOR ABULELE</b></p>
-                    <p>Authorized Signatory</p>
-                </div>
-                <div class="col-sm">
-
-                </div>
-                <div class="col-sm-2">
-
-                </div>
-                <div class="col-sm-2">
-
-                </div>
-                <div class="col-sm-3">
-                    <p><b>JOE ONWUBUYA</b></p>
-                    <p>Authorized Signatory</p>
-                </div>
-
-
-                <div class="footer"></div>
                 <br>
+                <p>Yours faithfully,</p>
+                <p>For: <b>CYBERSPACE NETWORK LIMITED</b></p>
+                <BR>
 
+                <div class=row>
+                    <div class="col-sm-3">
+                        <p><b>VICTOR ABULELE</b></p>
+                        <p>Authorized Signatory</p>
+                    </div>
+                    <div class="col-sm">
+
+                    </div>
+                    <div class="col-sm-2">
+
+                    </div>
+                    <div class="col-sm-2">
+
+                    </div>
+                    <div class="col-sm-3">
+                        <p><b>JOE ONWUBUYA</b></p>
+                        <p>Authorized Signatory</p>
+                    </div>
+
+
+                    <div class="footer"></div>
+                    <br>
+
+
+                </div>
 
             </div>
+
+            
         </div>
     </div>
 </div>

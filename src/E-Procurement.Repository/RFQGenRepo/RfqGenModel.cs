@@ -29,6 +29,9 @@ namespace E_Procurement.WebUI.Models.RFQModel
         public int Quantity { get; set; }
         
         public string Description { get; set; }
+
+        public string RFQTitle { get; set; }
+        public string RFQBody { get; set; }
         //[Required]
         public List<string> Descriptions { get; set; }
         //[Required]

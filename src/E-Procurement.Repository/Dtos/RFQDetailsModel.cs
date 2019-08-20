@@ -19,5 +19,7 @@ namespace E_Procurement.Repository.Dtos
         public string ContactName { get; set; }
         public string VendorName { get; set; }
         public string VendorAddress { get; set; }
+        public string RFQTitle { get; set; }
+        public string RFQBody { get; set; }
     }
 }

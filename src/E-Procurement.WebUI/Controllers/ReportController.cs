@@ -632,6 +632,8 @@ namespace E_Procurement.WebUI.Controllers
             model2.VendorAddress = vendor.VendorAddress;
             model2.VendorEmail = vendor.Email;
             model2.CreatedDate = rfq.CreatedDate;
+            model2.RFQTitle = RFQ.RFQTitle.ToUpper();
+            model2.RFQBody = RFQ.RFQBody;
 
 
             List<RFQDetailsModel> rfqModel = new List<RFQDetailsModel>();

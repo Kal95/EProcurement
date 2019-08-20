@@ -13,6 +13,13 @@ namespace E_Procurement.Data.Entity
         public string POStatus { get; set; }
         public DateTime ExpectedDeliveryDate { get; set; }
         public DateTime ActualDeliveryDate { get; set; }
-       
+        public string POTitle { get; set; }
+        public string POPreamble { get; set; }
+        public string POCost { get; set; }
+        public string POWarranty { get; set; }
+        public string POTerms { get; set; }
+        public string POValidity { get; set; }
+
+
     }
 }
