@@ -4,9 +4,11 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using E_Procurement.Data;
 using E_Procurement.Data.Entity;
+using E_Procurement.Repository.Interface;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace E_Procurement.Repository.AccountRepo
 {
@@ -15,6 +17,8 @@ namespace E_Procurement.Repository.AccountRepo
         private readonly EProcurementContext _context;
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<Role> _roleManager;
+        private readonly ISMTPService _emailSender;
+        private IConfiguration _config;
 
         public object SystemConstants { get; private set; }
 
@@ -22,11 +26,15 @@ namespace E_Procurement.Repository.AccountRepo
             EProcurementContext context,
             UserManager<User> userManager,
             RoleManager<Role> roleManager,
+             ISMTPService emailSender,
+             IConfiguration config,
             IHttpContextAccessor httpAccessor)
         {
             _context = context;
             _userManager = userManager;
             _roleManager = roleManager;
+            _emailSender = emailSender;
+            _config = config;
         }
 
 
@@ -163,6 +171,28 @@ namespace E_Procurement.Repository.AccountRepo
             try
             {
                 result = await _userManager.AddToRoleAsync(user, Role.ToUpper());
+                if (result.Succeeded)
+                {
+
+                }
+
+                var requisitionURL = _config.GetSection("ExternalAPI:RequisitionURL").Value;
+
+                var subject = "SIGNUP NOTIFICATION";
+
+                var message = "</br><b> Dear </b>" + user.FullName;
+                message += "</br><b> Your have been registered successful on Cyberspace E-procurement Portal.</br>";
+                message += "</br>Kindly, log in via " + requisitionURL + " and validate the required documents.";
+                message += "</br><U>LOGIN DETAILS </U>";
+                message += "</br>Email :  " + user.Email ;
+                message += "</br>Password :  " + password ;
+                message += "</br>Please do change your password upon login.";
+                message += "</br>Regards";
+
+                await _emailSender.SendEmailAsync(user.Email, subject, message, "");
+
+                _context.SaveChanges();
+
             }
             catch
             {
