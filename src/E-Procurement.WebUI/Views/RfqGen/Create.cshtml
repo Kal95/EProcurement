@@ -18,114 +18,128 @@
                 @Html.AntiForgeryToken()
                 @*<h2 class="text-center">Basic forms Example</h2>*@
                 <div class="row mg-t-20" style="display:flex; justify-content:space-between">
-                    <div class="col-md-6" style="margin-top:10px">
-                        <label for="VendorName">Category:</label>
-                        @Html.DropDownListFor(model => model.CategoryId, Model.ItemCategoryList, "-- Select Category --", htmlAttributes: new { id = "ItemCategory", @class = "form-control", style = "width:450px; height:40px", onchange = "document.forms[1].submit();" })
-                        @Html.ValidationMessageFor(model => model.CategoryId, "", new { @class = "text-danger" })
-                    </div>
-                    <div class="col-md-6" style="margin-top:10px">
-                        <div class="row mg-t-0">
-                            <div class="col-md-4">
-                                <label for="StartDate">Start Date:</label>
-                                @Html.TextBoxFor(model => model.StartDate, new { @class = "form-control datepicker", @placeholder = "Start Date", @Id = "StartDate", required = "required", type = "date", style = "width:150px; height:40px" })
-
-                                @*@Html.ValidationMessageFor(m => m.StartDate, "", new { @class = "text-danger" })*@
-
+                    <div class="col-md-8" style="margin-top:10px">
+                        <div class="row mg-t-20">
+                            <div class="col-md-7">
+                                <label for="VendorName">Category:</label>
+                                @Html.DropDownListFor(model => model.CategoryId, Model.ItemCategoryList, "-- Select Category --", htmlAttributes: new { id = "ItemCategory", @class = "form-control", style = "width:500px; height:40px", onchange = "document.forms[1].submit();" })
+                                @Html.ValidationMessageFor(model => model.CategoryId, "", new { @class = "text-danger" })
                             </div>
-                            <div class="col-md-4">
-                                <label for="EndDate">End Date:</label>
-                                @Html.TextBoxFor(model => model.EndDate, new { @class = "form-control datepicker", @placeholder = "End Date", @Id = "EndDate", required = "required", type = "date", style = "width:150px; height:40px" })
+                            <div class="col-md-5" >
+                                <div class="row mg-t-0">
+                                    <div class="col-md-6">
+                                        <label for="StartDate">Start Date:</label>
+                                        @Html.TextBoxFor(model => model.StartDate, new { @class = "form-control datepicker", @placeholder = "Start Date", @Id = "StartDate", required = "required", type = "date", style = "width:160px; height:40px" })
 
-                                @*@Html.ValidationMessageFor(m => m.EndDate, "", new { @class = "text-danger" })*@
+                                        @*@Html.ValidationMessageFor(m => m.StartDate, "", new { @class = "text-danger" })*@
 
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="EndDate">End Date:</label>
+                                        @Html.TextBoxFor(model => model.EndDate, new { @class = "form-control datepicker", @placeholder = "End Date", @Id = "EndDate", required = "required", type = "date", style = "width:160px; height:40px" })
+
+                                        @*@Html.ValidationMessageFor(m => m.EndDate, "", new { @class = "text-danger" })*@
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mg-t-20">
+                            <div class="col-md-7" style="margin-top:10px">
+                                <label for="ItemList">Item:</label>
+                                <table style="width:500px; height:40px" id="example" class="table table-hover table-striped table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th style="width:10px"></th>
+                                            <th>Items</th>
+                                            <th>Description</th>
+                                            <th>Quantity</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model.ItemList)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    <input type="checkbox" @Model.ItemList value="@item.Value" checked="checked" name="SelectedItems" id="@item.Value" />
+                                                </td>
+                                                <td>
+                                                    <label for="@item.Text">@item.Text</label>
+
+                                                    <input type="hidden" id="@item.Value" />
+                                                </td>
+
+                                                <td>
+                                                    <div class="">
+                                                        @Html.TextAreaFor(model => model.Descriptions, htmlAttributes: new { id = "Descriptions", @style = "width:270px; height:40px", @class = "form-control", @type = "text", required = "required" })
+                                                        @*@Html.ValidationMessageFor(model => model.Descriptions, "", new { @class = "text-danger" })*@
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="">
+                                                        @Html.TextBoxFor(model => model.Quantities, htmlAttributes: new { id = "Quantities", @style = "width:60px; height:40px", @class = "form-control", @type = "text", required = "required" })
+                                                        @*@Html.ValidationMessageFor(model => model.Quantities, "", new { @class = "text-danger" })*@
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-md-5" style="margin-top:10px">
+                                <label for="VendorName">Vendor:</label>
+                                <table style="width:350px; height:40px" id="example" class="table table-hover table-striped table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th style="width:10px"></th>
+                                            <th>Vendor</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var vendor in Model.VendorList)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    <input type="checkbox" @Model.VendorList value="@vendor.Value" checked="checked" name="SelectedVendors" id="@vendor.Value" />
+                                                </td>
+                                                <td>
+                                                    <label for="@vendor.Text">@vendor.Text</label>
+                                                    <input type="hidden" id="@vendor.Value" />
+                                                </td>
+
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
-                </div>
-                  
-                <div class="row mg-t-20">
-                    <div class="col-md-6" style="margin-top:10px">
-                        <label for="ItemList">Item:</label>
-                        <table style="width:450px; height:40px" id="example" class="table table-hover table-striped table-bordered">
-                            <thead>
-                                <tr>
-                                    <th></th>
-                                    <th>Items</th>
-                                    <th>Description</th>
-                                    <th>Quantity</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var item in Model.ItemList)
-                                {
-                                    <tr>
-                                        <td>
-                                            <input type="checkbox" @Model.ItemList value="@item.Value" checked="checked" name="SelectedItems" id="@item.Value" />
-                                        </td>
-                                        <td>
-                                            <label for="@item.Text">@item.Text</label>
+                    <div class="col-md-4" style="margin-top:10px">
+                        <div class="row mg-t-20">
+                            <label for="RFQTitle">RFQ Title:</label>
+                            @Html.TextBoxFor(model => model.RFQTitle, htmlAttributes: new { id = "RFQTitle", @style = "width:450px; height:40px", @class = "form-control", @type = "text", required = "required" })
 
-                                            <input type="hidden" id="@item.Value" />
-                                        </td>
+                        </div>
+                        <div class="row mg-t-20" style="margin-top:30px">
+                            <label for="RFQBody">RFQ Body:</label>
+                            @Html.TextAreaFor(model => model.RFQBody, htmlAttributes: new { id = "RFQBody", @style = "width:450px; height:80px", @class = "form-control", @type = "text", required = "required" })
 
-                                        <td>
-                                            <div class="">
-                                                @Html.TextAreaFor(model => model.Descriptions, htmlAttributes: new { id = "Descriptions", @style = "width:300px; height:40px", @class = "form-control", @type = "text", required = "required" })
-                                                @*@Html.ValidationMessageFor(model => model.Descriptions, "", new { @class = "text-danger" })*@
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="" >
-                                                @Html.TextBoxFor(model => model.Quantities, htmlAttributes: new { id = "Quantities", @style = "width:60px; height:40px", @class = "form-control", @type = "text", required = "required" })
-                                                @*@Html.ValidationMessageFor(model => model.Quantities, "", new { @class = "text-danger" })*@
-                                            </div>
-                                        </td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
+                        </div>
                     </div>
-                    <div class="col-md-6" style="margin-top:10px">
-                        <label for="VendorName">Vendor:</label>
-                        <table style="width:450px; height:40px" id="example" class="table table-hover table-striped table-bordered">
-                            <thead>
-                                <tr>
-                                    <th></th>
-                                    <th>Vendor</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var vendor in Model.VendorList)
-                                {
-                                    <tr>
-                                        <td>
-                                            <input type="checkbox" @Model.VendorList value="@vendor.Value" checked="checked" name="SelectedVendors" id="@vendor.Value" />
-                                        </td>
-                                        <td>
-                                            <label for="@vendor.Text">@vendor.Text</label>
-                                            <input type="hidden" id="@vendor.Value" />
-                                        </td>
-
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
                     </div>
-                </div>
-                       
-
                     <!-- Button -->
                     <div class="form-group">
                         <label class="col-md-8 control-label"></label>
                         <div class="col-md-4">
 
                             <button type="submit" class="btn btn-info mg-r-5"><span class="glyphicon glyphicon-send"></span>  Submit</button>
-                           
+
                             <a href="@Url.Action("Index","RfqGen")" class="btn btn-secondary"><span class="glyphicon glyphicon-remove"></span> Back</a>
                         </div>
 
                     </div>
-                   
+
 </form>
         </div>
     </div>

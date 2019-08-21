@@ -11,6 +11,7 @@ namespace E_Procurement.Data.Entity
         {
             VendorMapping = new List<VendorMapping>();
         }
+        public int UserId { get; set; }
         public string VendorName { get; set; }
         public string VendorAddress { get; set; }
         public string Email { get; set; }

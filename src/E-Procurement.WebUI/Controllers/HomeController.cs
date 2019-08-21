@@ -46,8 +46,8 @@ namespace E_Procurement.WebUI.Controllers
         {
             DashboardModel dashboard = new DashboardModel();
             dashboard.PO = _reportRepository.GetPoGen().Where(u => u.CreatedDate.Year == DateTime.Now.Year).Count().ToString();
-            dashboard.RegVen = _reportRepository.GetRfqGen().Where(u => u.CreatedDate.Year == DateTime.Now.Year).Count().ToString();
-            dashboard.RFQ = _reportRepository.GetVendors().Where(u => u.DateCreated.Year == DateTime.Now.Year).Count().ToString();
+            dashboard.RFQ = _reportRepository.GetRfqGen().Where(u => u.CreatedDate.Year == DateTime.Now.Year).Count().ToString();
+            dashboard.RegVen = _reportRepository.GetVendors().Where(u => u.DateCreated.Year == DateTime.Now.Year).Count().ToString();
 
             //var selected1 = _reportRepository.GetPoGen().Count().ToString().Zip(_reportRepository.GetRfqGen().Count().ToString(), (a, b) => new { A = a, B = b });
             //var selected2 = _reportRepository.GetVendors().Count().ToString().Zip(selected1, (a, b) => new { A = a, B = b });

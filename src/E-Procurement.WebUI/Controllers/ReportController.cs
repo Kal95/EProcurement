@@ -214,9 +214,12 @@ namespace E_Procurement.WebUI.Controllers
         private void VendorEvaluationReportPredefinedInfo(RfqGenModel Model)
         {
             //int CategoryId = Model.VendorCategoryId;
+            var period = _reportRepository.GetEvaluationPeriods().ToList();
+            var evaluated = _reportRepository.GetEvaluationByPeriod(Model).ToList();
             var EvaluationScore = _reportRepository.GetVendorEvaluation().ToList();
-            
-                List<SelectListItem> list = new List<SelectListItem>();
+           
+
+            List<SelectListItem> list = new List<SelectListItem>();
                 list.Add(new SelectListItem() { Text = "Excellent", Value = "5" });
                 list.Add(new SelectListItem() { Text = "Very Good", Value = "4" });
                 list.Add(new SelectListItem() { Text = "Good", Value = "3" });
@@ -259,13 +262,18 @@ namespace E_Procurement.WebUI.Controllers
            
             if (Model.CategoryId <= 0)
             {
-                var VendorEvaluation = _reportRepository.GetVendorEvaluation().ToList();
+                var VendorEvaluation = _reportRepository.GetVendorEvaluation().Where(a => evaluated.Any(b => Convert.ToInt32(b.VendorId) == Convert.ToInt32(a.VendorId))).ToList();
 
                 List<ReportModel> vendorModel = new List<ReportModel>();
                 Model.ItemCategoryList = vendorCategory.Select(x => new SelectListItem
                 {
                     Value = x.Id.ToString(),
                     Text = x.CategoryName
+                });
+                Model.PeriodList = period.Select(x => new SelectListItem
+                {
+                    Value = x.Id.ToString(),
+                    Text = x.Period
                 });
                 var listModel = VendorEvaluation.Select(x => new ReportModel
                 {
@@ -292,12 +300,17 @@ namespace E_Procurement.WebUI.Controllers
             }
             else
             {
-                var VendorEvaluation = _reportRepository.GetVendorEvaluationByCategory(Model).ToList();
+                var VendorEvaluation = _reportRepository.GetVendorEvaluationByCategory(Model).Where(a => evaluated.Any(b => Convert.ToInt32(b.VendorId) == Convert.ToInt32(a.VendorId))).ToList();
                 List<ReportModel> vendorModel = new List<ReportModel>();
                 Model.ItemCategoryList = vendorCategory.Select(x => new SelectListItem
                 {
                     Value = x.Id.ToString(),
                     Text = x.CategoryName
+                });
+                Model.PeriodList = period.Select(x => new SelectListItem
+                {
+                    Value = x.Id.ToString(),
+                    Text = x.Period
                 });
                 var listModel = VendorEvaluation.Select(x => new ReportModel
                 {
@@ -619,6 +632,8 @@ namespace E_Procurement.WebUI.Controllers
             model2.VendorAddress = vendor.VendorAddress;
             model2.VendorEmail = vendor.Email;
             model2.CreatedDate = rfq.CreatedDate;
+            model2.RFQTitle = RFQ.RFQTitle.ToUpper();
+            model2.RFQBody = RFQ.RFQBody;
 
 
             List<RFQDetailsModel> rfqModel = new List<RFQDetailsModel>();

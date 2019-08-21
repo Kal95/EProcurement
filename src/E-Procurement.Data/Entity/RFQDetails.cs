@@ -15,5 +15,7 @@ namespace E_Procurement.Data.Entity
         public decimal QuotedAmount { get; set; }
         public decimal AgreedAmount { get; set; }
         public string ItemDescription { get; set; }
+        public string RFQTitle { get; set; }
+        public string RFQBody { get; set; }
     }
 }
