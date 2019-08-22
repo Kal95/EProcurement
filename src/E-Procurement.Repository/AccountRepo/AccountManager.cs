@@ -179,9 +179,9 @@ namespace E_Procurement.Repository.AccountRepo
                         Vendor vendor = new Vendor();
                         vendor.UserId = user.Id;
                         vendor.Email = user.Email;
-                        vendor.CountryId = 2;
-                        vendor.StateId = 2;
-                        vendor.BankId = 2;
+                        //vendor.CountryId = 2;
+                        //vendor.StateId = 2;
+                        //vendor.BankId = 2;
                         _context.Vendors.Add(vendor);
                         //var commandText = "INSERT Vendors (UserId,Email) VALUES (@UserId,@Email)";
                         //var UserId = new SqlParameter("@UserId", user.Id);
