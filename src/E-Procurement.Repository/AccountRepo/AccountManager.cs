@@ -1,12 +1,15 @@
 ﻿using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using E_Procurement.Data;
 using E_Procurement.Data.Entity;
+using E_Procurement.Repository.Interface;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace E_Procurement.Repository.AccountRepo
 {
@@ -15,6 +18,8 @@ namespace E_Procurement.Repository.AccountRepo
         private readonly EProcurementContext _context;
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<Role> _roleManager;
+        private readonly ISMTPService _emailSender;
+        private IConfiguration _config;
 
         public object SystemConstants { get; private set; }
 
@@ -22,11 +27,15 @@ namespace E_Procurement.Repository.AccountRepo
             EProcurementContext context,
             UserManager<User> userManager,
             RoleManager<Role> roleManager,
+             ISMTPService emailSender,
+             IConfiguration config,
             IHttpContextAccessor httpAccessor)
         {
             _context = context;
             _userManager = userManager;
             _roleManager = roleManager;
+            _emailSender = emailSender;
+            _config = config;
         }
 
 
@@ -148,8 +157,8 @@ namespace E_Procurement.Repository.AccountRepo
         public async Task<bool> CreateUserAsync(User user, string password, string Role)
         {
             var result = await _userManager.CreateAsync(user, password);
-            if (!result.Succeeded)
-                return (false);
+            //if (!result.Succeeded)
+            //    return (false);
             
             if (!result.Succeeded)
             {
@@ -163,6 +172,40 @@ namespace E_Procurement.Repository.AccountRepo
             try
             {
                 result = await _userManager.AddToRoleAsync(user, Role.ToUpper());
+                if (result.Succeeded)
+                {
+                    if(Role.Contains("Vendor"))
+                    {
+                        Vendor vendor = new Vendor();
+                        vendor.UserId = user.Id;
+                        vendor.Email = user.Email;
+                        vendor.CountryId = 2;
+                        vendor.StateId = 2;
+                        vendor.BankId = 2;
+                        _context.Vendors.Add(vendor);
+                        //var commandText = "INSERT Vendors (UserId,Email) VALUES (@UserId,@Email)";
+                        //var UserId = new SqlParameter("@UserId", user.Id);
+                        //var Email = new SqlParameter("@Email", user.Email);
+                        //var exec=await _context.Database.ExecuteSqlCommandAsync(commandText, UserId, Email);
+                    }
+                }
+
+                var requisitionURL = _config.GetSection("ExternalAPI:RequisitionURL").Value;
+
+                var subject = "SIGNUP NOTIFICATION";
+                var message = "</br><b> Dear </b>" + user.FullName;
+                message += "</br><b> Your have been registered successful on Cyberspace E-procurement Portal.</br>";
+                message += "</br>Kindly, log in via " + requisitionURL + " and validate the required documents.";
+                message += "</br><U>LOGIN DETAILS </U>";
+                message += "</br>Email :  " + user.Email;
+                message += "</br>Password :  " + password;
+                message += "</br>Please do change your password upon login.";
+                message += "</br>Regards";
+
+                await _emailSender.SendEmailAsync(user.Email, subject, message, "");
+
+                //_context.SaveChanges();
+
             }
             catch
             {
@@ -253,8 +296,17 @@ namespace E_Procurement.Repository.AccountRepo
             return true;
         }
 
+        public async Task<bool> IsEmailExistAsync(string email)
+        {
+            var checkEmail = await _userManager.FindByEmailAsync(email);
+            if (checkEmail != null)
+            {
+                return true;
+            }
 
-         
+            return false;
+        }
+
 
 
         public async Task<(bool Succeeded, string[] Error)> DeleteUserAsync(long userId)

@@ -299,14 +299,6 @@ namespace E_Procurement.Repository.RfqApprovalConfigRepository
             var currentUser = _contextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
 
 
-            /// had to use Stored procedure due to current nature of request.
-            /// creating the sql parameters
-            //var user = new SqlParameter("@p0", currentUser);
-            //var RFQ = new SqlParameter("@p1", RFQId);
-
-            //var pendingApprovalList = await _context.Database.ExecuteSqlCommandAsync<RFQGenerationModel>("exec GetRFQPendingApprovalByVendorsAsync @p0, @p1", parameters: new[] { user, RFQ });
-            // var pendingApprovalList = await _context.Database.ExecuteSqlCommandAsync("exec GetRFQPendingApprovalByVendorsAsync @p0, @p1", parameters: new[] { user, RFQ }).ToListAsync();
-
 
 
             var query = await (from vend in _context.Vendors

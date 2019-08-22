@@ -20,7 +20,7 @@ namespace E_Procurement.WebUI.Models.AccountModel
         [EmailAddress]
         public string Email { get; set; }
 
-        [Required]
+//[Required]
         public string Username { get; set; }
         
         public string Password { get; set; }

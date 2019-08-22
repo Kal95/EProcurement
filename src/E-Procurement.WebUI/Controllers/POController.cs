@@ -58,7 +58,7 @@ namespace E_Procurement.WebUI.Controllers
         }
 
 
-        [System.Web.Mvc.HttpPost]
+        [HttpPost]
         public async Task<IActionResult> RFQDetails(RFQGenerationModel rfqApproval)
         {
 
