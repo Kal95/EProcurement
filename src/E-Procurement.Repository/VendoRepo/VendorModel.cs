@@ -69,7 +69,7 @@ namespace E_Procurement.Repository.VendoRepo
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public List<VendorModel> VendorDetails { get; set; }
-        public bool CurrentCategories { get; set; }
+        public int CurrentCategories { get; set; }
         public IEnumerable<SelectListItem> UserList { get; set; }
         public VendorModel()
         {

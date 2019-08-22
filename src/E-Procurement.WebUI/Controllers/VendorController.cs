@@ -232,6 +232,7 @@ namespace E_Procurement.WebUI.Controllers
             var mapping = _vendorRepository.GetMapping().Where(u => u.VendorID == Model.Id).ToList();
 
             var SelectedCategories = vendorCategory.Where(a => mapping.Any(b => b.VendorCategoryId == a.Id)).ToList();
+            Model.CurrentCategories = SelectedCategories.Count();
             var NewCategories = vendorCategory.Except(SelectedCategories);//.Where(a => mapping.Any(b => b.VendorCategoryId != a.Id)).ToList();
             if (SelectedCategories.ToList().Count == 0)
             {

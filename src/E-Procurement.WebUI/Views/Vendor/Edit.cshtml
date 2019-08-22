@@ -176,7 +176,7 @@
                         <div class="row mg-t-20">
                             <div class="col-md-6" style="margin-top:10px">
                                 <label for="AatAmount">Select Categories:</label>
-                                @if (Model.CurrentCategories.Equals(false))
+                                @if (Model.CurrentCategories.Equals(0))
                                 {
                                     @foreach (var category in Model.VendorCategoryList)
                                     {
