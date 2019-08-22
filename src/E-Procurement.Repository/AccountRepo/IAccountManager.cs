@@ -29,6 +29,7 @@ namespace E_Procurement.Repository.AccountRepo
         Task<(bool Succeeded, string[] Error)> ResetPasswordAsync(User user, string newPassword);
         Task<IEnumerable<Role>> GetRoles();
         Task<bool> TestCanDeleteRoleAsync(long roleId);
+        Task<bool> IsEmailExistAsync(string email);
         Task<(bool Succeeded, string[] Error)> UpdatePasswordAsync(User user, string currentPassword, string newPassword);
        // Task<(bool Succeeded, string[] Error)> UpdateRoleAsync(Role role, IEnumerable<string> claims);
         Task<(bool Succeeded, string[] Error)> UpdateUserAsync(User user);

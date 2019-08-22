@@ -51,5 +51,12 @@ namespace E_Procurement.Repository.Dtos
             public string RFQTitle { get; set; }
             public string RFQBody { get; set; }
 
+            public string POTitle { get; set; }
+            public string POPreamble { get; set; }
+            public string POCost { get; set; }
+            public string POWarranty { get; set; }
+            public string POTerms { get; set; }
+            public string POValidity { get; set; }
+
     }
 }

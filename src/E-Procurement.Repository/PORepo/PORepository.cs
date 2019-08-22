@@ -35,7 +35,13 @@ namespace E_Procurement.Repository.PORepo
                     RFQId = rfq.RFQId,
                     VendorId = rfq.VendorId,
                     POStatus = "Generated",
-                    ExpectedDeliveryDate = rfq.ExpectedDeliveryDate
+                    ExpectedDeliveryDate = rfq.ExpectedDeliveryDate,
+                    POCost = rfq.POCost,
+                    POPreamble = rfq.POPreamble,
+                    POTerms = rfq.POTerms,
+                    POTitle = rfq.POTitle,
+                    POValidity = rfq.POValidity,
+                    POWarranty = rfq.POWarranty
                 };
                 rfq.PONumber = poNumber;
                 await _context.AddAsync(poDetails);

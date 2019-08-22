@@ -175,9 +175,22 @@ namespace E_Procurement.WebUI.Controllers
         {
             if (ModelState.IsValid)
             {
-             
-                var mappedUser = _mapper.Map<User>(user);
+                var roles = await _accountManager.GetRoles();
+                var roleList = roles.Select(a => new SelectListItem()
+                {
+                    Value = a.Name,
+                    Text = a.Name
+                }).ToList();
+                ViewBag.roles = roleList;
 
+                if (await _accountManager.IsEmailExistAsync(user.Email))
+                {
+                    Alert("User already exist with the supplied email.", NotificationType.error);
+                    return View(user);
+                }
+
+                var mappedUser = _mapper.Map<User>(user);
+                mappedUser.UserName = user.Email;
                     var result = await _accountManager.CreateUserAsync(mappedUser, user.Password, user.Role);
 
                 if (result)
@@ -188,6 +201,7 @@ namespace E_Procurement.WebUI.Controllers
                 else
                 {
                     Alert("User account could not be created. Please try again later.", NotificationType.error);
+                    
                     return View(user);
                 }
             }

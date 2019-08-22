@@ -28,9 +28,9 @@
             <br>
             <p>@DateTime.Now.ToString("dd MMM yyyy")</p>
             <br>
-            <p><b>The Managing Director</p></b>
-            <p><b> @Html.DisplayFor(model => model.VendorName)</p></b>
-            <p><b> @Html.DisplayFor(model => model.VendorAddress)</p></b>
+            <p><b>The Managing Director</b></p>
+            <p><b> @Html.DisplayFor(model => model.VendorName)</b></p>
+            <p><b> @Html.DisplayFor(model => model.VendorAddress)</b></p>
             @*<p><b>Sabo Yaba</p></b>
             <p><b>Lagos.</p></b>*@
         </div>
@@ -38,7 +38,7 @@
         <div class="col-sm-8">
             <p>Dear Sir,
 
-            <p><b>OFFER TO SUPPLY</p></b>
+            <p><b>@Html.DisplayFor(model => model.POTitle.ToUpper())</b></p>
             <p> Reference your Quotation and our negotiation meeting with you, we are pleased to inform you that </p>
             <p> your company has been selected to carry out the above mentioned under the following terms and conditions:</p>
         </div>
@@ -63,7 +63,7 @@
                     @{
                         //var RFQDetails = Model.RFQDetails as List<E_Procurement.WebUI.Models.RfqApprovalModel.RFQDetailsViewModel>;
                         var RFQDetails = Model.RFQDetails as List<E_Procurement.Repository.Dtos.RFQDetailsModel>;
-                       
+
                     }
                     @foreach (var approvalConfig in RFQDetails)
                     {
@@ -73,10 +73,10 @@
                             <td>@approvalConfig.QuotedQuantity</td>
                             <td align="right">@approvalConfig.QuotedAmount</td>
                             <td align="right">@approvalConfig.QuotedAmount</td>
-                        </tr>                     
+                        </tr>
                     }
 
-                   
+
                     <tr>
                         <td>Total</td>
                         <td colspan=3 align="right">  Total</td>
@@ -86,26 +86,39 @@
 
 
 
+            </table>
 
-</div>
+        </div>
 
         <div>
         </div>
-        </table>
 
-        <div align>
+        <div>
 
-            <p><b>Cost:</b> we are accepting a total sum of <b> ₦@Html.DisplayFor(model => model.TotalAmount) </b>, Vat exclusive but subject to a deduction of withholding tax, for the supply of one Dell inspiron laptop with the above stated configuration</p>
+            <p>
+                <b>Cost:</b>      @Html.DisplayFor(model => model.POCost)@*we are accepting a total sum of <b> ₦@Html.DisplayFor(model => model.TotalAmount) </b>, Vat exclusive but subject to a deduction of withholding tax, for the supply of one Dell inspiron laptop with the above stated configuration*@
+            </p>
 
             <p> Please Note that no Variation in price will be entertained after the acceptance of this offer Letter.</p>
 
-            <p><b> Delivery Line:</b> Immediate delivery at our office , 33 saka Tinubu street, victoria Island, Lagos, Upon receipt of this offer letter.Any deffective item shall be replaced at no extra cost to cyverspace Netwrok Limited.
             <p>
-                <b>Terms of Delivery: </b>Full Payment of the Total cost shall be made to delivery.
+                <b> Delivery/Warranty:</b> @Html.DisplayFor(model => model.POWarranty)
+                @*Immediate delivery at our office , 33 saka Tinubu street, victoria Island, Lagos, Upon receipt of this offer letter.Any deffective item shall be replaced at no extra cost to cyverspace Netwrok Limited.*@
+            </p>
+            <p>
+                <b>Terms of Payments: </b> @Html.DisplayFor(model => model.POTerms)
 
-                if the above terms and conditions are acceptable to you, kindly acknowledge this letter by signing the enclosed copy and returning same to us.
+                @*Full Payment of the Total cost shall be made to delivery.
 
-            <p>If the above terms and conditions are acceptable to you, kindly acknowledge this letter by signing the enclosed copy and returning same to us.
+            if the above terms and conditions are acceptable to you, kindly acknowledge this letter by signing the enclosed copy and returning same to us.*@
+
+            </p>
+
+            <p>
+                <b>Validity of Offer : </b> @Html.DisplayFor(model => model.POValidity)
+            </p>
+            <p>
+                If the above terms and conditions are acceptable to you, kindly acknowledge this letter by signing the enclosed copy and returning same to us.
 
             <p>Thank You. </p>
 
@@ -140,7 +153,7 @@
 
         </div>
     </div>
-    </div>
+  
 
 
 
