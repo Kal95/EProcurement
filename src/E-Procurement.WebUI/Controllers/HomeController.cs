@@ -44,10 +44,38 @@ namespace E_Procurement.WebUI.Controllers
 
         public IActionResult Index()
         {
-            DashboardModel dashboard = new DashboardModel();
-            dashboard.PO = _reportRepository.GetPoGen().Where(u => u.CreatedDate.Year == DateTime.Now.Year).Count().ToString();
-            dashboard.RFQ = _reportRepository.GetRfqGen().Where(u => u.CreatedDate.Year == DateTime.Now.Year).Count().ToString();
-            dashboard.RegVen = _reportRepository.GetVendors().Where(u => u.DateCreated.Year == DateTime.Now.Year).Count().ToString();
+            var userId = _vendorRepository.GetUser().Where(u => u.UserName == User.Identity.Name).Select(u => u.Id).FirstOrDefault();
+
+            var loggedInVendor = _vendorRepository.GetVendors().Where(u => u.UserId == userId).Select(u => u.Id).FirstOrDefault();
+
+            
+            if (User.IsInRole("Vendor User") && !loggedInVendor.Equals(null))
+            {
+                var categories = _vendorRepository.GetItemCategory().ToList();
+
+                var vendor = _vendorRepository.GetVendors().Where(u => u.Id == loggedInVendor).FirstOrDefault();
+
+                var mapping = _vendorRepository.GetMapping().Where(u => u.VendorID == vendor.Id).ToList();
+
+                var SelectedCategories = categories.Where(a => mapping.Any(b => b.VendorCategoryId == a.Id)).Count().ToString();
+
+                DashboardModel dashboard = new DashboardModel();
+                dashboard.PO = _reportRepository.GetPoGen().Where(u => u.CreatedDate.Year == DateTime.Now.Year && u.VendorId == vendor.Id).Count().ToString();
+                dashboard.RFQ = _reportRepository.GetRfqGen().Where(u => u.CreatedDate.Year == DateTime.Now.Year && u.VendorId == vendor.Id).Count().ToString();
+                dashboard.Category = SelectedCategories;
+
+                return View(dashboard);
+
+            }
+            else
+            {
+                DashboardModel dashboard = new DashboardModel();
+                dashboard.PO = _reportRepository.GetPoGen().Where(u => u.CreatedDate.Year == DateTime.Now.Year).Count().ToString();
+                dashboard.RFQ = _reportRepository.GetRfqGen().Where(u => u.CreatedDate.Year == DateTime.Now.Year).Count().ToString();
+                dashboard.RegVen = _reportRepository.GetVendors().Where(u => u.DateCreated.Year == DateTime.Now.Year).Count().ToString();
+                
+            return View(dashboard);
+            }
 
             //var selected1 = _reportRepository.GetPoGen().Count().ToString().Zip(_reportRepository.GetRfqGen().Count().ToString(), (a, b) => new { A = a, B = b });
             //var selected2 = _reportRepository.GetVendors().Count().ToString().Zip(selected1, (a, b) => new { A = a, B = b });
@@ -59,7 +87,6 @@ namespace E_Procurement.WebUI.Controllers
             //   RFQ = x.B.B.ToString()
             //});
 
-            return View(dashboard);
         }
 
         public IActionResult Privacy()

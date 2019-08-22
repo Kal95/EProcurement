@@ -74,81 +74,147 @@ namespace E_Procurement.WebUI.Controllers
 
         private void LoadFilePath(VendorModel Model)
         {
+            var userId = _vendorRepository.GetUser().Where(u => u.UserName == User.Identity.Name).Select(u => u.Id).FirstOrDefault();
+
+            var loggedInVendor = _vendorRepository.GetVendors().Where(u => u.UserId == userId).Select(u => u.Id).FirstOrDefault();
+
+            if (User.IsInRole("Vendor User") && !loggedInVendor.Equals(null))
+            {
+
+                Model.VendorId = loggedInVendor;
+
+            }
+
             if (Model.BankReference != null || Model.CertificateOfVAT !=null || Model.MemorandumOfAssoociation != null || Model.NoticeOfSituationAddress != null || Model.ParticularsOfDirectors != null || Model.ParticularsOfShareholders != null || Model.Reference != null || Model.TaxClearance != null)
             {
                 var myReference = new Random();
-                string referencecode = myReference.Next(23006).ToString();
+                //string referencecode; 
+                if (Model.VendorId.Equals(null) || Model.VendorId == 0)
+                {
+                    Model.RefCode = myReference.Next(23006).ToString();
+                }
+                else
+                {
+                    Model.RefCode = Model.VendorId.ToString();
+                }
 
                 string webRootPath = _hostingEnv.WebRootPath;
 
                 var allowedExtensions = new[] { ".pdf", ".jpg", ".jpeg", ".png" };
-                var checkextension1 = Path.GetExtension(Model.MemorandumOfAssoociation.FileName).ToLower();
-                var checkextension2 = Path.GetExtension(Model.NoticeOfSituationAddress.FileName).ToLower();
-                var checkextension3 = Path.GetExtension(Model.ParticularsOfDirectors.FileName).ToLower();
-                var checkextension4 = Path.GetExtension(Model.ParticularsOfShareholders.FileName).ToLower();
-                var checkextension5 = Path.GetExtension(Model.Reference.FileName).ToLower();
-                var checkextension6 = Path.GetExtension(Model.TaxClearance.FileName).ToLower();
-                var checkextension7 = Path.GetExtension(Model.CertificateOfVAT.FileName).ToLower();
-                var checkextension8 = Path.GetExtension(Model.BankReference.FileName).ToLower();
-
-                var MOAFilePath = referencecode + "_" + "Memorandum_Of_Association" + Path.GetExtension(Model.MemorandumOfAssoociation.FileName);
-                var NOSFilePath = referencecode + "_" + "Notice_Of_Situation" + Path.GetExtension(Model.NoticeOfSituationAddress.FileName);
-                var PODFilePath = referencecode + "_" + "Particulars_Of_Directors" + Path.GetExtension(Model.ParticularsOfDirectors.FileName);
-                var POSFilePath = referencecode + "_" + "Particulars_Of_Shareholders" + Path.GetExtension(Model.ParticularsOfShareholders.FileName);
-                var RefFilePath = referencecode + "_" + "Reference" + Path.GetExtension(Model.Reference.FileName);
-                var TaxFilePath = referencecode + "_" + "Tax_Clearance" + Path.GetExtension(Model.TaxClearance.FileName);
-                var COVFilePath = referencecode + "_" + "Certificate_Of_VAT" + Path.GetExtension(Model.CertificateOfVAT.FileName);
-                var BankRefFilePath = referencecode + "_" + "Bank_Reference_Letter" + Path.GetExtension(Model.BankReference.FileName);
-
-                if (!allowedExtensions.Contains(checkextension1) || !allowedExtensions.Contains(checkextension2) || !allowedExtensions.Contains(checkextension3) || !allowedExtensions.Contains(checkextension4) || !allowedExtensions.Contains(checkextension5) || !allowedExtensions.Contains(checkextension6) || !allowedExtensions.Contains(checkextension7) || !allowedExtensions.Contains(checkextension8))
-                {
-                    ModelState.AddModelError("", "Invalid file extention.");
-                    //return View(Model);
-                }
-
-                string dbFilePath = "~/upload/VendorDocuments/";
+             
+                //string dbFilePath = "~/upload/VendorDocuments/";
 
                 //var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "upload", imageFilePath);
-                var path1 = Path.Combine(webRootPath, "Uploads", "VendorDocuments", MOAFilePath);
-                var path2 = Path.Combine(webRootPath, "Uploads", "VendorDocuments", NOSFilePath);
-                var path3 = Path.Combine(webRootPath, "Uploads", "VendorDocuments", PODFilePath);
-                var path4 = Path.Combine(webRootPath, "Uploads", "VendorDocuments", POSFilePath);
-                var path5 = Path.Combine(webRootPath, "Uploads", "VendorDocuments", RefFilePath);
-                var path6 = Path.Combine(webRootPath, "Uploads", "VendorDocuments", TaxFilePath);
-                var path7 = Path.Combine(webRootPath, "Uploads", "VendorDocuments", COVFilePath);
-                var path8 = Path.Combine(webRootPath, "Uploads", "VendorDocuments", BankRefFilePath);
 
-
-                if (System.IO.File.Exists(path1)) { System.IO.File.Delete(path1); }
-                if (System.IO.File.Exists(path2)) { System.IO.File.Delete(path2); }
-                if (System.IO.File.Exists(path3)) { System.IO.File.Delete(path3); }
-                if (System.IO.File.Exists(path4)) { System.IO.File.Delete(path4); }
-                if (System.IO.File.Exists(path5)) { System.IO.File.Delete(path5); }
-                if (System.IO.File.Exists(path6)) { System.IO.File.Delete(path6); }
-                if (System.IO.File.Exists(path7)) { System.IO.File.Delete(path7); }
-                if (System.IO.File.Exists(path8)) { System.IO.File.Delete(path8); }
-
-                using (Stream stream = new FileStream(path1, FileMode.Create)) { Model.MemorandumOfAssoociation.CopyTo(stream); }
-                using (Stream stream = new FileStream(path2, FileMode.Create)) { Model.NoticeOfSituationAddress.CopyTo(stream); }
-                using (Stream stream = new FileStream(path3, FileMode.Create)) { Model.ParticularsOfDirectors.CopyTo(stream); }
-                using (Stream stream = new FileStream(path4, FileMode.Create)) { Model.ParticularsOfShareholders.CopyTo(stream); }
-                using (Stream stream = new FileStream(path5, FileMode.Create)) { Model.Reference.CopyTo(stream); }
-                using (Stream stream = new FileStream(path6, FileMode.Create)) { Model.TaxClearance.CopyTo(stream); }
-                using (Stream stream = new FileStream(path7, FileMode.Create)) { Model.CertificateOfVAT.CopyTo(stream); }
-                using (Stream stream = new FileStream(path8, FileMode.Create)) { Model.BankReference.CopyTo(stream); }
-
-                Model.MOAFilePath = MOAFilePath;
-                Model.NOSFilePath = NOSFilePath;
-                Model.PODFilePath = PODFilePath;
-                Model.POSFilePath = POSFilePath;
-                Model.RefFilePath = RefFilePath;
-                Model.TaxFilePath = TaxFilePath;
-                Model.COVFilePath = COVFilePath;
-                Model.BankRefFilePath = BankRefFilePath;
+                if (Model.MemorandumOfAssoociation != null)
+                {
+                    var checkextension1 = Path.GetExtension(Model.MemorandumOfAssoociation.FileName).ToLower();
+                    if (!allowedExtensions.Contains(checkextension1))
+                    {
+                        ModelState.AddModelError("", "Invalid file extention."); 
+                    }
+                    var MOAFilePath = Model.RefCode + "_" + "Memorandum_Of_Association" + Path.GetExtension(Model.MemorandumOfAssoociation.FileName);
+                    var path1 = Path.Combine(webRootPath, "Uploads", "VendorDocuments", MOAFilePath);
+                    if (System.IO.File.Exists(path1)) { System.IO.File.Delete(path1); }
+                    using (Stream stream = new FileStream(path1, FileMode.Create)) { Model.MemorandumOfAssoociation.CopyTo(stream); }
+                    Model.MOAFilePath = MOAFilePath;
+                }
+                if (Model.NoticeOfSituationAddress != null)
+                {
+                    var checkextension2 = Path.GetExtension(Model.NoticeOfSituationAddress.FileName).ToLower();
+                    if (!allowedExtensions.Contains(checkextension2))
+                    {
+                        ModelState.AddModelError("", "Invalid file extention.");
+                    }
+                    var NOSFilePath = Model.RefCode + "_" + "Notice_Of_Situation" + Path.GetExtension(Model.NoticeOfSituationAddress.FileName);
+                    var path2 = Path.Combine(webRootPath, "Uploads", "VendorDocuments", NOSFilePath);
+                    if (System.IO.File.Exists(path2)) { System.IO.File.Delete(path2); }
+                    using (Stream stream = new FileStream(path2, FileMode.Create)) { Model.NoticeOfSituationAddress.CopyTo(stream); }
+                    Model.NOSFilePath = NOSFilePath;
+                }
+                if (Model.ParticularsOfDirectors != null)
+                {
+                    var checkextension3 = Path.GetExtension(Model.ParticularsOfDirectors.FileName).ToLower();
+                    if (!allowedExtensions.Contains(checkextension3))
+                    {
+                        ModelState.AddModelError("", "Invalid file extention.");
+                    }
+                    var PODFilePath = Model.RefCode + "_" + "Particulars_Of_Directors" + Path.GetExtension(Model.ParticularsOfDirectors.FileName);
+                    var path3 = Path.Combine(webRootPath, "Uploads", "VendorDocuments", PODFilePath);
+                    if (System.IO.File.Exists(path3)) { System.IO.File.Delete(path3); }
+                    using (Stream stream = new FileStream(path3, FileMode.Create)) { Model.ParticularsOfDirectors.CopyTo(stream); }
+                    Model.PODFilePath = PODFilePath;
+                }
+                if (Model.ParticularsOfShareholders != null)
+                {
+                    var checkextension4 = Path.GetExtension(Model.ParticularsOfShareholders.FileName).ToLower();
+                    if (!allowedExtensions.Contains(checkextension4))
+                    {
+                        ModelState.AddModelError("", "Invalid file extention.");
+                    }
+                    var POSFilePath = Model.RefCode + "_" + "Particulars_Of_Shareholders" + Path.GetExtension(Model.ParticularsOfShareholders.FileName);
+                    var path4 = Path.Combine(webRootPath, "Uploads", "VendorDocuments", POSFilePath);
+                    if (System.IO.File.Exists(path4)) { System.IO.File.Delete(path4); }
+                    using (Stream stream = new FileStream(path4, FileMode.Create)) { Model.ParticularsOfShareholders.CopyTo(stream); }
+                    Model.POSFilePath = POSFilePath;
+                }
+                if (Model.Reference != null)
+                {
+                    var checkextension5 = Path.GetExtension(Model.Reference.FileName).ToLower();
+                    if (!allowedExtensions.Contains(checkextension5))
+                    {
+                        ModelState.AddModelError("", "Invalid file extention.");
+                    }
+                    var RefFilePath = Model.RefCode + "_" + "Reference" + Path.GetExtension(Model.Reference.FileName);
+                    var path5 = Path.Combine(webRootPath, "Uploads", "VendorDocuments", RefFilePath);
+                    if (System.IO.File.Exists(path5)) { System.IO.File.Delete(path5); }
+                    using (Stream stream = new FileStream(path5, FileMode.Create)) { Model.Reference.CopyTo(stream);}
+                    Model.RefFilePath = RefFilePath;
+                }
+                if (Model.TaxClearance != null)
+                {
+                    var checkextension6 = Path.GetExtension(Model.TaxClearance.FileName).ToLower();
+                    if (!allowedExtensions.Contains(checkextension6))
+                    {
+                        ModelState.AddModelError("", "Invalid file extention.");
+                    }
+                    var TaxFilePath = Model.RefCode + "_" + "Tax_Clearance" + Path.GetExtension(Model.TaxClearance.FileName);
+                    var path6 = Path.Combine(webRootPath, "Uploads", "VendorDocuments", TaxFilePath);
+                    if (System.IO.File.Exists(path6)) { System.IO.File.Delete(path6); }
+                    using (Stream stream = new FileStream(path6, FileMode.Create)) { Model.TaxClearance.CopyTo(stream);}
+                    Model.TaxFilePath = TaxFilePath;
+                }
+                if (Model.CertificateOfVAT != null)
+                {
+                    var checkextension7 = Path.GetExtension(Model.CertificateOfVAT.FileName).ToLower();
+                    if (!allowedExtensions.Contains(checkextension7))
+                    {
+                        ModelState.AddModelError("", "Invalid file extention.");
+                    }
+                    var COVFilePath = Model.RefCode + "_" + "Certificate_Of_VAT" + Path.GetExtension(Model.CertificateOfVAT.FileName);
+                    var path7 = Path.Combine(webRootPath, "Uploads", "VendorDocuments", COVFilePath);
+                    if (System.IO.File.Exists(path7)) { System.IO.File.Delete(path7);}
+                    using (Stream stream = new FileStream(path7, FileMode.Create)) { Model.CertificateOfVAT.CopyTo(stream);}
+                    Model.COVFilePath = COVFilePath;
+                }
+                if (Model.BankReference != null)
+                {
+                    var checkextension8 = Path.GetExtension(Model.BankReference.FileName).ToLower();
+                    if (!allowedExtensions.Contains(checkextension8))
+                    {
+                        ModelState.AddModelError("", "Invalid file extention.");
+                    }
+                    var BankRefFilePath = Model.RefCode + "_" + "Bank_Reference_Letter" + Path.GetExtension(Model.BankReference.FileName);
+                    var path8 = Path.Combine(webRootPath, "Uploads", "VendorDocuments", BankRefFilePath);
+                    if (System.IO.File.Exists(path8)) { System.IO.File.Delete(path8); }
+                    using (Stream stream = new FileStream(path8, FileMode.Create)) { Model.BankReference.CopyTo(stream); }
+                    Model.BankRefFilePath = BankRefFilePath;
+                }
+    
             }
         }
 
-            private void LoadPredefinedInfo(VendorModel Model)
+        private void LoadPredefinedInfo(VendorModel Model)
         {
 
 
@@ -300,8 +366,19 @@ namespace E_Procurement.WebUI.Controllers
 
             try
             {
+                var userId = _vendorRepository.GetUser().Where(u => u.UserName == User.Identity.Name).Select(u => u.Id).FirstOrDefault();
+
+                var loggedInVendor = _vendorRepository.GetVendors().Where(u => u.UserId == userId).Select(u => u.Id).FirstOrDefault();
+
                 var categories = _vendorRepository.GetItemCategory().ToList();
-               
+
+                if (User.IsInRole("Vendor User") && !loggedInVendor.Equals(null))
+                {
+                
+                VendorId = loggedInVendor;
+                    
+                }
+
                 var vendor = _vendorRepository.GetVendors().Where(u => u.Id == VendorId).FirstOrDefault();
 
                 var mapping = _vendorRepository.GetMapping().Where(u => u.VendorID == vendor.Id).ToList();
@@ -373,6 +450,10 @@ namespace E_Procurement.WebUI.Controllers
                 {
                     string message;
 
+                    var userId = _vendorRepository.GetUser().Where(u => u.UserName == User.Identity.Name).Select(u => u.Id).FirstOrDefault();
+
+                    var loggedInVendor = _vendorRepository.GetVendors().Where(u => u.UserId == userId).Select(u => u.Id).FirstOrDefault();
+
                     var vendor = _vendorRepository.GetVendors().FirstOrDefault(u => u.Id == Model.Id);
 
                     if (vendor == null) { Alert("This Vendor Doesn't Exist", NotificationType.warning); return RedirectToAction("Index", "Vendor"); }
@@ -381,21 +462,40 @@ namespace E_Procurement.WebUI.Controllers
 
                     LoadFilePath(Model);
                     var status = _vendorRepository.UpdateVendor(Model, out message);
-                    
 
-                    if (status == true)
+                    if (User.IsInRole("Vendor User") && !loggedInVendor.Equals(null))
                     {
+                        if (status == true)
+                        {
 
-                        Alert("Vendor Updated Successfully", NotificationType.success);
+                            Alert("Vendor Updated Successfully", NotificationType.success);
+                        }
+
+                        else
+                        {
+                            Alert("This Vendor Already Exists", NotificationType.info);
+                            return RedirectToAction("Index", "Vendor");
+                        }
+
+                        return RedirectToAction("Index", "Home");
+
                     }
-
                     else
                     {
-                        Alert("This Vendor Already Exists", NotificationType.info);
+                        if (status == true)
+                        {
+
+                            Alert("Vendor Updated Successfully", NotificationType.success);
+                        }
+
+                        else
+                        {
+                            Alert("This Vendor Already Exists", NotificationType.info);
+                            return RedirectToAction("Index", "Vendor");
+                        }
+
                         return RedirectToAction("Index", "Vendor");
                     }
-
-                    return RedirectToAction("Index", "Vendor");
                 }
                 else
                 {

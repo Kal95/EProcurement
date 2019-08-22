@@ -13,5 +13,6 @@ namespace E_Procurement.Repository.VendoRepo
         bool CreateVendor(VendorModel model, out string Message);
 
         bool UpdateVendor(VendorModel model, out string Message);
+        IEnumerable<User> GetUser();
     }
 }

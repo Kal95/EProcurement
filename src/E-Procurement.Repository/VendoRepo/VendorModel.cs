@@ -53,6 +53,7 @@ namespace E_Procurement.Repository.VendoRepo
         public string NOSFilePath { get; set; }
         public string RefFilePath { get; set; }
 
+        public string RefCode { get; set; }
         public IEnumerable<SelectListItem> VendorCategoryList { get; set; }
         public IEnumerable<SelectListItem> CurrentVendorCategoryList { get; set; }
         public List<ReportModel> Report { get; set; }

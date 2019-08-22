@@ -33,9 +33,9 @@ namespace E_Procurement.Data.Entity
         public decimal AatAmount { get; set; }
         public ICollection<VendorMapping> VendorMapping { get; set; }
         //public VendorCategory VendorCategory { get; set; }
-        public Bank Bank { get; set; }
-        public Country Country { get; set; }
-        public State State { get; set; }
+        //public Bank Bank { get; set; }
+        //public Country Country { get; set; }
+       // public State State { get; set; }
         public string MOAFilePath { get; set; }
         public string BankRefFilePath { get; set; }
         public string COVFilePath { get; set; }
