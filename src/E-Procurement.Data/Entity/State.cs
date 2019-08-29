@@ -7,6 +7,6 @@ namespace E_Procurement.Data.Entity
     public class State: BaseEntity.Entity
     {
         public string StateName { get; set; }
-        public ICollection<Vendor> Vendor { get; set; }
+        //public ICollection<Vendor> Vendor { get; set; }
     }
 }

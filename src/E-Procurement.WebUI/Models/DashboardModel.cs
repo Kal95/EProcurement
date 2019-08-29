@@ -10,5 +10,6 @@ namespace E_Procurement.WebUI.Models
         public string RegVen { get; set; }
         public string PO { get; set; }
         public string RFQ { get; set; }
+        public string Category { get; set; }
     }
 }

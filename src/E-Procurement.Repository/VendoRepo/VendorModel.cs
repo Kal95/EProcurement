@@ -53,6 +53,7 @@ namespace E_Procurement.Repository.VendoRepo
         public string NOSFilePath { get; set; }
         public string RefFilePath { get; set; }
 
+        public string RefCode { get; set; }
         public IEnumerable<SelectListItem> VendorCategoryList { get; set; }
         public IEnumerable<SelectListItem> CurrentVendorCategoryList { get; set; }
         public List<ReportModel> Report { get; set; }
@@ -68,7 +69,7 @@ namespace E_Procurement.Repository.VendoRepo
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public List<VendorModel> VendorDetails { get; set; }
-        public bool CurrentCategories { get; set; }
+        public int CurrentCategories { get; set; }
         public IEnumerable<SelectListItem> UserList { get; set; }
         public VendorModel()
         {

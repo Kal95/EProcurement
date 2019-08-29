@@ -8,6 +8,7 @@ using E_Procurement.Data;
 using E_Procurement.Data.Entity;
 using E_Procurement.Repository.Interface;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 
@@ -19,13 +20,15 @@ namespace E_Procurement.Repository.VendoRepo
         private readonly ISMTPService _emailSender;
         private readonly IHttpContextAccessor _contextAccessor;
         private IConfiguration _config;
+        private readonly UserManager<User> _userManager;
 
-        public VendorRepository(EProcurementContext context, IConfiguration config, ISMTPService emailSender, IHttpContextAccessor contextAccessor)
+        public VendorRepository(EProcurementContext context, UserManager<User> userManager, IConfiguration config, ISMTPService emailSender, IHttpContextAccessor contextAccessor)
         {
             _context = context;
             _emailSender = emailSender;
             _contextAccessor = contextAccessor;
             _config = config;
+            _userManager = userManager;
         }
         public bool CreateVendor(VendorModel model, out string Message)
         {
@@ -142,14 +145,39 @@ namespace E_Procurement.Repository.VendoRepo
                 oldEntry.UpdatedBy = model.UpdatedBy;
                 oldEntry.LastDateUpdated = DateTime.Now;
                 oldEntry.IsActive = model.IsActive;
-                oldEntry.BankRefFilePath = model.BankRefFilePath;
-                oldEntry.COVFilePath = model.COVFilePath;
-                oldEntry.MOAFilePath = model.MOAFilePath;
-                oldEntry.NOSFilePath = model.NOSFilePath;
-                oldEntry.PODFilePath = model.PODFilePath;
-                oldEntry.POSFilePath = model.POSFilePath;
-                oldEntry.RefFilePath = model.RefFilePath;
-                oldEntry.TaxFilePath = model.TaxFilePath;
+                if (model.BankRefFilePath != null)
+                {
+                    oldEntry.BankRefFilePath = model.BankRefFilePath;
+                }
+                if (model.COVFilePath != null)
+                {
+                    oldEntry.COVFilePath = model.COVFilePath;
+                }
+                if (model.MOAFilePath != null)
+                {
+                    oldEntry.MOAFilePath = model.MOAFilePath;
+                }
+                if (model.NOSFilePath != null)
+                {
+                    oldEntry.NOSFilePath = model.NOSFilePath;
+                }
+                if (model.PODFilePath != null)
+                {
+                    oldEntry.PODFilePath = model.PODFilePath;
+                }
+                if (model.POSFilePath != null)
+                {
+                    oldEntry.POSFilePath = model.POSFilePath;
+                }
+                if (model.RefFilePath != null)
+                {
+                    oldEntry.RefFilePath = model.RefFilePath;
+                }
+                if (model.TaxFilePath != null)
+                {
+                    oldEntry.TaxFilePath = model.TaxFilePath;
+                }
+                
 
                 foreach (var category in model.SelectedVendorCategories)
                 {
@@ -215,6 +243,10 @@ namespace E_Procurement.Repository.VendoRepo
         public IEnumerable<VendorMapping> GetMapping()
         {
             return _context.VendorMappings.OrderByDescending(u => u.Id).ToList();
+        }
+        public IEnumerable<User> GetUser()
+        {
+            return _userManager.Users.OrderByDescending(u => u.Id).ToList();
         }
     }
 }

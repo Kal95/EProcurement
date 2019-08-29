@@ -176,37 +176,55 @@
                         <div class="row mg-t-20">
                             <div class="col-md-6" style="margin-top:10px">
                                 <label for="AatAmount">Select Categories:</label>
-                                @foreach (var category in Model.CurrentVendorCategoryList)
+                                @if (Model.CurrentCategories.Equals(0))
                                 {
-                                    //foreach (var selected in Model.SelectedVendorCategories.Where(u => u.ToString() == category.Value))
-                                    //{
+                                    @foreach (var category in Model.VendorCategoryList)
+                                    {
+                                        //foreach (var selected in Model.SelectedVendorCategories.Where(u => u.ToString() == category.Value))
+                                        //{
 
-                                    <div class="form-horizontal" style="width:450px; height:20px; margin-top:5px">
-                                        <input type="checkbox" value="@category.Value" checked="@category.Selected" name="SelectedVendorCategories" id="@category.Value" />
-                                        <label for="@category.Text">@category.Text</label>
-                                        <input type="hidden" id="@category.Value" />
-                                    </div>
+                                        <div class="form-horizontal" style="width:450px; height:20px; margin-top:5px">
+                                            <input type="checkbox" value="@category.Value" checked="@category.Selected" name="SelectedVendorCategories" id="@category.Value" />
+                                            <label for="@category.Text">@category.Text</label>
+                                            <input type="hidden" id="@category.Value" />
+                                        </div>
+
+                                    }
                                 }
-                                @foreach (var category in Model.VendorCategoryList)
+                                else
                                 {
-                                    //foreach (var selected in Model.SelectedVendorCategories.Where(u => u.ToString() == category.Value))
-                                    //{
+                                    @foreach (var category in Model.CurrentVendorCategoryList)
+                                    {
+                                        //foreach (var selected in Model.SelectedVendorCategories.Where(u => u.ToString() == category.Value))
+                                        //{
 
-                                    <div class="form-horizontal" style="width:450px; height:20px; margin-top:5px">
-                                        <input type="checkbox" value="@category.Value" checked="@category.Selected" name="SelectedVendorCategories" id="@category.Value" />
-                                        <label for="@category.Text">@category.Text</label>
-                                        <input type="hidden" id="@category.Value" />
-                                    </div>
+                                        <div class="form-horizontal" style="width:450px; height:20px; margin-top:5px">
+                                            <input type="checkbox" value="@category.Value" checked="@category.Selected" name="SelectedVendorCategories" id="@category.Value" />
+                                            <label for="@category.Text">@category.Text</label>
+                                            <input type="hidden" id="@category.Value" />
+                                        </div>
+                                    }
+                                    @foreach (var category in Model.VendorCategoryList)
+                                    {
+                                        //foreach (var selected in Model.SelectedVendorCategories.Where(u => u.ToString() == category.Value))
+                                        //{
 
+                                        <div class="form-horizontal" style="width:450px; height:20px; margin-top:5px">
+                                            <input type="checkbox" value="@category.Value" checked="@category.Selected" name="SelectedVendorCategories" id="@category.Value" />
+                                            <label for="@category.Text">@category.Text</label>
+                                            <input type="hidden" id="@category.Value" />
+                                        </div>
+
+                                    }
                                 }
-                                    <br />
-                                    @*<hr style="border-width:3px"/>*@
-                                    <br />
-                                    <div class="form-horizontal" style="width:450px; height:20px; margin-top:5px">
-                                        @Html.CheckBoxFor(model => model.IsActive, new { @*Style = "opacity:10; left:0px;",*@ htmlAttributes = new { id = "active", @type = "checkbox", @class = "form-control" } })
-                                        <label for="IsActive">Is Active?</label>
-                                        @Html.ValidationMessageFor(model => model.IsActive, "", new { @class = "text-danger" })
-                                    </div>
+                                <br />
+                                @*<hr style="border-width:3px"/>*@
+                                <br />
+                                <div class="form-horizontal" style="width:450px; height:20px; margin-top:5px">
+                                    @Html.CheckBoxFor(model => model.IsActive, new { @*Style = "opacity:10; left:0px;",*@htmlAttributes = new { id = "active", @type = "checkbox", @class = "form-control" } })
+                                    <label for="IsActive">Is Active?</label>
+                                    @Html.ValidationMessageFor(model => model.IsActive, "", new { @class = "text-danger" })
+                                </div>
                             </div>
                         </div>
                     </div>
