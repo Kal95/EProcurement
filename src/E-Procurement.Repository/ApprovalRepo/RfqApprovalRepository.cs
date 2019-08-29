@@ -217,7 +217,6 @@ namespace E_Procurement.Repository.RfqApprovalConfigRepository
                               join rfqDetails in _context.RfqDetails on rfq.Id equals rfqDetails.RFQId
                               join vend in _context.Vendors on rfqDetails.VendorId equals vend.Id
                               where rfq.EndDate <= DateTime.Now && rfq.RFQStatus == null && rfq.Id == RFQId
-
                               orderby rfq.Id, rfq.EndDate descending
                               select new RFQGenerationModel()
                               {
@@ -235,7 +234,7 @@ namespace E_Procurement.Repository.RfqApprovalConfigRepository
                                   VendorStatus = vend.VendorStatus,
                                   ContactName = vend.ContactName,
                                   TotalAmount = _context.RfqDetails.Where(it => it.RFQId == rfq.Id && it.VendorId == rfqDetails.VendorId).Select(it => it.QuotedAmount).Sum()
-                              }).ToListAsync();
+                              }).Distinct().ToListAsync();
 
 
             return query;

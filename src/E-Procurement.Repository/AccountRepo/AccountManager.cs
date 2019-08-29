@@ -179,9 +179,9 @@ namespace E_Procurement.Repository.AccountRepo
                         Vendor vendor = new Vendor();
                         vendor.UserId = user.Id;
                         vendor.Email = user.Email;
-                        vendor.CountryId = 2;
-                        vendor.StateId = 2;
-                        vendor.BankId = 2;
+                        //vendor.CountryId = 2;
+                        //vendor.StateId = 2;
+                        //vendor.BankId = 2;
                         _context.Vendors.Add(vendor);
                         //var commandText = "INSERT Vendors (UserId,Email) VALUES (@UserId,@Email)";
                         //var UserId = new SqlParameter("@UserId", user.Id);
@@ -195,7 +195,7 @@ namespace E_Procurement.Repository.AccountRepo
                 var subject = "SIGNUP NOTIFICATION";
                 var message = "</br><b> Dear </b>" + user.FullName;
                 message += "</br><b> Your have been registered successful on Cyberspace E-procurement Portal.</br>";
-                message += "</br>Kindly, log in via " + requisitionURL + " and validate the required documents.";
+                message += "</br>Kindly, log in via <a href='" + requisitionURL + "' >"+ requisitionURL +" </a> and validate the required documents.";
                 message += "</br><U>LOGIN DETAILS </U>";
                 message += "</br>Email :  " + user.Email;
                 message += "</br>Password :  " + password;

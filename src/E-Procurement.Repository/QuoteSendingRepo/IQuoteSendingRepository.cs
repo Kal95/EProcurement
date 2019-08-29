@@ -13,6 +13,6 @@ namespace E_Procurement.Repository.QuoteSendingRepo
         Task<IEnumerable<RFQGenerationModel>> GetQuoteAsync();
         Task<RFQGenerationModel> GetQuoteDetailsAsync(int RFQId);
         List<RFQDetails> GetRfqDetails();
-        bool UpdateQuote(int[] Id, decimal[] AgreedAmount, out string Message);
+        bool UpdateQuote(int[] Id, decimal[] quotedPrice, decimal[] AgreedAmount, out string Message);
     }
 }

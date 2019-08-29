@@ -27,7 +27,7 @@ namespace E_Procurement.Repository.QuoteSendingRepo
             var query = await (from rfq in _context.RfqGenerations
                                join rfqDetails in _context.RfqDetails on rfq.Id equals rfqDetails.RFQId
                                join vend in _context.Vendors on rfqDetails.VendorId equals vend.Id
-                               where rfq.EndDate >= DateTime.Now && rfq.RFQStatus == null && vend.Email == currentUser
+                               where rfq.EndDate >= DateTime.Now && rfq.RFQStatus == null //&& vend.Email == currentUser
                                orderby rfq.Id, rfq.EndDate descending
                                select new RFQGenerationModel()
                                {
@@ -96,8 +96,11 @@ namespace E_Procurement.Repository.QuoteSendingRepo
                 VendorId = x.VendorId,
                 ItemId = x.ItemId,
                 ItemName = x.ItemName,
+                Description = x.ItemDescription,
                 QuotedQuantity = x.QuotedQuantity,
                 AgreedQuantity = x.AgreedQuantity,
+                QuotedPrice = x.QuotedPrice,
+                AgreedPrice = x.AgreedPrice,
                 QuotedAmount = x.QuotedAmount,
                 AgreedAmount = x.AgreedAmount
             });
@@ -115,10 +118,10 @@ namespace E_Procurement.Repository.QuoteSendingRepo
             return _context.RfqDetails.OrderBy(x => x.Id).ToList();
         }
 
-        public bool UpdateQuote(int[] Id, decimal[] AgreedAmount, out string Message)
+        public bool UpdateQuote(int[] Id, decimal[] quotedPrice, decimal[] quotedAmount, out string Message)
         {
 
-            for (int i = 0; i < AgreedAmount.Length; i++)
+            for (int i = 0; i < quotedAmount.Length; i++)
             {                          
                 
                     var oldEntry = _context.RfqDetails.Where(x => x.Id == Id[i]).FirstOrDefault();
@@ -129,16 +132,17 @@ namespace E_Procurement.Repository.QuoteSendingRepo
                         throw new Exception("No RFQ exists with this Id");
                     }
 
-                    oldEntry.AgreedAmount = AgreedAmount[i];
-                
+                    oldEntry.QuotedPrice = quotedPrice[i];
+                    oldEntry.QuotedAmount = quotedAmount[i];
 
-                    //foreach (var item in AgreedAmount)
-                    //{
-                    //    oldEntry.AgreedAmount = item[i];
 
-                    //}
+                //foreach (var item in AgreedAmount)
+                //{
+                //    oldEntry.QuotedAmount = item[i];
 
-                    _context.SaveChanges();
+                //}
+
+                _context.SaveChanges();
 
               
 
