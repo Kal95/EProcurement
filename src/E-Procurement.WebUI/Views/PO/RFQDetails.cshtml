@@ -81,7 +81,9 @@
                     <tr>
                         <th class="wd-5p">S/N</th>
                         <th class="wd-5p">Item</th>
+                        <th class="wd-5p">Description</th>
                         <th class="wd-5p">Quantity</th>
+                        <th class="wd-5p">Price</th>
                         <th class="wd-5p">QuotedAmount</th>
 
                     </tr>
@@ -97,13 +99,15 @@
                     }
                     @foreach (var approvalConfig in RFQDetails)
                     {
-                        <tr>
-                            <td>@(i = i + 1)</td>
+                    <tr>
+                        <td>@(i = i + 1)</td>
 
-                            <td>@approvalConfig.ItemName</td>
-                            <td>@approvalConfig.QuotedQuantity</td>
-                            <td>@approvalConfig.QuotedAmount</td>
-                        </tr>
+                        <td>@approvalConfig.ItemName</td>
+                        <td>@approvalConfig.Description</td>
+                        <td>@approvalConfig.QuotedQuantity</td>
+                        <td>@approvalConfig.QuotedPrice</td>
+                        <td>@approvalConfig.QuotedAmount</td>
+                    </tr>
 
                     }
                 </tbody>

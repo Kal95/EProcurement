@@ -13,8 +13,9 @@ namespace E_Procurement.Repository.ApprovalRepo
         Task<IEnumerable<RFQGenerationModel>> GetRFQApprovalDueAsync();
 
         Task<IEnumerable<RFQGenerationModel>> GetRFQByVendorsAsync(int RFQId);
-
+        Task<IEnumerable<RFQGenerationModel>> GetSubmittedRFQByVendorsAsync(int RFQId);
         Task<IEnumerable<RFQGenerationModel>> GetRFQPendingApprovalAsync();
+        Task<IEnumerable<RFQGenerationModel>> GetRFQInPipelineAsync();
         Task<IEnumerable<RFQGenerationModel>> GetRFQPendingApprovalByVendorsAsync(int RFQId);
         Task<RFQGenerationModel> GetRFQDetailsAsync(int RFQId, int VendorId);
 

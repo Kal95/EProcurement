@@ -134,12 +134,12 @@
                             @Html.Hidden("DetailsId", approvalConfig.DetailsId)
 
                             @*@Html.HiddenFor(model => model.RFQDetails.First().Id)*@
-
+                            <input type="hidden" id="quantity_@(i)" value="@approvalConfig.QuotedQuantity" />
                             <td>
-                                <input type="text" id="quotedPrice_@(i)" name="quotedPrice" class="form-control" onKeup ="calculateTotalAmmount(@(i));" />
+                                <input type="number" id="quotedPrice_@(i)" name="quotedPrice" class="form-control" value="@approvalConfig.QuotedPrice" onKeyUp="calculateTotalAmmount(@(i));" required />
                             </td>
                             <td>
-                                <input type="text" id="quotedAmount_@(i)" name="quotedAmount" class="form-control" readonly />
+                                <input type="number" id="quotedAmount_@(i)" name="quotedAmount" class="form-control" value="@approvalConfig.QuotedAmount" readonly />
                             </td>
 
                         </tr>
@@ -165,11 +165,25 @@
 <script>
 
     function calculateTotalAmmount(id) {
-        alert(id);
+        var price = $(`#quotedPrice_${id}`).val();
+        var quantity = $(`#quantity_${id}`).val();
+
+        var total = price * quantity;
+        $(`#quotedAmount_${id}`).val(total);
+
+
+        //alert("Unit" + $(`#unit_${id}`).val());
+        //alert("" + $(`#unit_${id}`).val());
+        //alert("" + $(`#quotedPrice_${id}`).val());
+        //alert(id);
     }
    
 
     $(document).ready(function (id) {
+        //function calculateTotalAmmount(id) {
+        //    alert($(`#quotedPrice_${id}`).val());
+        //    alert(id);
+        //}
         // $.noConflict();
         //function calculateTotalAmmount() {
         //    $("#quotedPrice").on("keyup", function (event) {

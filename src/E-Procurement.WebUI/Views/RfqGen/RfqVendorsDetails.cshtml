@@ -1,0 +1,83 @@
+﻿@model IEnumerable<E_Procurement.WebUI.Models.RfqApprovalModel.RFQGenerationViewModel>
+@{
+    ViewBag.Title = "Submitted RFQ by vendor";
+}
+
+
+<div class="card pd-20 pd-sm-40">
+    <h6 class="card-body-title">Submitted RFQ By Vendor(s)</h6>
+    <p class="mg-b-20 mg-sm-b-30"> List </p>
+
+    @*<div class="right">
+        <a asp-controller="RfqApprovalConfig" asp-action="Create" alt="Create" class="btn btn-primary"> Create Approval Config </a>
+    </div>*@
+    <div class="table-wrapper">
+        <table id="datatable1" class="table table-striped display responsive nowrap">
+            <thead>
+                <tr>
+                    <th class="wd-5p">S/N</th>
+                    <th class="wd-5p">RFQ No</th>
+                    <th class="wd-10p">RFQStatus</th>
+                    <th class="wd-25p">Vendor Name</th>
+                    <th class="wd-10p">Status</th>
+                    <th class="wd-25p">Contact</th>
+                    <th class="wd-25p">Amount</th>
+                    <th class="wd-10p"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    int i = 0;
+                }
+                @foreach (var rfq in Model)
+                {
+                <tr>
+                    <td>@(i = i + 1)</td>
+                    <td>@rfq.RFQId</td>
+                    <td>@rfq.RFQStatus</td>
+                    <td>@rfq.VendorName</td>
+                    <td>@rfq.VendorStatus</td>
+                    <td>@rfq.ContactName</td>
+                    <td>@rfq.TotalAmount</td>
+                    <td>
+                        <form id="@rfq.RFQId@rfq.VendorId" asp-action="RfqDetails" method="get">
+                            <input type="hidden" name="id" value="@rfq.RFQId" />
+                            <input type="hidden" name="VendorId" value="@rfq.VendorId" />
+                            <button type="submit" class="btn btn-primary btn-icon"><div><i class="fa fa-pencil"></i></div></button>
+                        </form>
+                        </td>
+                   
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div><!-- table-wrapper -->
+</div><!-- card -->
+
+<script src="/lib/jquery/jquery.js"></script>
+<script src="/lib/datatables/jquery.dataTables.js"></script>
+<script src="/lib/datatables-responsive/dataTables.responsive.js"></script>
+<script src="../lib/select2/js/select2.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+       // $.noConflict();
+        $(function () {
+            'use strict';
+           
+            // for all datatable
+            $('#datatable1').DataTable({
+                responsive: true,
+                language: {
+                    searchPlaceholder: 'Search...',
+                    sSearch: '',
+                    lengthMenu: '_MENU_ items/page',
+                }
+            });
+            // Select2
+            $('.dataTables_length select').select2({ minimumResultsForSearch: Infinity });
+        });
+    });
+</script>
+
+
