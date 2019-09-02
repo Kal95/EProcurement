@@ -89,7 +89,7 @@ namespace E_Procurement.Repository.ReportRepo
         
         public IEnumerable<Vendor> GetVendors()
         {
-            return _context.Vendors.OrderByDescending(u => u.Id).ToList();
+            return _context.Vendors.Where(x => x.IsActive == true).OrderByDescending(u => u.Id).ToList();
         }
 
         public IEnumerable<VendorEvaluation> GetVendorEvaluation()
@@ -114,7 +114,7 @@ namespace E_Procurement.Repository.ReportRepo
         public List<Vendor> GetVendorsByCategory(RfqGenModel model)
         {
             var mapping = _context.VendorMappings.Where(u => u.VendorCategoryId == model.CategoryId).ToList();
-            var vendor = _context.Vendors.OrderByDescending(u => u.Id).ToList();
+            var vendor = _context.Vendors.Where(x => x.IsActive == true).OrderByDescending(u => u.Id).ToList();
 
             var vendorList = vendor.Where(a => mapping.Any(b => b.VendorID == a.Id));
             return vendorList.ToList();

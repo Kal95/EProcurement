@@ -110,8 +110,8 @@ namespace E_Procurement.Repository.VendoRepo
         public bool UpdateVendor(VendorModel model, out string Message)
         {
             var confirm4 = _context.VendorMappings.Where(u => u.VendorID == model.Id).Count();
-            var confirm5 = model.SelectedVendorCategories.Count();
-            var confirm = _context.Vendors.Where(x => x.VendorName == model.VendorName && x.IsActive == model.IsActive && confirm4 == confirm5).Count();
+            //var confirm5 = model.SelectedVendorCategories.Count();
+            var confirm = _context.Vendors.Where(x => x.VendorName == model.VendorName && x.IsActive == model.IsActive /*&& confirm4 == confirm5*/).Count();
 
             var oldEntry = _context.Vendors.Where(u => u.Id == model.Id).FirstOrDefault();
 
@@ -177,34 +177,36 @@ namespace E_Procurement.Repository.VendoRepo
                 {
                     oldEntry.TaxFilePath = model.TaxFilePath;
                 }
-                
 
-                foreach (var category in model.SelectedVendorCategories)
+                if (model.SelectedVendorCategories != null)
                 {
-                    var confirm2 = _context.VendorMappings.Where(u => u.VendorID == model.Id).Count();
-
-                    if (confirm2 == model.SelectedVendorCategories.Count())
+                    foreach (var category in model.SelectedVendorCategories)
                     {
-                        var oldEntry2 = _context.VendorMappings.Where(u => u.VendorID == model.Id).FirstOrDefault();
+                        var confirm2 = _context.VendorMappings.Where(u => u.VendorID == model.Id).Count();
 
-                        oldEntry2.VendorCategoryId = category;
-                        oldEntry2.VendorID = model.Id;
-
-                    }
-                    else if (confirm2 != model.SelectedVendorCategories.Count())
-                    {
-                        foreach (var category2 in _context.VendorMappings.Where(u => u.VendorID == model.Id /*&& u.VendorCategoryId != category*/))
+                        if (confirm2 == model.SelectedVendorCategories.Count())
                         {
-                            _context.VendorMappings.Remove(category2);
+                            var oldEntry2 = _context.VendorMappings.Where(u => u.VendorID == model.Id).FirstOrDefault();
+
+                            oldEntry2.VendorCategoryId = category;
+                            oldEntry2.VendorID = model.Id;
 
                         }
-                        VendorMapping mapping = new VendorMapping();
-                        mapping.VendorCategoryId = category;
-                        mapping.VendorID = oldEntry.Id;
-                        oldEntry.VendorMapping.Add(mapping);
+                        else if (confirm2 != model.SelectedVendorCategories.Count())
+                        {
+                            foreach (var category2 in _context.VendorMappings.Where(u => u.VendorID == model.Id /*&& u.VendorCategoryId != category*/))
+                            {
+                                _context.VendorMappings.Remove(category2);
+
+                            }
+                            VendorMapping mapping = new VendorMapping();
+                            mapping.VendorCategoryId = category;
+                            mapping.VendorID = oldEntry.Id;
+                            oldEntry.VendorMapping.Add(mapping);
+
+                        }
 
                     }
-
                 }
 
                 _context.SaveChanges();

@@ -17,5 +17,6 @@ namespace E_Procurement.Data.Entity
         public string ItemDescription { get; set; }
         public string RFQTitle { get; set; }
         public string RFQBody { get; set; }
+        public string RFQCondition { get; set; }
     }
 }

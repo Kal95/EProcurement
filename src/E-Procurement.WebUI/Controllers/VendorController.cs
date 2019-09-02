@@ -218,13 +218,13 @@ namespace E_Procurement.WebUI.Controllers
         {
 
 
-            var vendorCategory = _vendorRepository.GetItemCategory().ToList();
+            var vendorCategory = _vendorRepository.GetItemCategory().Where(x => x.IsActive == true).ToList();
 
-            var country = _countryRepository.GetCountries().ToList();
+            var country = _countryRepository.GetCountries().Where(x => x.IsActive == true).ToList();
 
-            var state = _stateRepository.GetStates().ToList();
+            var state = _stateRepository.GetStates().Where(x => x.IsActive == true).ToList();
 
-            var bank = _bankRepository.GetBanks().ToList();
+            var bank = _bankRepository.GetBanks().Where(x => x.IsActive == true).ToList();
 
 
             //var vendor = _vendorRepository.GetVendors().Where(u => u.Id == Model.VendorId).FirstOrDefault();
@@ -240,7 +240,7 @@ namespace E_Procurement.WebUI.Controllers
                 {
                     Value = x.Id.ToString(),
                     Text = x.CategoryName,
-                    Selected = true
+                    Selected = false
                 });
             }
             else 
@@ -469,13 +469,13 @@ namespace E_Procurement.WebUI.Controllers
                         if (status == true)
                         {
 
-                            Alert("Vendor Updated Successfully", NotificationType.success);
+                            Alert("Record Updated Successfully", NotificationType.success);
                         }
 
                         else
                         {
-                            Alert("This Vendor Already Exists", NotificationType.info);
-                            return RedirectToAction("Index", "Vendor");
+                            Alert("This Record Already Exists", NotificationType.info);
+                            return RedirectToAction("Index", "Home");
                         }
 
                         return RedirectToAction("Index", "Home");

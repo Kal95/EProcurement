@@ -94,6 +94,7 @@ namespace E_Procurement.Repository.RFQGenRepo
                         ItemDescription = x.S.P.B,
                         RFQTitle = model.RFQTitle,
                         RFQBody = model.RFQBody,
+                        RFQCondition = model.RFQCondition,
                         RFQId = rfq.Id,
                         //IsActive = true,
                         UpdatedBy = model.CreatedBy,
@@ -314,7 +315,7 @@ namespace E_Procurement.Repository.RFQGenRepo
                 HttpResponseMessage response = client.GetAsync("/api/item/getitem/" + CategoryId).Result;
                 string stringData = response.Content.ReadAsStringAsync().Result;
                 List<RfqGenModel> data = JsonConvert.DeserializeObject<List<RfqGenModel>>(stringData);
-                return data.ToList();
+                return data.Where(x => x.IsActive == true).ToList();
             }
         }
         public List<RfqGenModel> GetItemCategory()
@@ -329,20 +330,20 @@ namespace E_Procurement.Repository.RFQGenRepo
                 HttpResponseMessage response = client.GetAsync("/api/item/getcategory/").Result;
                 string stringData = response.Content.ReadAsStringAsync().Result;
                 List<RfqGenModel> data = JsonConvert.DeserializeObject<List<RfqGenModel>>(stringData);
-                return data.ToList();
+                return data.Where(x => x.IsActive == true).ToList();
             }
         }
 
         public List<Vendor> GetVendors(RfqGenModel model)
         {
             var mapping = _context.VendorMappings.Where(u => u.VendorCategoryId == model.CategoryId).ToList();
-            var vendor = _context.Vendors.OrderByDescending(u => u.Id).ToList();
+            var vendor = _context.Vendors.Where(x => x.IsActive == true).OrderByDescending(u => u.Id).ToList();
 
             var vendorList = vendor.Where(a => mapping.Any(b => b.VendorID == a.Id));
             return vendorList.ToList();
         }
 
-        public List<RFQGenerationModel> GetRfqGen()
+        public List<RfqGenModel> GetRfqGen()
         {
             var ven = _context.Vendors.ToList();
             
@@ -366,7 +367,7 @@ namespace E_Procurement.Repository.RFQGenRepo
             var query = (/*from rfqDetails in _context.RfqDetails*/
                          from rfq in _context.RfqGenerations /*on rfqDetails.RFQId equals rfq.Id*/
                            
-                         select new RFQGenerationModel()
+                         select new RfqGenModel()
                          {
                              //QuotedAmount = rfqDetails.QuotedAmount,
                              //QuotedQuantity = rfqDetails.QuotedQuantity,
@@ -374,7 +375,7 @@ namespace E_Procurement.Repository.RFQGenRepo
                              ProjectId = rfq.ProjectId,
                              RequisitionId = rfq.RequisitionId,
                              Reference = rfq.Reference,
-                             Description = string.Join(", ", desList.Where(u => u.RfqId == rfq.Id).Select (u=> u.ItemName)),
+                             Item = string.Join(", ", desList.Where(u => u.RfqId == rfq.Id).Select (u=> u.ItemName)),
                              VendorName = string.Join(", ", vendList.Where(a => a.RfqId == rfq.Id).Select(u => u.VendorName)),
                              StartDate = rfq.StartDate,
                              EndDate = rfq.EndDate,

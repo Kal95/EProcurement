@@ -7,7 +7,6 @@
     ViewBag.FavIcon = "fa fa-street-view";
 }
 
-
 <!-- page section -->
 <div class="row row-sm mg-t-20">
     <div class="col-xl-12">
@@ -46,6 +45,7 @@
                         </div>
                         
                         <div class="row mg-t-20">
+                            
                             <div class="col-md-7" style="margin-top:10px">
                                 <label for="ItemList">Item:</label>
                                 <table style="width:500px; height:40px" id="example" class="table table-hover table-striped table-bordered">
@@ -60,25 +60,27 @@
                                     <tbody>
                                         @foreach (var item in Model.ItemList)
                                         {
+                                            @*int i = 0; i < @item; i++;*@
                                             <tr>
                                                 <td>
-                                                    <input type="checkbox" @Model.ItemList value="@item.Value" checked="checked" name="SelectedItems" id="@item.Value" />
+                                                    <input type="checkbox" @Model.ItemList value="@item.Value" checked="checked" name="SelectedItems" id="myInput_@item.Value" onclick="myFunction(@item.Value)"/>
                                                 </td>
                                                 <td>
-                                                    <label for="@item.Text">@item.Text</label>
+                                                    <label for="@item.Value">@item.Text</label>
 
-                                                    <input type="hidden" id="@item.Value" />
+                                                    @*<input type="hidden" id="@item.Value" />*@
                                                 </td>
 
                                                 <td>
                                                     <div class="">
-                                                        @Html.TextAreaFor(model => model.Descriptions, htmlAttributes: new { id = "Descriptions", @style = "width:270px; height:40px", @class = "form-control", @type = "text", required = "required" })
+                                                        @*<input asp-for="Descriptions" type="text" class="form-control" id = "Descriptions_@item.Value", placeholder="Enter Permission Code" required>*@
+                                                        @Html.TextAreaFor(model => model.Descriptions, htmlAttributes: new { id = "Descriptions_" + @item.Value, @style = "width:270px; height:40px", @class = "form-control", @type = "text", required = "required" })
                                                         @*@Html.ValidationMessageFor(model => model.Descriptions, "", new { @class = "text-danger" })*@
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div class="">
-                                                        @Html.TextBoxFor(model => model.Quantities, htmlAttributes: new { id = "Quantities", @style = "width:60px; height:40px", @class = "form-control", @type = "text", required = "required" })
+                                                        @Html.TextBoxFor(model => model.Quantities, htmlAttributes: new { id = "Quantities_"+ @item.Value, @style = "width:60px; height:40px", @class = "form-control", @type = "text", required = "required" })
                                                         @*@Html.ValidationMessageFor(model => model.Quantities, "", new { @class = "text-danger" })*@
                                                     </div>
                                                 </td>
@@ -124,6 +126,11 @@
                         <div class="row mg-t-20" style="margin-top:30px">
                             <label for="RFQBody">RFQ Body:</label>
                             @Html.TextAreaFor(model => model.RFQBody, htmlAttributes: new { id = "RFQBody", @style = "width:450px; height:80px", @class = "form-control", @type = "text", required = "required" })
+
+                        </div>
+                        <div class="row mg-t-20" style="margin-top:30px">
+                            <label for="RFQCondition">RFQ Condition:</label>
+                            @Html.TextAreaFor(model => model.RFQCondition, htmlAttributes: new { id = "RFQCondition", @style = "width:450px; height:80px", @class = "form-control", @type = "text", required = "required" })
 
                         </div>
                     </div>
@@ -184,6 +191,24 @@
 
     });
 
+    function myFunction(id) {
+      
+        //alert(id);
+       
+        if ($(`#myInput_${id}`).prop('checked')) {
+            $(`#Descriptions_${id}`).show();
+            $(`#Quantities_${id}`).show();
+        }
+        else {
+            $(`#Descriptions_${id}`).attr("disabled", "");
+            $(`#Quantities_${id}`).attr("disabled", "");
+            $(`#Descriptions_${id}`).prop('required', false);
+            $(`#Quantities_${id}`).prop('required', false);
+            $(`#Descriptions_${id}`).hide();
+            $(`#Quantities_${id}`).hide();
+        }
+      
+    }
    
 </script>
 

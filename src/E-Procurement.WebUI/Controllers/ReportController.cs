@@ -634,7 +634,7 @@ namespace E_Procurement.WebUI.Controllers
             model2.CreatedDate = rfq.CreatedDate;
             model2.RFQTitle = RFQ.RFQTitle.ToUpper();
             model2.RFQBody = RFQ.RFQBody;
-
+            model2.RFQCondition = RFQ.RFQCondition;
 
             List<RFQDetailsModel> rfqModel = new List<RFQDetailsModel>();
             var RFQList = _reportRepository.GetRFQDetails().Where(u => u.RFQId == Model.RfqId && u.VendorId == vendor.Id).ToList();

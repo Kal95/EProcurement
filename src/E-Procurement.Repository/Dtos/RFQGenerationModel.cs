@@ -50,6 +50,7 @@ namespace E_Procurement.Repository.Dtos
             public string GRNUploadedBy { get; set; }
             public string RFQTitle { get; set; }
             public string RFQBody { get; set; }
+            public string RFQCondition { get; set; }
 
             public string POTitle { get; set; }
             public string POPreamble { get; set; }

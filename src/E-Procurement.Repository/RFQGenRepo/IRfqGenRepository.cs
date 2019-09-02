@@ -10,7 +10,7 @@ namespace E_Procurement.Repository.RFQGenRepo
 {
     public interface IRfqGenRepository : IDependencyRegister
     {
-        List<RFQGenerationModel> GetRfqGen();
+        List<RfqGenModel> GetRfqGen();
         bool CreateRfqGen(RfqGenModel model, out string Message);
         bool UpdateRfqGen(RfqGenModel model, out string Message);
         List<Vendor> GetVendors(RfqGenModel model);

@@ -1,5 +1,10 @@
 ﻿@model E_Procurement.Repository.VendoRepo.VendorModel
 
+@using Microsoft.AspNetCore.Identity
+@using E_Procurement.Data.Entity
+
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
 
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -127,120 +132,122 @@
                         <div class="row mg-t-20">
                             <div class="col-md-3" style="margin-top:10px">
                                 <label for="MemorandumOfAssoociation">Memorandum Of Assoociation:</label>
-                                <input type="file" id="MemorandumOfAssoociation" name="MemorandumOfAssoociation" class="form-control" accept=".jpg, .jpeg, .png"  style="width:220px; height:40px" />
+                                <input type="file" id="MemorandumOfAssoociation" name="MemorandumOfAssoociation" class="form-control" accept=".jpg, .jpeg, .png" style="width:220px; height:40px" />
                                 @Html.ValidationMessageFor(model => model.MemorandumOfAssoociation, "", new { @class = "text-danger" })
                             </div>
                             <div class="col-md-3" style="margin-top:10px">
                                 <label for="BankReference">Bank Reference Letter:</label>
-                                <input type="file" id="BankReference" name="BankReference" class="form-control" accept=".jpg, .jpeg, .png"  style="width:220px; height:40px" />
+                                <input type="file" id="BankReference" name="BankReference" class="form-control" accept=".jpg, .jpeg, .png" style="width:220px; height:40px" />
                                 @Html.ValidationMessageFor(model => model.BankReference, "", new { @class = "text-danger" })
                             </div>
                             <div class="col-md-3" style="margin-top:10px">
                                 <label for="CertificateOfVAT">Certificate Of VAT Registration:</label>
-                                <input type="file" id="CertificateOfVAT" name="CertificateOfVAT" class="form-control" accept=".jpg, .jpeg, .png"  style="width:220px; height:40px" />
+                                <input type="file" id="CertificateOfVAT" name="CertificateOfVAT" class="form-control" accept=".jpg, .jpeg, .png" style="width:220px; height:40px" />
                                 @Html.ValidationMessageFor(model => model.CertificateOfVAT, "", new { @class = "text-danger" })
                             </div>
                             <div class="col-md-3" style="margin-top:10px">
                                 <label for="Reference">Reference:</label>
-                                <input type="file" id="Reference" name="Reference" class="form-control" accept=".jpg, .jpeg, .png"  style="width:220px; height:40px" />
+                                <input type="file" id="Reference" name="Reference" class="form-control" accept=".jpg, .jpeg, .png" style="width:220px; height:40px" />
                                 @Html.ValidationMessageFor(model => model.Reference, "", new { @class = "text-danger" })
                             </div>
                         </div>
                         <div class="row mg-t-20">
                             <div class="col-md-3" style="margin-top:10px">
                                 <label for="TaxClearance">Tax Clearance Certificate:</label>
-                                <input type="file" id="TaxClearance" name="TaxClearance" class="form-control" accept=".jpg, .jpeg, .png"  style="width:220px; height:40px" />
+                                <input type="file" id="TaxClearance" name="TaxClearance" class="form-control" accept=".jpg, .jpeg, .png" style="width:220px; height:40px" />
                                 @Html.ValidationMessageFor(model => model.TaxClearance, "", new { @class = "text-danger" })
                             </div>
                             <div class="col-md-3" style="margin-top:10px">
                                 <label for="ParticularsOfDirectors">Particulars Of Directors:</label>
-                                <input type="file" id="ParticularsOfDirectors" name="ParticularsOfDirectors" class="form-control" accept=".jpg, .jpeg, .png"  style="width:220px; height:40px" />
+                                <input type="file" id="ParticularsOfDirectors" name="ParticularsOfDirectors" class="form-control" accept=".jpg, .jpeg, .png" style="width:220px; height:40px" />
                                 @Html.ValidationMessageFor(model => model.ParticularsOfDirectors, "", new { @class = "text-danger" })
                             </div>
                             <div class="col-md-3" style="margin-top:10px">
                                 <label for="ParticularsOfShareholders">Particulars Of Shareholders:</label>
-                                <input type="file" id="ParticularsOfShareholders" name="ParticularsOfShareholders" class="form-control" accept=".jpg, .jpeg, .png"  style="width:220px; height:40px" />
+                                <input type="file" id="ParticularsOfShareholders" name="ParticularsOfShareholders" class="form-control" accept=".jpg, .jpeg, .png" style="width:220px; height:40px" />
                                 @Html.ValidationMessageFor(model => model.ParticularsOfShareholders, "", new { @class = "text-danger" })
                             </div>
                             <div class="col-md-3" style="margin-top:10px">
                                 <label for="NoticeOfSituationAddress">Notice Of Situation Address:</label>
-                                <input type="file" id="NoticeOfSituationAddress" name="NoticeOfSituationAddress" class="form-control" accept=".jpg, .jpeg, .png"  style="width:220px; height:40px" />
+                                <input type="file" id="NoticeOfSituationAddress" name="NoticeOfSituationAddress" class="form-control" accept=".jpg, .jpeg, .png" style="width:220px; height:40px" />
                                 @Html.ValidationMessageFor(model => model.NoticeOfSituationAddress, "", new { @class = "text-danger" })
                             </div>
                         </div>
 
                     </div>
-                    
-                    <div class="col-md-3" style="margin-top:10px">
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <div class="col-md-3" style="margin-top:10px">
 
-                        <div class="row mg-t-20">
-                            <div class="col-md-6" style="margin-top:10px">
-                                <label for="AatAmount">Select Categories:</label>
-                                @if (Model.CurrentCategories.Equals(0))
-                                {
-                                    @foreach (var category in Model.VendorCategoryList)
+                            <div class="row mg-t-20">
+                                <div class="col-md-6" style="margin-top:10px">
+                                    <label for="AatAmount">Select Categories:</label>
+                                    @if (Model.CurrentCategories.Equals(0))
                                     {
-                                        //foreach (var selected in Model.SelectedVendorCategories.Where(u => u.ToString() == category.Value))
-                                        //{
+                                        @foreach (var category in Model.VendorCategoryList)
+                                        {
+                                            //foreach (var selected in Model.SelectedVendorCategories.Where(u => u.ToString() == category.Value))
+                                            //{
 
-                                        <div class="form-horizontal" style="width:450px; height:20px; margin-top:5px">
-                                            <input type="checkbox" value="@category.Value" checked="@category.Selected" name="SelectedVendorCategories" id="@category.Value" />
-                                            <label for="@category.Text">@category.Text</label>
-                                            <input type="hidden" id="@category.Value" />
-                                        </div>
+                                            <div class="form-horizontal" style="width:450px; height:20px; margin-top:5px">
+                                                <input type="checkbox" value="@category.Value" checked="@category.Selected" name="SelectedVendorCategories" id="@category.Value" />
+                                                <label for="@category.Text">@category.Text</label>
+                                                <input type="hidden" id="@category.Value" />
+                                            </div>
 
+                                        }
                                     }
-                                }
-                                else
-                                {
-                                    @foreach (var category in Model.CurrentVendorCategoryList)
+                                    else
                                     {
-                                        //foreach (var selected in Model.SelectedVendorCategories.Where(u => u.ToString() == category.Value))
-                                        //{
+                                        @foreach (var category in Model.CurrentVendorCategoryList)
+                                        {
+                                            //foreach (var selected in Model.SelectedVendorCategories.Where(u => u.ToString() == category.Value))
+                                            //{
 
-                                        <div class="form-horizontal" style="width:450px; height:20px; margin-top:5px">
-                                            <input type="checkbox" value="@category.Value" checked="@category.Selected" name="SelectedVendorCategories" id="@category.Value" />
-                                            <label for="@category.Text">@category.Text</label>
-                                            <input type="hidden" id="@category.Value" />
-                                        </div>
+                                            <div class="form-horizontal" style="width:450px; height:20px; margin-top:5px">
+                                                <input type="checkbox" value="@category.Value" checked="@category.Selected" name="SelectedVendorCategories" id="@category.Value" />
+                                                <label for="@category.Text">@category.Text</label>
+                                                <input type="hidden" id="@category.Value" />
+                                            </div>
+                                        }
+                                        @foreach (var category in Model.VendorCategoryList)
+                                        {
+                                            //foreach (var selected in Model.SelectedVendorCategories.Where(u => u.ToString() == category.Value))
+                                            //{
+
+                                            <div class="form-horizontal" style="width:450px; height:20px; margin-top:5px">
+                                                <input type="checkbox" value="@category.Value" checked="@category.Selected" name="SelectedVendorCategories" id="@category.Value" />
+                                                <label for="@category.Text">@category.Text</label>
+                                                <input type="hidden" id="@category.Value" />
+                                            </div>
+
+                                        }
                                     }
-                                    @foreach (var category in Model.VendorCategoryList)
-                                    {
-                                        //foreach (var selected in Model.SelectedVendorCategories.Where(u => u.ToString() == category.Value))
-                                        //{
-
-                                        <div class="form-horizontal" style="width:450px; height:20px; margin-top:5px">
-                                            <input type="checkbox" value="@category.Value" checked="@category.Selected" name="SelectedVendorCategories" id="@category.Value" />
-                                            <label for="@category.Text">@category.Text</label>
-                                            <input type="hidden" id="@category.Value" />
-                                        </div>
-
-                                    }
-                                }
-                                <br />
-                                @*<hr style="border-width:3px"/>*@
-                                <br />
-                                <div class="form-horizontal" style="width:450px; height:20px; margin-top:5px">
-                                    @Html.CheckBoxFor(model => model.IsActive, new { @*Style = "opacity:10; left:0px;",*@htmlAttributes = new { id = "active", @type = "checkbox", @class = "form-control" } })
-                                    <label for="IsActive">Is Active?</label>
-                                    @Html.ValidationMessageFor(model => model.IsActive, "", new { @class = "text-danger" })
+                                    <br />
+                                    @*<hr style="border-width:3px"/>*@
+                                    <br />
+                                    <div class="form-horizontal" style="width:450px; height:20px; margin-top:5px">
+                                        @Html.CheckBoxFor(model => model.IsActive, new { @*Style = "opacity:10; left:0px;",*@htmlAttributes = new { id = "active", @type = "checkbox", @class = "form-control" } })
+                                        <label for="IsActive">Is Active?</label>
+                                        @Html.ValidationMessageFor(model => model.IsActive, "", new { @class = "text-danger" })
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                    }
                     </div>
+                <br />
+                <!-- Button -->
+                <div class="form-group">
+                    <label class="col-md-8 control-label"></label>
+                    <div class="col-md-4">
+
+                        <button type="submit" class="btn btn-info mg-r-5"><span class="glyphicon glyphicon-send"></span>  Submit</button>
+
+                        <a href="@Url.Action("Index","Vendor")" class="btn btn-secondary"><span class="glyphicon glyphicon-remove"></span> Back</a>
+                    </div>
+
                 </div>
-                    <br />
-                    <!-- Button -->
-                    <div class="form-group">
-                        <label class="col-md-8 control-label"></label>
-                        <div class="col-md-4">
-
-                            <button type="submit" class="btn btn-info mg-r-5"><span class="glyphicon glyphicon-send"></span>  Submit</button>
-
-                            <a href="@Url.Action("Index","Vendor")" class="btn btn-secondary"><span class="glyphicon glyphicon-remove"></span> Back</a>
-                        </div>
-
-                    </div>
 
             </form>
         </div>
