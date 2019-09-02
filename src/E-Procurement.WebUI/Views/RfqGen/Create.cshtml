@@ -198,6 +198,10 @@
         if ($(`#myInput_${id}`).prop('checked')) {
             $(`#Descriptions_${id}`).show();
             $(`#Quantities_${id}`).show();
+            $(`#Descriptions_${id}`).attr("disabled", false);
+            $(`#Quantities_${id}`).attr("disabled", false);
+            $(`#Descriptions_${id}`).prop('required', true);
+            $(`#Quantities_${id}`).prop('required', true);
         }
         else {
             $(`#Descriptions_${id}`).attr("disabled", "");
