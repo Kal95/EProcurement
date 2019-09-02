@@ -68,7 +68,7 @@ namespace E_Procurement.WebUI.Controllers
             return View(QuoteDetails);
         }
          
-        public IActionResult Update(int[] DetailsId, decimal[] agreedAmount)
+        public IActionResult Update(int[] DetailsId, decimal[] quotedPrice, decimal[] quotedAmount)
         {
             try
             {
@@ -84,7 +84,7 @@ namespace E_Procurement.WebUI.Controllers
                         return RedirectToAction("Index", "QuoteSending");
                     }
 
-                    var status = _quoteSendingRepository.UpdateQuote(DetailsId, agreedAmount, out message);
+                    var status = _quoteSendingRepository.UpdateQuote(DetailsId, quotedPrice, quotedAmount, out message);
                     if(status)
                     {
                         Alert("Quote updated successfully.", NotificationType.success);

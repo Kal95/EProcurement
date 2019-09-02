@@ -1,7 +1,7 @@
 ﻿@*@model E_Procurement.WebUI.Models.RfqApprovalModel.RFQGenerationViewModel*@
 @model E_Procurement.Repository.Dtos.RFQGenerationModel
 @{
-    ViewBag.Title = "RFQ Approval Detials";
+    ViewBag.Title = "RFQ Details";
 }
 
 
@@ -10,7 +10,7 @@
 <div class="row row-sm mg-t-20">
     <div class="col-xl-12">
         <div class="card pd-20 pd-sm-40 form-layout form-layout-4">
-            <h6 class="card-body-title">RFQ Approval Details </h6>
+            <h6 class="card-body-title">Submitted RFQ Vendor Details </h6>
             <p class="mg-b-20 mg-sm-b-30"> RFQ INFORMATION </p>
 
             <div class="row mg-t-20">
@@ -75,7 +75,7 @@
 
 
 <div class="card pd-20 pd-sm-40">
-    <h6 class="card-body-title">RFQ Details</h6>
+    <h6 class="card-body-title">Submitted RFQ Item Details</h6>
     <p class="mg-b-20 mg-sm-b-30"> List </p>
 
     @*<div class="right">
@@ -122,16 +122,8 @@
             <input asp-for="RFQStatus" type="hidden" />
             <input asp-for="VendorId" type="hidden" />
             <input asp-for="TotalAmount" type="hidden" />
-            <div class="row mg-t-20">
-                <label class="col-sm-1 form-control-label"><b> Comments : </b></label>
-                <div class="col-sm-11 mg-t-10 mg-sm-t-0">
-                    <input asp-for="Comments" type="text" class="form-control" placeholder="Add your comments.">
-                </div>
-            </div><!-- row -->
-            <div class="form-layout-footer mg-t-30">
-                <button type="submit" class="btn btn-info mg-r-5">Send For Approval</button>
-                @*<button class="btn btn-secondary">Cancel</button>*@
-            </div><!-- form-layout-footer -->
+          
+            
         </form>
 
     </div><!-- table-wrapper -->

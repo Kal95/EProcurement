@@ -16,6 +16,7 @@
     <Compile Remove="Migrations\20190620122853_EmailLog.cs" />
     <Compile Remove="Migrations\20190626133004_POStatus.cs" />
     <Compile Remove="Migrations\20190626133004_POStatus.Designer.cs" />
+    <Compile Remove="Migrations\20190829114533_ItemDetailsPrice.cs" />
   </ItemGroup>
 
   <ItemGroup>

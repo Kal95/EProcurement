@@ -96,11 +96,12 @@
                 <thead>
                     <tr>
                         <th class="wd-5p">S/N</th>
-                        <th class="wd-5p">Id</th>
+                        @*<th class="wd-5p">Id</th>*@
                         <th class="wd-5p">Item</th>
+                        <th class="wd-5p">Description</th>
                         <th class="wd-5p">Quantity</th>
+                        <th class="wd-5p">Unit Price</th>
                         <th class="wd-5p">QuotedAmount</th>
-                        <th class="wd-5p">AgreedAmount</th>
 
                     </tr>
                 </thead>
@@ -119,12 +120,12 @@
                     {
 
                         <tr>
-                            <td>@(i = i + 1)</td>
+                            <td>@(i + 1)</td>
 
-                            <td>@approvalConfig.DetailsId</td>
+                            @*<td>@approvalConfig.DetailsId</td>*@
                             <td>@approvalConfig.ItemName</td>
+                            <td>@approvalConfig.Description</td>
                             <td>@approvalConfig.QuotedQuantity</td>
-                            <td>@approvalConfig.QuotedAmount</td>
 
                             @*<input type="hidden" name="@Model.Id" />*@
 
@@ -133,13 +134,17 @@
                             @Html.Hidden("DetailsId", approvalConfig.DetailsId)
 
                             @*@Html.HiddenFor(model => model.RFQDetails.First().Id)*@
-
+                            <input type="hidden" id="quantity_@(i)" value="@approvalConfig.QuotedQuantity" />
                             <td>
-                                <input type="text" id="agreedAmount" name="agreedAmount" class="form-control" />
+                                <input type="number" id="quotedPrice_@(i)" name="quotedPrice" class="form-control" value="@approvalConfig.QuotedPrice" onKeyUp="calculateTotalAmmount(@(i));" required />
+                            </td>
+                            <td>
+                                <input type="number" id="quotedAmount_@(i)" name="quotedAmount" class="form-control" value="@approvalConfig.QuotedAmount" readonly />
                             </td>
 
                         </tr>
-                }
+                            i++;
+                        }
                     </tbody>
             </table>
             <div asp-validation-summary="All" class="text-danger"></div>
@@ -158,8 +163,46 @@
 <script src="../lib/select2/js/select2.min.js"></script>
 
 <script>
-    $(document).ready(function () {
+
+    function calculateTotalAmmount(id) {
+        var price = $(`#quotedPrice_${id}`).val();
+        var quantity = $(`#quantity_${id}`).val();
+
+        var total = price * quantity;
+        $(`#quotedAmount_${id}`).val(total);
+
+
+        //alert("Unit" + $(`#unit_${id}`).val());
+        //alert("" + $(`#unit_${id}`).val());
+        //alert("" + $(`#quotedPrice_${id}`).val());
+        //alert(id);
+    }
+   
+
+    $(document).ready(function (id) {
+        //function calculateTotalAmmount(id) {
+        //    alert($(`#quotedPrice_${id}`).val());
+        //    alert(id);
+        //}
         // $.noConflict();
+        //function calculateTotalAmmount() {
+        //    $("#quotedPrice").on("keyup", function (event) {
+        //        var input = $("#Amount").val();
+        //        // 2
+        //        var input = input.replace(/[\D\s\._\-]+/g, "");
+        //        // 3
+        //        input = input ? parseInt(input, 10) : 0;
+
+        //        // 4
+        //        $("#Amount").val(function () {
+        //            return (input === 0) ? "" : input.toLocaleString("en-US");
+        //        });
+
+        //    });
+        //}
+
+
+
         $(function () {
             'use strict';
 

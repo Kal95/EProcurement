@@ -13,6 +13,8 @@ namespace E_Procurement.Repository.Dtos
         public string ItemName { get; set; }
         public int QuotedQuantity { get; set; }
         public int AgreedQuantity { get; set; }
+        public decimal QuotedPrice { get; set; }
+        public decimal AgreedPrice { get; set; }
         public decimal QuotedAmount { get; set; }
         public decimal AgreedAmount { get; set; }
         public string Description { get; set; }

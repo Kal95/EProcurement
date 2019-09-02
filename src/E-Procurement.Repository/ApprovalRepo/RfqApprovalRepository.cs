@@ -210,14 +210,67 @@ namespace E_Procurement.Repository.RfqApprovalConfigRepository
             return  query;
         }
 
+        public async Task<IEnumerable<RFQGenerationModel>> GetRFQInPipelineAsync()
+        {
+
+
+            var query = await (from rfq in _context.RfqGenerations
+                               join rfqDetails in _context.RfqDetails on rfq.Id equals rfqDetails.RFQId
+                               join vend in _context.Vendors on rfqDetails.VendorId equals vend.Id
+                               where (rfq.EndDate >= DateTime.Now) && rfq.RFQStatus == null && rfqDetails.QuotedAmount > 0
+                               orderby rfq.Id, rfq.EndDate descending
+                               select new RFQGenerationModel()
+                               {
+                                   RFQId = rfq.Id,
+                                   ProjectId = rfq.ProjectId,
+                                   RequisitionId = rfq.RequisitionId,
+                                   Reference = rfq.Reference,
+                                   Description = rfq.Description,
+                                   StartDate = rfq.StartDate,
+                                   EndDate = rfq.EndDate,
+                                   RFQStatus = rfq.RFQStatus
+                               }).Distinct().ToListAsync();
+
+
+            return query;
+        }
+        public async Task<IEnumerable<RFQGenerationModel>> GetSubmittedRFQByVendorsAsync(int RFQId)
+        {
+
+            var query = await (from rfq in _context.RfqGenerations
+                               join rfqDetails in _context.RfqDetails on rfq.Id equals rfqDetails.RFQId
+                               join vend in _context.Vendors on rfqDetails.VendorId equals vend.Id
+                               where rfq.RFQStatus == null && rfq.Id == RFQId && rfqDetails.QuotedAmount > 0
+                               orderby rfq.Id, rfq.EndDate descending
+                               select new RFQGenerationModel()
+                               {
+                                   RFQId = rfq.Id,
+                                   ProjectId = rfq.ProjectId,
+                                   RequisitionId = rfq.RequisitionId,
+                                   Reference = rfq.Reference,
+                                   Description = rfq.Description,
+                                   StartDate = rfq.StartDate,
+                                   EndDate = rfq.EndDate,
+                                   RFQStatus = rfq.RFQStatus,
+                                   VendorId = vend.Id,
+                                   VendorName = vend.VendorName,
+                                   VendorAddress = vend.VendorAddress,
+                                   VendorStatus = vend.VendorStatus,
+                                   ContactName = vend.ContactName,
+                                   TotalAmount = _context.RfqDetails.Where(it => it.RFQId == rfq.Id && it.VendorId == rfqDetails.VendorId).Select(it => it.QuotedAmount).Sum()
+                               }).Distinct().ToListAsync();
+
+
+            return query;
+        }
+
         public async Task<IEnumerable<RFQGenerationModel>> GetRFQByVendorsAsync(int RFQId)
         {
 
             var query = await(from rfq in _context.RfqGenerations
                               join rfqDetails in _context.RfqDetails on rfq.Id equals rfqDetails.RFQId
                               join vend in _context.Vendors on rfqDetails.VendorId equals vend.Id
-                              where rfq.EndDate <= DateTime.Now && rfq.RFQStatus == null && rfq.Id == RFQId
-
+                              where rfq.RFQStatus == null && rfq.Id == RFQId 
                               orderby rfq.Id, rfq.EndDate descending
                               select new RFQGenerationModel()
                               {
@@ -235,7 +288,7 @@ namespace E_Procurement.Repository.RfqApprovalConfigRepository
                                   VendorStatus = vend.VendorStatus,
                                   ContactName = vend.ContactName,
                                   TotalAmount = _context.RfqDetails.Where(it => it.RFQId == rfq.Id && it.VendorId == rfqDetails.VendorId).Select(it => it.QuotedAmount).Sum()
-                              }).ToListAsync();
+                              }).Distinct().ToListAsync();
 
 
             return query;
@@ -248,7 +301,7 @@ namespace E_Procurement.Repository.RfqApprovalConfigRepository
             var query = await(from rfq in _context.RfqGenerations
                               join rfqDetails in _context.RfqDetails on rfq.Id equals rfqDetails.RFQId
                               join vend in _context.Vendors on rfqDetails.VendorId equals vend.Id
-                              where rfq.EndDate <= DateTime.Now && rfq.Id== RFQId && rfqDetails.VendorId == VendorId
+                              where rfq.Id== RFQId && rfqDetails.VendorId == VendorId
                               orderby rfq.Id, rfq.EndDate descending
                               select new RFQGenerationModel()
                               {
@@ -276,9 +329,11 @@ namespace E_Procurement.Repository.RfqApprovalConfigRepository
                                                         VendorId = item.VendorId, 
                                                         ItemId = item.ItemId,
                                                         ItemName = item.ItemName,
+                                                        Description = item.ItemDescription,
                                                         QuotedQuantity = item.QuotedQuantity,
-                                                        AgreedQuantity = item.AgreedQuantity, 
-                                                        QuotedAmount = item.QuotedAmount,
+                                                        AgreedQuantity = item.AgreedQuantity,
+                                                         QuotedPrice = item.QuotedPrice,
+                                                         QuotedAmount = item.QuotedAmount,
                                                         AgreedAmount = item.AgreedAmount
                                                      }
                  );

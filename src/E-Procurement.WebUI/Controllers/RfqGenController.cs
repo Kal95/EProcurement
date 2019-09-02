@@ -5,9 +5,11 @@ using System.Threading.Tasks;
 using Abp.Web.Mvc.Alerts;
 using AutoMapper;
 using E_Procurement.Data.Entity;
+using E_Procurement.Repository.ApprovalRepo;
 using E_Procurement.Repository.Dtos;
 using E_Procurement.Repository.RFQGenRepo;
 using E_Procurement.Repository.VendoRepo;
+using E_Procurement.WebUI.Models.RfqApprovalModel;
 using E_Procurement.WebUI.Models.RFQModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -22,13 +24,15 @@ namespace E_Procurement.WebUI.Controllers
         private readonly IRfqGenRepository _rfqGenRepository;
         private readonly IMapper _mapper;
         private readonly IVendorRepository _vendorRepository;
+        private readonly IRfqApprovalRepository _RfqApprovalRepository;
 
-        public RfqGenController(IRfqGenRepository rfqRepository, IMapper mapper,IVendorRepository vendorRepository)
+        public RfqGenController(IRfqGenRepository rfqRepository, IRfqApprovalRepository RfqApprovalRepository, IMapper mapper,IVendorRepository vendorRepository)
         {
             _rfqGenRepository = rfqRepository;
             _mapper = mapper;
            _vendorRepository = vendorRepository;
-    }
+            _RfqApprovalRepository = RfqApprovalRepository;
+        }
         // GET: RfqGen
         public ActionResult Index()
         {
@@ -271,6 +275,76 @@ namespace E_Procurement.WebUI.Controllers
             }
 
         }
+
+
+        #region "RFQ In Pipeline"
+
+
+        public async Task<IActionResult> RfqInProgress()
+        {
+            try { 
+                    var RfqApprovalList = await _RfqApprovalRepository.GetRFQInPipelineAsync();
+
+                    List<RFQGenerationViewModel> RfqApproval = _mapper.Map<List<RFQGenerationViewModel>>(RfqApprovalList);
+
+                    return View(RfqApproval);
+
+            }
+            catch (Exception)
+            {
+
+                    return View("Error");
+            }
+        }
+
+        public async Task<IActionResult> RfqVendorsDetails(int id)
+        {
+            try { 
+                var RfqApprovalDetails = await _RfqApprovalRepository.GetSubmittedRFQByVendorsAsync(id);
+
+
+
+                List<RFQGenerationViewModel> RfqApproval = _mapper.Map<List<RFQGenerationViewModel>>(RfqApprovalDetails);
+
+                if (RfqApproval == null)
+                {
+                    Alert("Could not load rfq details. Please, try again later.", NotificationType.error);
+                    return View();
+                }
+
+
+                return View(RfqApproval);
+            }
+            catch (Exception)
+            {
+
+                    return View("Error");
+            }
+        }
+        [HttpGet]
+        public async Task<IActionResult> RfqDetails(int id, int VendorId)
+        {
+            try { 
+                var RfqApprovalDetails = await _RfqApprovalRepository.GetRFQDetailsAsync(id, VendorId);
+
+           
+                if (RfqApprovalDetails == null)
+                {
+                    Alert("Could not load rfq details. Please, try again later.", NotificationType.error);
+                    return View();
+                }
+
+
+                return View(RfqApprovalDetails);
+            }
+            catch (Exception)
+            {
+
+                    return View("Error");
+            }
+        }
+
+        #endregion
     }
 
 }
