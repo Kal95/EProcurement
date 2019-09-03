@@ -163,7 +163,8 @@ namespace E_Procurement.Repository.RFQGenRepo
                     model2.RFQId = Convert.ToInt32(model.Reference.ToString());
                     model2.RFQTitle = model.RFQTitle.ToUpper();
                     model2.RFQBody = model.RFQBody;
-                   
+                    model2.RFQCondition = model.RFQCondition;
+
                     List<RFQDetailsModel> rFQDetails = new List<RFQDetailsModel>();
                     var itemV = GetItem(model.CategoryId).ToList();
                     var itemListV = itemV.Where(a => model.SelectedItems.Any(b => b == a.Id.ToString())).ToList();
