@@ -162,7 +162,7 @@ namespace E_Procurement.WebUI.Controllers
                         return RedirectToAction("Index");
                     }
                     Alert("RFQ Approval Error.", NotificationType.error);
-                    return View();
+                    return View(rfqApproval);
                 }
                 else
                 {
@@ -175,14 +175,14 @@ namespace E_Procurement.WebUI.Controllers
                         return RedirectToAction("PendingApproval");
                     }
                     Alert("RFQ Approval Error.", NotificationType.error);
-                    return View();
+                    return View(rfqApproval);
                 }
 
             }
             catch(Exception ex)
             {
                 Alert("An error encountered. Please try again later.", NotificationType.error);
-                return View();
+                return View(rfqApproval);
             }
 
         }

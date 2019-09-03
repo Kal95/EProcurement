@@ -43,13 +43,13 @@ namespace E_Procurement.Repository.RfqApprovalConfigRepository
                 using (var transaction = await _context.Database.BeginTransactionAsync(System.Data.IsolationLevel.ReadUncommitted))
                 {
                   
-                    var rfqLevel = _context.RfqApprovalConfigs.Where(x => x.ApprovalLevel == 1).First();
+                   // var rfqLevel = _context.RfqApprovalConfigs.Where(x => x.ApprovalLevel == 1).First();
+                    var rfqLevel = _context.RfqApprovalConfigs.ToList();
                     var rfq = _context.RfqGenerations.Where(x => x.Id == rFQApproval.RFQId).First();
 
                     //add to approval transactions
                     RFQApprovalTransactions rfqTransaction = new RFQApprovalTransactions
                     {
-                        ApprovalLevel = rfqLevel.ApprovalLevel,
                         RFQId = rFQApproval.RFQId,
                         VendorId = rFQApproval.VendorId,
                         Comments = rFQApproval.Comments
@@ -62,13 +62,21 @@ namespace E_Procurement.Repository.RfqApprovalConfigRepository
                     // add to approval status
                     RFQApprovalStatus rfqstatus = new RFQApprovalStatus
                     {
-                        CurrentApprovalLevel = rfqLevel.ApprovalLevel,
                         RFQId = rFQApproval.RFQId
                     };
+
+                    string approvalEmail = "";
                     if (rFQApproval.TotalAmount <= Convert.ToInt32(approvallimit))
                     {
+                        approvalEmail = rfqLevel.Where(x => x.ApprovalLevel == 2).First().Email;
                         rfqstatus.CurrentApprovalLevel = 2;
                         rfqTransaction.ApprovalLevel = 2;
+                    }
+                    else
+                    {
+                        approvalEmail = rfqLevel.Where(x => x.ApprovalLevel == 1).First().Email;
+                        rfqstatus.CurrentApprovalLevel = 1;
+                        rfqTransaction.ApprovalLevel = 1;
                     }
 
                     await _context.AddAsync(rfqstatus);
@@ -87,7 +95,7 @@ namespace E_Procurement.Repository.RfqApprovalConfigRepository
                     message += "</br>Regards";
 
                     _context.Update<RFQGeneration>(rfq);
-                    await _emailSender.SendEmailAsync(rfqLevel.Email, subject, message,"");
+                    await _emailSender.SendEmailAsync(approvalEmail, subject, message,"");
 
                     //await _context.SaveChangesAsync();
                     transaction.Commit();
@@ -101,12 +109,6 @@ namespace E_Procurement.Repository.RfqApprovalConfigRepository
             {
                 return false;
             }
-            // get approval level
-                
-
-
-
-
         }
 
         public async Task<bool> CreateRFQPendingApprovalAsync(RFQGenerationModel rFQApproval)
