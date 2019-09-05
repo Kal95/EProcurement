@@ -58,7 +58,7 @@ namespace E_Procurement.Repository.Utility
                     if (!string.IsNullOrWhiteSpace(n)) mm.To.Add(new MailAddress(n.Trim()));
                 }
                 mm.Sender = new MailAddress(_emailSettings.SenderName);
-                mm.From = new MailAddress(_emailSettings.Sender);
+                mm.From = new MailAddress(_emailSettings.SenderName);
                 mm.Subject = subject;
                 mm.Body = message;
 
@@ -172,7 +172,7 @@ namespace E_Procurement.Repository.Utility
                     if (!string.IsNullOrWhiteSpace(n)) mm.To.Add(new MailAddress(n.Trim()));
                 }
                 mm.Sender = new MailAddress(_emailSettings.SenderName);
-                mm.From = new MailAddress(_emailSettings.Sender);
+                mm.From = new MailAddress(_emailSettings.SenderName);
                 mm.Subject = subject;
                 mm.Body = message;
 
