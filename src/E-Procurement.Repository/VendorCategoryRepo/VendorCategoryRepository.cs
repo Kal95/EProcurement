@@ -143,7 +143,7 @@ namespace E_Procurement.Repository.VendorCategoryRepo
 
                 oldEntry.ItemName = model.ItemName;
 
-                oldEntry.IsActive = true;
+                oldEntry.IsActive = model.IsActive;
 
                 oldEntry.CreatedBy = model.CreatedBy;
 
