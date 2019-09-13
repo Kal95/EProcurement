@@ -17,6 +17,9 @@ namespace E_Procurement.Repository.RFQGenRepo
         List<RfqGenModel> GetItemCategory();
         List<RfqGenModel> GetItem(int CategoryId);
         List<Vendor> GetVendorDetails(RfqGenModel model);
+        bool CloseRfqGen(RfqGenModel model, out string Message);
+        bool ExtendRfqGen(RfqGenModel model, out string Message);
+        List<RFQApprovalTransactions> GetInitiatedRfq();
 
     }
 }

@@ -6,8 +6,8 @@
 <div class="row row-sm mg-t-20">
     <div class="col-xl-12">
         <div class="card pd-20 pd-sm-40 form-layout form-layout-4">
-            <h6 class="card-body-title">Users</h6>
-            <p class="mg-b-20 mg-sm-b-30"> Assign User to Role</p>
+            <h6 class="card-body-title">User To Role</h6>
+            <p class="mg-b-20 mg-sm-b-30"> Select a User  and Assign to a Role</p>
             <form role="form" method="post" asp-action="CreateUserRole">
                 <div asp-validation-summary="All" class="text-danger"></div>
                 <div class="row">
@@ -52,7 +52,7 @@
                 </div>
                 <div class="form-layout-footer mg-t-30">
                     <button class="btn btn-info mg-r-5">Submit</button>
-                    <a class="btn btn-secondary" asp-controller="Account" asp-action="Roles">Cancel</a>
+                    <a class="btn btn-secondary" asp-controller="Account" asp-action="AssignUserRole">Cancel</a>
                 </div><!-- form-layout-footer -->
             </form>
         </div><!-- card -->

@@ -48,7 +48,7 @@ namespace E_Procurement.WebUI.Controllers
 
             var loggedInVendor = _vendorRepository.GetVendors().Where(u => u.UserId == userId).Select(u => u.Id).FirstOrDefault();
 
-            
+
             if (User.IsInRole("Vendor User") && !loggedInVendor.Equals(null))
             {
                 var categories = _vendorRepository.GetItemCategory().ToList();
@@ -67,14 +67,18 @@ namespace E_Procurement.WebUI.Controllers
                 return View(dashboard);
 
             }
+            else if (User.IsInRole("Approval"))
+            {
+                return RedirectToAction("PendingApproval", "RfqApproval");
+            }
             else
             {
                 DashboardModel dashboard = new DashboardModel();
                 dashboard.PO = _reportRepository.GetPoGen().Where(u => u.CreatedDate.Year == DateTime.Now.Year).Count().ToString();
                 dashboard.RFQ = _reportRepository.GetRfqGen().Where(u => u.CreatedDate.Year == DateTime.Now.Year).Count().ToString();
                 dashboard.RegVen = _reportRepository.GetVendors().Where(u => u.DateCreated.Year == DateTime.Now.Year).Count().ToString();
-                
-            return View(dashboard);
+
+                return View(dashboard);
             }
 
             //var selected1 = _reportRepository.GetPoGen().Count().ToString().Zip(_reportRepository.GetRfqGen().Count().ToString(), (a, b) => new { A = a, B = b });

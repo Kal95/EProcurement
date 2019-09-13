@@ -10,7 +10,8 @@ namespace E_Procurement.Data.Entity
         public string Email { get; set; }
         public int ApprovalLevel { get; set; }
         public bool IsFinalLevel { get; set; }
+        public int ApprovalTypeId { get; set; }
 
-    
+
     }
 }

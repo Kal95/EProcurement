@@ -303,6 +303,72 @@ namespace E_Procurement.Repository.RFQGenRepo
             }
         }
 
+        public bool CloseRfqGen(RfqGenModel model, out string Message)
+        {
+            var confirm = _context.RfqGenerations.Where(x => x.Reference == model.Reference && x.IsActive == model.IsActive).Count();
+
+            var oldEntry = _context.RfqGenerations.Where(u => u.Id == model.Id).FirstOrDefault();
+
+
+            if (oldEntry == null)
+            {
+                throw new Exception("No RFQ exists with this Id");
+            }
+
+            if (confirm == 0)
+            {
+
+                oldEntry.EndDate = DateTime.Now.AddDays(-1);
+
+
+                _context.SaveChanges();
+
+                Message = "RFQ updated successfully";
+
+                return true;
+            }
+            else
+            {
+                Message = "RFQ already exist";
+
+                return false;
+            }
+
+        }
+
+        public bool ExtendRfqGen(RfqGenModel model, out string Message)
+        {
+            var confirm = _context.RfqGenerations.Where(x => x.Reference == model.Reference && x.IsActive == model.IsActive).Count();
+
+            var oldEntry = _context.RfqGenerations.Where(u => u.Id == model.Id).FirstOrDefault();
+
+
+            if (oldEntry == null)
+            {
+                throw new Exception("No RFQ exists with this Id");
+            }
+
+            if (confirm == 0)
+            {
+
+                oldEntry.EndDate = model.EndDate;
+
+
+                _context.SaveChanges();
+
+                Message = "RFQ updated successfully";
+
+                return true;
+            }
+            else
+            {
+                Message = "RFQ already exist";
+
+                return false;
+            }
+
+        }
+
         public List<RfqGenModel> GetItem(int CategoryId)
         {
 
@@ -344,6 +410,12 @@ namespace E_Procurement.Repository.RFQGenRepo
             return vendorList.ToList();
         }
 
+        public List<RFQApprovalTransactions> GetInitiatedRfq()
+        {
+            var RFQ = _context.RfqApprovalTransactions.ToList();
+            return RFQ;
+        }
+        
         public List<RfqGenModel> GetRfqGen()
         {
             var ven = _context.Vendors.ToList();

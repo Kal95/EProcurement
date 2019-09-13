@@ -5,8 +5,8 @@
 
 
 <div class="card pd-20 pd-sm-40">
-    <h6 class="card-body-title">RFQ By Vendors</h6>
-    <p class="mg-b-20 mg-sm-b-30"> List </p>
+    <h6 class="card-body-title">QUOTES SUBMITTED BY VENDORS</h6>
+    <p class="mg-b-20 mg-sm-b-30"> Select Preferred Quote </p>
 
     @*<div class="right">
         <a asp-controller="RfqApprovalConfig" asp-action="Create" alt="Create" class="btn btn-primary"> Create Approval Config </a>
@@ -16,12 +16,12 @@
             <thead>
                 <tr>
                     <th class="wd-5p">S/N</th>
-                    <th class="wd-5p">RFQ No</th>
+                    @*<th class="wd-5p">RFQ No</th>*@
                     @*<th class="wd-5p">Proj. ID</th>
                     <th class="wd-5p">Req. ID</th>*@
-                    <th class="wd-10p">RFQStatus</th>
+                    @*<th class="wd-10p">RFQStatus</th>*@
                     <th class="wd-25p">Vendor Name</th>
-                    <th class="wd-10p">Status</th>
+                    @*<th class="wd-10p">Status</th>*@
                     <th class="wd-25p">Contact</th>
                     <th class="wd-25p">Amount</th>
                     <th class="wd-10p"></th>
@@ -39,12 +39,12 @@
                 {
                 <tr>
                     <td>@(i = i + 1)</td>
-                    <td>@approvalConfig.RFQId</td>
+                    @*<td>@approvalConfig.RFQId</td>*@
                     @*<td>@approvalConfig.ProjectId</td>
                     <td>@approvalConfig.RequisitionId</td>*@
-                    <td>@approvalConfig.RFQStatus</td>
+                    @*<td>@approvalConfig.RFQStatus</td>*@
                     <td>@approvalConfig.VendorName</td>
-                    <td>@approvalConfig.VendorStatus</td>
+                    @*<td>@approvalConfig.VendorStatus</td>*@
                     <td>@approvalConfig.ContactName</td>
                     <td>@approvalConfig.TotalAmount</td>
                     <td>

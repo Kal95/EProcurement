@@ -2,39 +2,45 @@
 @{
     ViewBag.Title = "RFQ Due for Approval";
 }
-
+@using Microsoft.AspNetCore.Identity
+@using E_Procurement.Data.Entity
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
 
 <div class="card pd-20 pd-sm-40">
-    <h6 class="card-body-title">APPROVED RFQ(s)</h6>
-    <p class="mg-b-20 mg-sm-b-30"> List </p>
+    <h6 class="card-body-title">aPPORVED MEMO(S) DUE FOR PURCHASE ORDER(S)</h6>
+    <p class="mg-b-20 mg-sm-b-30"> Select Memo to Initiate for Purchase Order</p>
 
     @*<div class="right">
-        <a asp-controller="RfqApprovalConfig" asp-action="Create" alt="Create" class="btn btn-primary"> Create Approval Config </a>
-    </div>*@
+            <a asp-controller="RfqApprovalConfig" asp-action="Create" alt="Create" class="btn btn-primary"> Create Approval Config </a>
+        </div>*@
     <div class="table-wrapper">
         <table id="datatable1" class="table table-striped dataTable display responsive nowrap mg-b-0">
             <thead>
                 <tr>
-                    <th>
-                        <label class="ckbox mg-b-0">
-                            <input type="checkbox"><span></span>
-                        </label>
-                    </th>
+                    @*<th>
+            <label class="ckbox mg-b-0">
+                <input type="checkbox"><span></span>
+            </label>
+        </th>*@
                     <th class="wd-5p">S/N</th>
                     <th class="wd-5p">RFQ No</th>
-                    <th class="wd-5p">Proj. ID</th>
-                    <th class="wd-5p">Req. ID</th>
+                    @*<th class="wd-5p">Proj. ID</th>
+        <th class="wd-5p">Req. ID</th>*@
                     <th class="wd-5p">Reference</th>
                     <th class="wd-15p">Description</th>
                     <th class="wd-10p">StartDate</th>
                     <th class="wd-10p">EndDate</th>
-                    <th class="wd-10p">RFQStatus</th>
+                    @*<th class="wd-10p">RFQStatus</th>*@
                     <th class="wd-25p">Vendor</th>
                     <th class="wd-30p">Address</th>
                     <th class="wd-25p">Contact</th>
-                    <th class="wd-5p">Status</th>
-                    <th class="wd-5p"></th>
-                </tr>
+                    @*<th class="wd-5p">Status</th>*@
+                    @if (User.IsInRole("Procurement"))
+                    {
+                        <th class="wd-5p"></th>
+                    }
+                    </tr>
             </thead>
             <tbody>
                 @{
@@ -43,28 +49,30 @@
                 @foreach (var approvalConfig in Model)
                 {
                 <tr>
-                    <td>
-                        <label class="ckbox mg-b-0">
-                            <input type="checkbox"><span></span>
-                        </label>
-                    </td>
+                    @*<td>
+            <label class="ckbox mg-b-0">
+                <input type="checkbox"><span></span>
+            </label>
+        </td>*@
                     <td>@(i = i + 1)</td>
                     <td>@approvalConfig.RFQId</td>
-                    <td>@approvalConfig.ProjectId</td>
-                    <td>@approvalConfig.RequisitionId</td>
+                    @*<td>@approvalConfig.ProjectId</td>
+        <td>@approvalConfig.RequisitionId</td>*@
                     <td>@approvalConfig.Reference</td>
                     <td>@approvalConfig.Description</td>
                     <td>@approvalConfig.StartDate.ToString("dd MMM yyyy")</td>
                     <td>@approvalConfig.EndDate.ToString("dd MMM yyyy")</td>
-                    <td>@approvalConfig.RFQStatus</td>
+                    @*<td>@approvalConfig.RFQStatus</td>*@
                     <td>@approvalConfig.VendorName</td>
                     <td>@approvalConfig.VendorAddress</td>
-                    <td>@approvalConfig.VendorStatus</td>
+                    @*<td>@approvalConfig.VendorStatus</td>*@
                     <td>@approvalConfig.ContactName</td>
                     @*<td><a asp-controller="PO" asp-action="RFQDetails" asp-route-id="@approvalConfig.RFQId" alt="Edit" class="btn btn-primary btn-icon"> <div><i class="fa fa-pencil"></i></div></a> </td>*@
-
-                    <td><a href="/PO/RFQDetails/@approvalConfig.RFQId/@approvalConfig.VendorId" alt="Edit" class="btn btn-primary btn-icon"> <div><i class="fa fa-pencil"></i></div></a> </td>
-                </tr>
+                    @if (User.IsInRole("Procurement"))
+                    {
+                        <td><a href="/PO/RFQDetails/@approvalConfig.RFQId/@approvalConfig.VendorId" alt="Edit" class="btn btn-primary btn-icon"> <div><i class="fa fa-pencil"></i></div></a> </td>
+                    }
+                    </tr>
                 }
             </tbody>
         </table>
@@ -78,10 +86,10 @@
 
 <script>
     $(document).ready(function () {
-       // $.noConflict();
+        // $.noConflict();
         $(function () {
             'use strict';
-           
+
             // for all datatable
             $('#datatable1').DataTable({
                 responsive: true,

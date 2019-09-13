@@ -391,7 +391,7 @@ namespace E_Procurement.WebUI.Controllers
                 {
                     //await _userManager.AddToRoleAsync(user, registerViewModel.UserRoles);
                     Alert("Role(s) assigned to user succesfully.", NotificationType.success);
-                    return RedirectToAction("Users");
+                    return RedirectToAction("AssignUserRole");
                 }
                 else
                 {

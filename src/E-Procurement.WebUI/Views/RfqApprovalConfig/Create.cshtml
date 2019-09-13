@@ -6,7 +6,7 @@
 <div class="row row-sm mg-t-20">
     <div class="col-xl-12">
         <div class="card pd-20 pd-sm-40 form-layout form-layout-4">
-            <h6 class="card-body-title">RFQ Approval Config </h6>
+            <h6 class="card-body-title">Approval Config </h6>
             <p class="mg-b-20 mg-sm-b-30"> Create </p>
             <form role="form" method="post">
                 <div asp-validation-summary="All" class="text-danger"></div>
@@ -14,6 +14,15 @@
                     <label class="col-sm-2 form-control-label">User: <span class="tx-danger">*</span></label>
                     <div class="col-sm-4 mg-t-10 mg-sm-t-0">
                         <select asp-for="UserId" asp-items="@ViewBag.users"
+                                class="form-control custom-select" required>
+                            <option value="">Please select one</option>
+                        </select>
+                    </div>
+                </div><!-- row -->
+                <div class="row mg-t-20">
+                    <label class="col-sm-2 form-control-label">Approval Type: <span class="tx-danger">*</span></label>
+                    <div class="col-sm-4 mg-t-10 mg-sm-t-0">
+                        <select asp-for="ApprovalTypeId" asp-items="@ViewBag.ApprovalType"
                                 class="form-control custom-select" required>
                             <option value="">Please select one</option>
                         </select>
@@ -38,21 +47,21 @@
                         </select>
                     </div>
                 </div><!-- row -->
-               
-                    <div class="row">
-                        <label class="col-sm-2 form-control-label"> </label>
-                        <div class="col-sm-5 mg-t-10 mg-sm-t-10">
-                            <div class="row">
-                                <input asp-for="IsFinalLevel" type="checkbox" class="col-sm-1 form-control">Final Approval
 
-                            </div>
+                <div class="row">
+                    <label class="col-sm-2 form-control-label"> </label>
+                    <div class="col-sm-5 mg-t-10 mg-sm-t-10">
+                        <div class="row">
+                            <input asp-for="IsFinalLevel" type="checkbox" class="col-sm-1 form-control">Final Approval
+
                         </div>
-                    </div><!-- row -->
-              
-                    <div class="form-layout-footer mg-t-30">
-                        <button class="btn btn-info mg-r-5">Submit</button>
-                        <a class="btn btn-secondary" asp-controller="RfqApprovalConfig" asp-action="Index">Cancel</a>
-                    </div><!-- form-layout-footer -->
+                    </div>
+                </div><!-- row -->
+
+                <div class="form-layout-footer mg-t-30">
+                    <button class="btn btn-info mg-r-5">Submit</button>
+                    <a class="btn btn-secondary" asp-controller="RfqApprovalConfig" asp-action="Index">Cancel</a>
+                </div><!-- form-layout-footer -->
             </form>
         </div><!-- card -->
     </div><!-- col-6 -->

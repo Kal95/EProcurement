@@ -5,8 +5,8 @@
 
 
 <div class="card pd-20 pd-sm-40">
-    <h6 class="card-body-title">RFQ Due for Approval</h6>
-    <p class="mg-b-20 mg-sm-b-30"> List </p>
+    <h6 class="card-body-title"> QUOTE(S) Due for Approval</h6>
+    <p class="mg-b-20 mg-sm-b-30"> Select Quote for Approval (Memo) </p>
 
     @*<div class="right">
         <a asp-controller="RfqApprovalConfig" asp-action="Create" alt="Create" class="btn btn-primary"> Create Approval Config </a>
@@ -17,8 +17,8 @@
                 <tr>
                     <th class="wd-5p">S/N</th>
                     <th class="wd-5p">RFQ No</th>
-                    <th class="wd-5p">Proj. ID</th>
-                    <th class="wd-5p">Req. ID</th>
+                    @*<th class="wd-5p">Proj. ID</th>
+                    <th class="wd-5p">Req. ID</th>*@
                     <th class="wd-10p">Reference</th>
                     <th class="wd-15p">Description</th>
                     <th class="wd-15p">StartDate</th>
@@ -40,8 +40,8 @@
                 <tr>
                     <td>@(i = i + 1)</td>
                     <td>@approvalConfig.RFQId</td>
-                    <td>@approvalConfig.ProjectId</td>
-                    <td>@approvalConfig.RequisitionId</td>
+                    @*<td>@approvalConfig.ProjectId</td>
+                    <td>@approvalConfig.RequisitionId</td>*@
                     <td>@approvalConfig.Reference</td>
                     <td>@approvalConfig.Description</td>
                     <td>@approvalConfig.StartDate.ToString("dd MMM yyyy")</td>

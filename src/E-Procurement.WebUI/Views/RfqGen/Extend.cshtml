@@ -1,0 +1,39 @@
+﻿@*@model IEnumerable<E_Procurement.WebUI.Models.RFQModel.RfqGenModel>*@
+<div id="modaldemo5" class="modal fade">
+    <div class="modal-dialog modal-dialog-vertical-center" role="document">
+        <div class="modal-content bd-0 tx-14">
+            <div class="modal-header pd-y-20 pd-x-25">
+                <h6 class="tx-14 mg-b-0 tx-uppercase tx-inverse tx-bold">Extend RFQ</h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <form id="extendRFQId" role="form" asp-controller="RfqGen" asp-action="Extend" method="post">
+                @Html.AntiForgeryToken()
+                @Html.Hidden("RFQId")
+                
+                <div class="modal-body pd-25">
+                    <div class="form-group col-sm-12">
+                        <label class="form-control-label">Set New End Date: <span class="tx-danger">*</span></label>
+                        @*@Html.TextBoxFor(model => model.SingleOrDefault(x => Convert.ToBoolean(x.EndDate)), new { @class = "form-control datepicker", @placeholder = "End Date", @Id = "EndDate", required = "required", type = "date", style = "width:160px; height:40px" })*@
+
+                        <input id="EndDate" name="EndDate" class="form-control" type="date" placeholder="Select New Date" required>
+                    </div>
+                    @*<div class="form-group col-sm-12">
+                <label class="form-control-label">New Password: <span class="tx-danger">*</span></label>
+                <input id="Password" name="Password" class="form-control" type="password" placeholder="Enter Password" required>
+            </div>
+            <div class="form-group col-sm-12">
+                <label class="form-control-label">Confirm New  Password: <span class="tx-danger">*</span></label>
+                <input id="ConfirmPassword" name="ConfirmPassword" class="form-control" type="password" placeholder="Confirm Password" required>
+            </div>*@
+
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-info pd-x-20">Save Changes</button>
+                    <button type="button" class="btn btn-secondary pd-x-20" data-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+    </div><!-- modal-dialog -->
+</div>

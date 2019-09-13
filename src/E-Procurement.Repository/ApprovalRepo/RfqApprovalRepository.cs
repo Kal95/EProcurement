@@ -401,7 +401,7 @@ namespace E_Procurement.Repository.RfqApprovalConfigRepository
                                          VendorStatus = vend.VendorStatus,
                                          ContactName = vend.ContactName,
                                          TotalAmount = _context.RfqDetails.Where(it => it.RFQId == rfq.Id && it.VendorId == vend.Id).Select(it => it.QuotedAmount).Sum()
-                                     }).ToListAsync();
+                                     }).Distinct().ToListAsync();
 
             var retQuery = query.Union(query1);
            // var returnQ = query.Distinct();

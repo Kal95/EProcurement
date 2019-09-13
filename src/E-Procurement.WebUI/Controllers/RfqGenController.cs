@@ -276,6 +276,91 @@ namespace E_Procurement.WebUI.Controllers
 
         }
 
+        [HttpPost]
+        //[ValidateAntiForgeryToken]
+        public ActionResult Close(int RFQId2, RfqGenModel Model)
+        {
+            try
+            {
+                    Model.RFQId = RFQId2;
+                    string message;
+
+                    var rfq = _rfqGenRepository.GetRfqGen().Where(u => u.RFQId == Model.RFQId).FirstOrDefault();
+
+                    if (rfq == null) { Alert("This RFQ Doesn't Exist", NotificationType.warning); return RedirectToAction("Index", "RfqGen"); }
+
+                    Model.UpdatedBy = User.Identity.Name;
+                    Model.Id = Model.RFQId;
+
+                    var status = _rfqGenRepository.CloseRfqGen(Model, out message);
+
+
+                    if (status == true)
+                    {
+
+                        Alert("RFQ Closed Successfully", NotificationType.success);
+                    }
+
+                    else
+                    {
+                        Alert("This RFQ Cannot be closed", NotificationType.info);
+                        return View(Model);
+                    }
+
+                    return RedirectToAction("Index", "RfqGen");
+               
+            }
+
+            catch (Exception)
+            {
+
+                return View("Error");
+            }
+
+        }
+
+        [HttpPost]
+        //[ValidateAntiForgeryToken]
+        public ActionResult Extend(RfqGenModel Model)
+        {
+            try
+            {
+                string message;
+
+                var rfq = _rfqGenRepository.GetRfqGen().Where(u => u.RFQId == Model.RFQId).FirstOrDefault();
+                var initiatedRFQ = _rfqGenRepository.GetInitiatedRfq().Where(u => u.RFQId == Model.RFQId).FirstOrDefault();
+                if (initiatedRFQ != null) { Alert("This RFQ cannot been Extended, Approval has already been initiated", NotificationType.warning); return RedirectToAction("Index", "RfqGen"); }
+                if (rfq == null) { Alert("This RFQ Doesn't Exist", NotificationType.warning); return RedirectToAction("Index", "RfqGen"); }
+
+                Model.UpdatedBy = User.Identity.Name;
+                Model.Id = Model.RFQId;
+                Model.EndDate = Model.EndDate;
+
+                var status = _rfqGenRepository.ExtendRfqGen(Model, out message);
+
+
+                if (status == true)
+                {
+
+                    Alert("RFQ Extended Successfully", NotificationType.success);
+                }
+
+                else
+                {
+                    Alert("This RFQ Cannot be Extended", NotificationType.info);
+                    return View(Model);
+                }
+
+                return RedirectToAction("Index", "RfqGen");
+
+            }
+            catch (Exception)
+            {
+
+                return View("Error");
+            }
+
+        }
 
         #region "RFQ In Pipeline"
 

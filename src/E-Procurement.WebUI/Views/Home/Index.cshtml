@@ -3,7 +3,7 @@
     ViewData["Title"] = "Home Page";
 }
 
-@if (User.IsInRole("Admin"))
+@if (User.IsInRole("Admin") || User.IsInRole("Procurement"))
 {
     <div class="row row-sm">
         <div class="col-lg-4">

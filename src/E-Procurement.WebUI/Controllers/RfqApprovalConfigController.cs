@@ -48,6 +48,7 @@ namespace E_Procurement.WebUI.Controllers
             }).ToList();
 
             ViewBag.users = UserList;
+            ViewBag.ApprovalType = UserList;
             return View();
         }
 

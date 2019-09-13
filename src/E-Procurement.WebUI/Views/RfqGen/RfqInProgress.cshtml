@@ -5,8 +5,8 @@
 
 
 <div class="card pd-20 pd-sm-40">
-    <h6 class="card-body-title">Submitted RFQ(s)</h6>
-    <p class="mg-b-20 mg-sm-b-30"> List </p>
+    <h6 class="card-body-title">Submitted Quote(s)</h6>
+    <p class="mg-b-20 mg-sm-b-30"> List of all submitted Quotes for Active RFQ(s) </p>
 
     @*<div class="right">
         <a asp-controller="RfqApprovalConfig" asp-action="Create" alt="Create" class="btn btn-primary"> Create Approval Config </a>
@@ -17,13 +17,13 @@
                 <tr>
                     <th class="wd-5p">S/N</th>
                     <th class="wd-5p">RFQ No</th>
-                    <th class="wd-5p">Proj. ID</th>
-                    <th class="wd-5p">Req. ID</th>
+                    @*<th class="wd-5p">Proj. ID</th>
+                    <th class="wd-5p">Req. ID</th>*@
                     <th class="wd-10p">Reference</th>
                     <th class="wd-15p">Description</th>
                     <th class="wd-15p">StartDate</th>
                     <th class="wd-15p">EndDate</th>
-                    <th class="wd-10p">RFQStatus</th>
+                    @*<th class="wd-10p">RFQStatus</th>*@
                     <th class="wd-10p"></th>
 
 
@@ -40,13 +40,13 @@
                 <tr>
                     <td>@(i = i + 1)</td>
                     <td>@rfq.RFQId</td>
-                    <td>@rfq.ProjectId</td>
-                    <td>@rfq.RequisitionId</td>
+                    @*<td>@rfq.ProjectId</td>
+                    <td>@rfq.RequisitionId</td>*@
                     <td>@rfq.Reference</td>
                     <td>@rfq.Description</td>
                     <td>@rfq.StartDate.ToString("dd MMM yyyy")</td>
                     <td>@rfq.EndDate.ToString("dd MMM yyyy")</td>
-                    <td>@rfq.RFQStatus</td>
+                    @*<td>@rfq.RFQStatus</td>*@
                     <td><a asp-controller="RfqGen" asp-action="RfqVendorsDetails" asp-route-id="@rfq.RFQId" alt="Edit" class="btn btn-primary btn-icon"> <div><i class="fa fa-pencil"></i></div></a> </td>
 
                 </tr>
