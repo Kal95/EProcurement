@@ -1,0 +1,207 @@
+﻿@*@model E_Procurement.WebUI.Models.RfqApprovalModel.RFQGenerationViewModel*@
+@model E_Procurement.Repository.Dtos.RFQGenerationModel
+@{
+    ViewBag.Title = "RFQ Approval Detials";
+}
+
+
+
+
+<div class="row row-sm mg-t-20">
+    <div class="col-xl-12">
+        <div class="card pd-20 pd-sm-40 form-layout form-layout-4">
+            <h6 class="card-body-title">PO Approval Details </h6>
+            <p class="mg-b-20 mg-sm-b-30"> PO INFORMATION </p>
+
+            @*<div class="row mg-t-20">
+                <label class="col-sm-2 form-control-label"><b> RFQ No. : </b></label>
+                <div class="col-sm-4 mg-t-10 mg-sm-t-0">
+                    @Html.DisplayFor(model => model.RFQId)
+                </div>
+                <label class="col-sm-2 form-control-label"> <b> Project Code : </b></label>
+                <div class="col-sm-4 mg-t-10 mg-sm-t-0">
+                    @Html.DisplayFor(model => model.ProjectId)
+                </div>
+            </div> row*@ 
+            <div class="row mg-t-20">
+                <label class="col-sm-2 form-control-label"> <b> Reference : </b></label>
+                <div class="col-sm-4 mg-t-10 mg-sm-t-0">
+                    @Html.DisplayFor(model => model.Reference)
+                </div>
+                <label class="col-sm-2 form-control-label"> <b>Duration : </b></label>
+                <div class="col-sm-4 mg-t-10 mg-sm-t-0">
+                    From <b>@Model.StartDate.ToString("dd MMM yyyy")</b>
+                    to <b>@Model.EndDate.ToString("dd MMM yyyy")</b>
+                </div>
+
+            </div><!-- row -->
+            <div class="row mg-t-20">
+
+            </div><!-- row -->
+            <div class="row mg-t-20">
+                <label class="col-sm-2 form-control-label"><b> Vendor's Address : </b></label>
+                <div class="col-sm-4 mg-t-10 mg-sm-t-0">
+                    @Html.DisplayFor(model => model.VendorAddress)
+                </div>
+               
+                <label class="col-sm-2 form-control-label"> <b> RFQ Status : </b></label>
+                <div class="col-sm-4 mg-t-10 mg-sm-t-0">
+                    @Html.DisplayFor(model => model.RFQStatus)
+                </div>
+            </div><!-- row -->
+
+            <div class="row mg-t-20">
+                <label class="col-sm-2 form-control-label"><b> Vendor : </b></label>
+                <div class="col-sm-4 mg-t-10 mg-sm-t-0">
+                    @Html.DisplayFor(model => model.VendorName)
+                </div>
+                <label class="col-sm-2 form-control-label"> <b> PO Status : </b></label>
+                <div class="col-sm-4 mg-t-10 mg-sm-t-0">
+                    @Html.DisplayFor(model => model.POStatus)
+                </div>
+            </div><!-- row -->
+            <div class="row mg-t-20">
+                <label class="col-sm-2 form-control-label"><b> Contact : </b></label>
+                <div class="col-sm-4 mg-t-10 mg-sm-t-0">
+                    @Html.DisplayFor(model => model.ContactName)
+                </div>
+                @*<label class="col-sm-2 form-control-label"><b> Vendor Status : </b></label>
+                <div class="col-sm-4 mg-t-10 mg-sm-t-0">
+                    @Html.DisplayFor(model => model.VendorStatus)
+                </div>*@
+            </div><!-- row -->
+        </div><!-- card -->
+    </div><!-- col-6 -->
+
+</div>
+
+
+<div class="card pd-20 pd-sm-40">
+    <h6 class="card-body-title">RFQ Details</h6>
+    <p class="mg-b-20 mg-sm-b-30"> </p>
+
+    @*<div class="right">
+            <a asp-controller="RfqApprovalConfig" asp-action="Create" alt="Create" class="btn btn-primary"> Create Approval Config </a>
+        </div>*@
+    <div class="table-wrapper">
+        <table id="datatable1" class="table table-striped display responsive nowrap">
+            <thead>
+                <tr>
+                    <th class="wd-5p">S/N</th>
+                    <th class="wd-5p">Item</th>
+                    <th class="wd-5p">Description</th>
+                    <th class="wd-5p">Quantity</th>
+                    <th class="wd-5p">Price</th>
+                    <th class="wd-5p">QuotedAmount</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    int i = 0;
+                }
+                @{
+                    //var RFQDetails = Model.RFQDetails as List<E_Procurement.WebUI.Models.RfqApprovalModel.RFQDetailsViewModel>;
+                    var RFQDetails = Model.RFQDetails as List<E_Procurement.Repository.Dtos.RFQDetailsModel>;
+                }
+                @foreach (var approvalConfig in RFQDetails)
+                {
+                    <tr>
+                        <td>@(i = i + 1)</td>
+
+                        <td>@approvalConfig.ItemName</td>
+                        <td>@approvalConfig.Description</td>
+                        <td>@approvalConfig.QuotedQuantity</td>
+                        <td>@approvalConfig.QuotedPrice</td>
+                        <td>@approvalConfig.QuotedAmount</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <form role="form" method="post" asp-action="POGenDetails">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <input asp-for="RFQId" type="hidden" />
+            <input asp-for="RFQStatus" type="hidden" />
+            <input asp-for="VendorId" type="hidden" />
+            <input asp-for="QuotedAmount" type="hidden" />
+
+            <div class="row row-sm mg-t-20">
+                <div class="col-xl-12">
+                    <div class="row mg-t-20">
+                        <label class="col-sm-2 form-control-label"><b> Expected Delivery Date : </b></label>
+                        <div class="col-sm-2 mg-t-10 mg-sm-t-0">
+                            <input asp-for="ExpectedDeliveryDate" type="date" class="form-control fc-datepicker" value="null" placeholder="MM/DD/YYYY">
+                        </div>
+                    </div><!-- row -->
+                    <div class="row mg-t-20">
+                        <label class="col-sm-2 form-control-label"><b> PO Title : </b></label>
+                        <div class="col-sm-10 mg-t-10 mg-sm-t-0">
+                            <input asp-for="POTitle" type="text" class="form-control" placeholder="PO Title" required>
+                        </div>
+                    </div><!-- row -->
+
+                    <div class="row mg-t-20">
+                        <label class="col-sm-2 form-control-label"><b> PO Cost : </b></label>
+                        <div class="col-sm-10 mg-t-10 mg-sm-t-0">
+                            <textarea asp-for="POCost" type="text" class="form-control" placeholder="PO Cost" required></textarea>
+                        </div>
+                    </div><!-- row -->
+                    <div class="row mg-t-20">
+                        <label class="col-sm-2 form-control-label"><b> PO Warranty : </b></label>
+                        <div class="col-sm-10 mg-t-10 mg-sm-t-0">
+                            <textarea asp-for="POWarranty" type="text" class="form-control" placeholder="PO Warranty" required></textarea>
+                        </div>
+                    </div><!-- row -->
+                    <div class="row mg-t-20">
+                        <label class="col-sm-2 form-control-label"><b> PO Terms : </b></label>
+                        <div class="col-sm-10 mg-t-10 mg-sm-t-0">
+                            <textarea asp-for="POTerms" type="text" class="form-control" placeholder="PO Terms" required></textarea>
+                        </div>
+                    </div><!-- row -->
+                    <div class="row mg-t-20">
+                        <label class="col-sm-2 form-control-label"><b> PO Validity : </b></label>
+                        <div class="col-sm-10 mg-t-10 mg-sm-t-0">
+                            <textarea asp-for="POValidity" type="text" class="form-control" placeholder="PO Validity" required></textarea>
+                        </div>
+                    </div><!-- row -->
+
+                    <div class="form-layout-footer mg-t-30">
+                        <button class="btn btn-info mg-r-5">Generate PO</button>
+                        <a class="btn btn-secondary" asp-controller="PO" asp-action="GeneratePO">Cancel</a>
+                    </div><!-- form-layout-footer -->
+
+                </div><!-- table-wrapper -->
+            </div><!-- card -->
+            
+        </form>
+
+    </div><!-- table-wrapper -->
+</div><!-- card -->
+
+<script src="/lib/jquery/jquery.js"></script>
+<script src="/lib/datatables/jquery.dataTables.js"></script>
+<script src="/lib/datatables-responsive/dataTables.responsive.js"></script>
+<script src="../lib/select2/js/select2.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        // $.noConflict();
+        $(function () {
+            'use strict';
+
+            // for all datatable
+            $('#datatable1').DataTable({
+                responsive: true,
+                language: {
+                    searchPlaceholder: 'Search...',
+                    sSearch: '',
+                    lengthMenu: '_MENU_ items/page',
+                }
+            });
+            // Select2
+            $('.dataTables_length select').select2({ minimumResultsForSearch: Infinity });
+        });
+    });
+</script>
+
+

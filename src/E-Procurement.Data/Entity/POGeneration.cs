@@ -19,7 +19,7 @@ namespace E_Procurement.Data.Entity
         public string POWarranty { get; set; }
         public string POTerms { get; set; }
         public string POValidity { get; set; }
-
+        public string Reference { get; set; }
 
     }
 }

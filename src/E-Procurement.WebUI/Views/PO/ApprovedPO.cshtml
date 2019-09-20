@@ -5,19 +5,19 @@
 
 
 <div class="card pd-20 pd-sm-40">
-    <h6 class="card-body-title"> QUOTE(S) Due for Approval</h6>
-    <p class="mg-b-20 mg-sm-b-30"> Select Quote for Approval (Memo) </p>
+    <h6 class="card-body-title"> Approved Purchase Order(s)</h6>
+    <p class="mg-b-20 mg-sm-b-30">  </p>
 
     @*<div class="right">
             <a asp-controller="RfqApprovalConfig" asp-action="Create" alt="Create" class="btn btn-primary"> Create Approval Config </a>
         </div>*@
     <div class="table-wrapper">
         <div id="accordion">
+
             <table id="datatable1" class="table table-striped display responsive nowrap">
 
                 <thead>
                     <tr>
-
                         <th class="wd-5p">S/N</th>
                         <th class="wd-5p">RFQ No</th>
                         @*<th class="wd-5p">Proj. ID</th>
@@ -28,8 +28,8 @@
                         <th class="wd-10p">StartDate</th>
                         <th class="wd-10p">EndDate</th>
                         <th class="wd-10p">RFQStatus</th>
-                        @*<th class="wd-10p"></th>*@
                         <th class="wd-10p"></th>
+                        @*<th class="wd-10p"></th>*@
 
 
 
@@ -69,10 +69,12 @@
                     <input type="checkbox" @Model value="@approvalConfig.VendorId" checked="checked" name="SelectedItems" id="myInput_@approvalConfig.VendorId" onclick="myFunction(@approvalConfig.VendorId)" />
                 </td>*@
                         </tr>
+
                         <tr class="collapse" id="collapseItem_@(i)">
                             <td colspan="13">
 
                                 <table class="table align-items-center table-flush" id="tdItems">
+
 
                                     <thead>
                                         <tr>
@@ -86,7 +88,8 @@
                                             @*<th class="wd-10p">Status</th>*@
                                             <th class="wd-25p">Contact</th>
                                             <th class="wd-25p">Amount</th>
-                                            <th class="wd-10p"></th>
+                                            <th class="wd-10p">PO Status</th>
+                                            @*<th class="wd-10p"></th>*@
 
 
 
@@ -96,6 +99,7 @@
                                         @{
                                             int a = 0;
                                         }
+
                                         @{
                                             //var RFQDetails = Model.RFQDetails as List<E_Procurement.WebUI.Models.RfqApprovalModel.RFQDetailsViewModel>;
                                             var RFQDetails2 = Model.RFQDetails2 as List<E_Procurement.Repository.Dtos.RFQDetailsModel>;
@@ -107,19 +111,22 @@
                                                 <td>@(a = a + 1)</td>
                                                 @*<td>@approvalConfig.RFQId</td>*@
                                                 @*<td>@approvalConfig.ProjectId</td>
-                                    <td>@approvalConfig.RequisitionId</td>*@
+                <td>@approvalConfig.RequisitionId</td>*@
                                                 @*<td>@approvalConfig.RFQStatus</td>*@
                                                 <td>@approvalConfig2.VendorName</td>
                                                 @*<td>@approvalConfig.VendorStatus</td>*@
                                                 <td>@approvalConfig2.ContactName</td>
                                                 <td>@approvalConfig2.TotalAmount</td>
-                                                <td>
-                                                    <a class="btn btn-info mg-r-5" style="width:120px"
-                                                       href="@Url.Action("RfqApprovalDetails", "RfqApproval", new { Id = @approvalConfig2.RFQId, VendorId = @approvalConfig2.VendorId })"><span class="fa fa-pencil"></span><i class="pe-7s-edit btn-icon-wrapper"></i>Details</a>
-                                                </td>
+                                                <td>@approvalConfig.POStatus</td>
+                                                @*<td>
+                    <a class="btn btn-info mg-r-5" style="width:120px"
+                       href="@Url.Action("POApprovalDetails", "PO", new { RFQId = @approvalConfig2.RFQId, VendorId = @approvalConfig2.VendorId })"><span class="fa fa-pencil"></span><i class="pe-7s-edit btn-icon-wrapper"></i>Details</a>
+                </td>*@
 
 
                                             </tr>
+
+
 
                                         }
 
@@ -127,20 +134,23 @@
                                 </table>
                             </td>
                         </tr>
-
+                     
                     }
                 </tbody>
             </table>
 
         </div>
     </div><!-- table-wrapper -->
-
 </div><!-- card -->
 
 <script src="/lib/jquery/jquery.js"></script>
 <script src="/lib/datatables/jquery.dataTables.js"></script>
 <script src="/lib/datatables-responsive/dataTables.responsive.js"></script>
 <script src="../lib/select2/js/select2.min.js"></script>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<link rel="stylesheet" href="/resources/demos/style.css">
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
 <script>
     $(document).ready(function () {
@@ -161,6 +171,33 @@
             $('.dataTables_length select').select2({ minimumResultsForSearch: Infinity });
         });
     });
+
+    $(function () {
+        $("#accordion").accordion();
+    });
+    function myFunction(id) {
+
+        //alert(id);
+
+        if ($(`#myInput_${id}`).prop('checked')) {
+            $(`#Descriptions_${id}`).show();
+            $(`#Quantities_${id}`).show();
+            $(`#Descriptions_${id}`).attr("disabled", false);
+            $(`#Quantities_${id}`).attr("disabled", false);
+            $(`#Descriptions_${id}`).prop('required', true);
+            $(`#Quantities_${id}`).prop('required', true);
+        }
+        else {
+            $(`#Descriptions_${id}`).attr("disabled", "");
+            $(`#Quantities_${id}`).attr("disabled", "");
+            $(`#Descriptions_${id}`).prop('required', false);
+            $(`#Quantities_${id}`).prop('required', false);
+            $(`#Descriptions_${id}`).hide();
+            $(`#Quantities_${id}`).hide();
+        }
+
+    }
+
 </script>
 
 

@@ -13,9 +13,11 @@ namespace E_Procurement.Repository.Dtos
             public int RequisitionId { get; set; }
             public string Reference { get; set; }
             public string Description { get; set; }
+            public string Item { get; set; }
             public DateTime StartDate { get; set; }
             public DateTime EndDate { get; set; }
             public string RFQStatus { get; set; }
+            public string POStatus { get; set; }
             public int VendorId { get; set; }
             public string VendorName { get; set; }
             public string VendorAddress { get; set; }
@@ -23,6 +25,7 @@ namespace E_Procurement.Repository.Dtos
             public string ContactName { get; set; }
             public string VendorEmail { get; set; }
             public List<RFQDetailsModel> RFQDetails { get; set; }
+            public List<RFQDetailsModel> RFQDetails2 { get; set; }
             public string ApprovedBy { get; set; }
             public string Comments { get; set; }
             public string PONumber { get; set; }
@@ -31,6 +34,7 @@ namespace E_Procurement.Repository.Dtos
             public DateTime ExpectedDeliveryDate { get; set; }
             public DateTime CreatedDate { get; set; }
             public decimal QuotedAmount { get; set; }
+            public decimal QuotedPrice { get; set; }
             public string PhoneNumber { get; set; }
             public int QuotedQuantity { get; set; }
             public bool IsActive { get; set; }

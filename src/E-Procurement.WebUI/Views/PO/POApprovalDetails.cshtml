@@ -1,0 +1,176 @@
+﻿@*@model E_Procurement.WebUI.Models.RfqApprovalModel.RFQGenerationViewModel*@
+@model E_Procurement.Repository.Dtos.RFQGenerationModel
+@{
+    ViewBag.Title = "RFQ Approval Detials";
+}
+
+
+
+
+<div class="row row-sm mg-t-20">
+    <div class="col-xl-12">
+        <div class="card pd-20 pd-sm-40 form-layout form-layout-4">
+            <h6 class="card-body-title">PO Approval Details </h6>
+            <p class="mg-b-20 mg-sm-b-30"> PO INFORMATION </p>
+
+            @*<div class="row mg-t-20">
+                <label class="col-sm-2 form-control-label"><b> RFQ No. : </b></label>
+                <div class="col-sm-4 mg-t-10 mg-sm-t-0">
+                    @Html.DisplayFor(model => model.RFQId)
+                </div>
+                <label class="col-sm-2 form-control-label"> <b> Project Code : </b></label>
+                <div class="col-sm-4 mg-t-10 mg-sm-t-0">
+                    @Html.DisplayFor(model => model.ProjectId)
+                </div>
+            </div> row*@ 
+            <div class="row mg-t-20">
+                <label class="col-sm-2 form-control-label"> <b> Reference : </b></label>
+                <div class="col-sm-4 mg-t-10 mg-sm-t-0">
+                    @Html.DisplayFor(model => model.Reference)
+                </div>
+                @*<label class="col-sm-2 form-control-label"> <b> Requisition No. : </b></label>
+                <div class="col-sm-4 mg-t-10 mg-sm-t-0">
+                    @Html.DisplayFor(model => model.RequisitionId)
+                </div>*@
+            </div><!-- row -->
+            <div class="row mg-t-20">
+
+            </div><!-- row -->
+            <div class="row mg-t-20">
+                <label class="col-sm-2 form-control-label"> <b>Duration : </b></label>
+                <div class="col-sm-4 mg-t-10 mg-sm-t-0">
+                    From <b>@Model.StartDate.ToString("dd MMM yyyy")</b> 
+                    to <b>@Model.EndDate.ToString("dd MMM yyyy")</b>
+                </div>
+                <label class="col-sm-2 form-control-label"> <b> Status : </b></label>
+                <div class="col-sm-4 mg-t-10 mg-sm-t-0">
+                    @Html.DisplayFor(model => model.RFQStatus)
+                </div>
+            </div><!-- row -->
+
+            <div class="row mg-t-20">
+                <label class="col-sm-2 form-control-label"><b> Vendor : </b></label>
+                <div class="col-sm-4 mg-t-10 mg-sm-t-0">
+                    @Html.DisplayFor(model => model.VendorName)
+                </div>
+                <label class="col-sm-2 form-control-label"><b> Address : </b></label>
+                <div class="col-sm-4 mg-t-10 mg-sm-t-0">
+                    @Html.DisplayFor(model => model.VendorAddress)
+                </div>
+            </div><!-- row -->
+            <div class="row mg-t-20">
+                <label class="col-sm-2 form-control-label"><b> Contact : </b></label>
+                <div class="col-sm-4 mg-t-10 mg-sm-t-0">
+                    @Html.DisplayFor(model => model.ContactName)
+                </div>
+                @*<label class="col-sm-2 form-control-label"><b> Vendor Status : </b></label>
+                <div class="col-sm-4 mg-t-10 mg-sm-t-0">
+                    @Html.DisplayFor(model => model.VendorStatus)
+                </div>*@
+            </div><!-- row -->
+        </div><!-- card -->
+    </div><!-- col-6 -->
+
+</div>
+
+
+<div class="card pd-20 pd-sm-40">
+    <h6 class="card-body-title">Details</h6>
+    <p class="mg-b-20 mg-sm-b-30"> </p>
+
+    @*<div class="right">
+            <a asp-controller="RfqApprovalConfig" asp-action="Create" alt="Create" class="btn btn-primary"> Create Approval Config </a>
+        </div>*@
+    <div class="table-wrapper">
+        <table id="datatable1" class="table table-striped display responsive nowrap">
+            <thead>
+                <tr>
+                    <th class="wd-5p">S/N</th>
+                    <th class="wd-5p">Item</th>
+                    <th class="wd-5p">Description</th>
+                    <th class="wd-5p">Quantity</th>
+                    <th class="wd-5p">Price</th>
+                    <th class="wd-5p">QuotedAmount</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    int i = 0;
+                }
+                @{
+                    //var RFQDetails = Model.RFQDetails as List<E_Procurement.WebUI.Models.RfqApprovalModel.RFQDetailsViewModel>;
+                    var RFQDetails = Model.RFQDetails as List<E_Procurement.Repository.Dtos.RFQDetailsModel>;
+                }
+                @foreach (var approvalConfig in RFQDetails)
+                {
+                    <tr>
+                        <td>@(i = i + 1)</td>
+
+                        <td>@approvalConfig.ItemName</td>
+                        <td>@approvalConfig.Description</td>
+                        <td>@approvalConfig.QuotedQuantity</td>
+                        <td>@approvalConfig.QuotedPrice</td>
+                        <td>@approvalConfig.QuotedAmount</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <form role="form" method="post" asp-action="POApproval">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <input asp-for="RFQId" type="hidden" />
+            <input asp-for="RFQStatus" type="hidden" />
+            <input asp-for="VendorId" type="hidden" />
+            <input asp-for="QuotedAmount" type="hidden" />
+            <div class="row mg-t-20">
+                <label class="col-sm-1 form-control-label"><b> Comments : </b></label>
+                <div class="col-sm-11 mg-t-10 mg-sm-t-0">
+                    <input asp-for="Comments" type="text" class="form-control" placeholder="Add your comments.">
+                </div>
+            </div><!-- row -->
+            @if (User.IsInRole("Approval"))
+            {
+                <div class="form-layout-footer mg-t-30">
+                    <button type="submit" class="btn btn-info mg-r-5">Approve</button>
+                    @*<button class="btn btn-secondary">Cancel</button>*@
+                </div><!-- form-layout-footer -->
+            }
+            @if (User.IsInRole("Procurement") && !User.IsInRole("Approval"))
+            {
+                <div class="form-layout-footer mg-t-30">
+                    <button type="submit" class="btn btn-info mg-r-5">Send For Approval</button>
+                    @*<button class="btn btn-secondary">Cancel</button>*@
+                </div><!-- form-layout-footer -->
+            }
+        </form>
+
+    </div><!-- table-wrapper -->
+</div><!-- card -->
+
+<script src="/lib/jquery/jquery.js"></script>
+<script src="/lib/datatables/jquery.dataTables.js"></script>
+<script src="/lib/datatables-responsive/dataTables.responsive.js"></script>
+<script src="../lib/select2/js/select2.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        // $.noConflict();
+        $(function () {
+            'use strict';
+
+            // for all datatable
+            $('#datatable1').DataTable({
+                responsive: true,
+                language: {
+                    searchPlaceholder: 'Search...',
+                    sSearch: '',
+                    lengthMenu: '_MENU_ items/page',
+                }
+            });
+            // Select2
+            $('.dataTables_length select').select2({ minimumResultsForSearch: Infinity });
+        });
+    });
+</script>
+
+

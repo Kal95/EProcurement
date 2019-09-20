@@ -21,7 +21,9 @@ namespace E_Procurement.Repository.ApprovalRepo
 
         Task<bool> CreateRFQApprovalAsync(RFQGenerationModel rFQApproval);
         Task<bool> CreateRFQPendingApprovalAsync(RFQGenerationModel rFQApproval);
-
-
+        List<Vendor> GetVendors();
+        List<RFQDetails> GetRFQDetails();
+        List<RFQGeneration> GetRFQ();
+        List<RFQGenerationModel> GetRFQPendingApproval();
     }
 }

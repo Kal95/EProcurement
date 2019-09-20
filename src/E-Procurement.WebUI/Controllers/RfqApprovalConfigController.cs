@@ -38,7 +38,7 @@ namespace E_Procurement.WebUI.Controllers
 
         public async Task<IActionResult> Create()
         {
-    
+            var ApprovalType = await _RfqApprovalConfigRepository.GetApprovalType();
             var user = await _accountManager.GetUsers();
             
             var UserList = user.Select(a => new SelectListItem()
@@ -47,8 +47,14 @@ namespace E_Procurement.WebUI.Controllers
                 Text = a.FullName + " (" + a.Email +")"
             }).ToList();
 
+            var ApprovalTypeList = ApprovalType.Select(a => new SelectListItem()
+            {
+                Value = a.ApprovalTypeId.ToString(),
+                Text = a.ApprovalTypeName
+            }).ToList();
+
             ViewBag.users = UserList;
-            ViewBag.ApprovalType = UserList;
+            ViewBag.ApprovalType = ApprovalTypeList;
             return View();
         }
 
@@ -58,27 +64,36 @@ namespace E_Procurement.WebUI.Controllers
             if (ModelState.IsValid)
             {
                 // to reload the list
+                var ApprovalType = await _RfqApprovalConfigRepository.GetApprovalType();
                 var users = await _accountManager.GetUsers();
-                    var UserList = users.Select(a => new SelectListItem()
-                    {
-                        Value = a.Id.ToString(),
-                        Text = a.FullName + " (" + a.Email + ")"
-                    }).ToList();
 
-                    ViewBag.users = UserList;
+                var UserList = users.Select(a => new SelectListItem()
+                {
+                    Value = a.Id.ToString(),
+                    Text = a.FullName + " (" + a.Email + ")"
+                }).ToList();
 
+                var ApprovalTypeList = ApprovalType.Select(a => new SelectListItem()
+                {
+                    Value = a.ApprovalTypeId.ToString(),
+                    Text = a.ApprovalTypeName
+                }).ToList();
+
+                ViewBag.users = UserList;
+                ViewBag.ApprovalType = ApprovalTypeList;
+           
                 var user = await _accountManager.GetUserByIdAsync(RfqApprovalConfig.UserId);
                 RfqApprovalConfig.Email = user.Email;
 
                 var userApprovalCheck = await _RfqApprovalConfigRepository.CheckUserApprovalAsync(RfqApprovalConfig.UserId);
-                if (userApprovalCheck.Count() > 0)
+                if (userApprovalCheck.Count() > 2)
                 {
                     Alert("Can not create multiple approval level for the selected user!! Please try again.", NotificationType.info);
                     return View(RfqApprovalConfig);
                 }
 
                 var finalApprovalCheck = await _RfqApprovalConfigRepository.GetFinalApprovalAsync();
-                if (finalApprovalCheck.Count() > 0)
+                if (finalApprovalCheck.Count() > 2)
                 {
                     Alert("Cannot create new approval level because Final Approval has already been assigned!! Please try again.", NotificationType.info);
                     return View(RfqApprovalConfig);
@@ -106,15 +121,24 @@ namespace E_Procurement.WebUI.Controllers
         {
             try
             {
+                var ApprovalType = await _RfqApprovalConfigRepository.GetApprovalType();
                 var user = await _accountManager.GetUsers();
-                
+
                 var UserList = user.Select(a => new SelectListItem()
                 {
                     Value = a.Id.ToString(),
                     Text = a.FullName + " (" + a.Email + ")"
                 }).ToList();
 
+                var ApprovalTypeList = ApprovalType.Select(a => new SelectListItem()
+                {
+                    Value = a.ApprovalTypeId.ToString(),
+                    Text = a.ApprovalTypeName
+                }).ToList();
+
                 ViewBag.users = UserList;
+                ViewBag.ApprovalType = ApprovalTypeList;
+               
 
                 var RfqApprovalConfig = await _RfqApprovalConfigRepository.GetApprovalConfigByIdAsync(Id);
 
@@ -201,6 +225,165 @@ namespace E_Procurement.WebUI.Controllers
             return View("Index");
         }
 
-        
+        public ActionResult ApprovalTypeCreate()
+        {
+            return View();
+        }
+
+        // POST: Report/EvaluationPeriodCreate
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ApprovalTypeCreate(ApprovalTypeModel model)
+        {
+            try
+            {
+                string message;
+                model.CreatedBy = User.Identity.Name;
+
+
+                if (ModelState.IsValid)
+                {
+
+                    var status = _RfqApprovalConfigRepository.CreateApprovalType(model, out message);
+
+                    if (status == true)
+                    {
+
+                        Alert("Approval Type Created Successfully", NotificationType.success);
+
+                    }
+
+                    else
+                    {
+                        Alert("This Approval Type Already Exists", NotificationType.info);
+                        return View(model);
+                    }
+
+                    return RedirectToAction("ApprovalTypeIndex", "RfqApprovalConfig");
+                }
+                else
+                {
+                    ViewBag.StatusCode = 2;
+                    Alert("Approval Type Wasn't Created", NotificationType.error);
+
+                    return View(model);
+
+                }
+            }
+
+            catch (Exception)
+            {
+
+                return View("Error");
+            }
+        }
+
+        // GET: Report/EvaluationPeriodEdit
+        public ActionResult ApprovalTypeEdit(int ApprovalTypeId)
+        {
+
+
+            ApprovalTypeModel Model = new ApprovalTypeModel();
+
+            try
+            {
+
+                var Period = _RfqApprovalConfigRepository.GetApprovalTypes().Where(u => u.ApprovalTypeId == ApprovalTypeId).FirstOrDefault();
+
+                if (Period == null)
+                {
+                    Alert("This Approval Type Doesn't Exists", NotificationType.info);
+
+                    return RedirectToAction("ApprovalTypeIndex", "RfqApprovalConfig");
+                }
+
+                Model.ApprovalTypeId = Period.ApprovalTypeId;
+
+                Model.ApprovalTypeName = Period.ApprovalTypeName;
+
+
+                return View(Model);
+            }
+            catch (Exception)
+            {
+
+                return View("Error");
+            }
+
+        }
+
+        // POST: Report/EvaluationPeriodEdit
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ApprovalTypeEdit(ApprovalTypeModel Model)
+        {
+            try
+            {
+               
+                if (ModelState.IsValid)
+                {
+                    string message;
+
+                    var Period = _RfqApprovalConfigRepository.GetApprovalTypes().FirstOrDefault(u => u.ApprovalTypeId == Model.ApprovalTypeId);
+
+                    if (Period == null) { Alert("This Approval Type Doesn't Exist", NotificationType.warning); return RedirectToAction("ApprovalTypeIndex", "RfqApprovalConfig"); }
+
+                    Model.UpdatedBy = User.Identity.Name;
+
+                    var status = _RfqApprovalConfigRepository.UpdateApprovalType(Model, out message);
+
+
+                    if (status == true)
+                    {
+                        Alert("Approval Type Updated Successfully", NotificationType.success);
+
+                    }
+
+                    else
+                    {
+                        Alert("This Approval Type Already Exists", NotificationType.info);
+                        return View(Model);
+                    }
+
+                    return RedirectToAction("ApprovalTypeIndex", "RfqApprovalConfig");
+                }
+                else
+                {
+                    ViewBag.StatusCode = 2;
+
+                    Alert("Approval Type Wasn't Updated", NotificationType.error);
+
+                    return View(Model);
+                }
+            }
+            catch (Exception)
+            {
+
+                return View("Error");
+            }
+        }
+        public ActionResult ApprovalTypeIndex()
+        {
+            try
+            {
+                List<ApprovalTypeModel> poModel = new List<ApprovalTypeModel>();
+
+                var period = _RfqApprovalConfigRepository.GetApprovalTypes().ToList();
+
+                //var RfqList = _rfqGenRepository.GetRfqGen().OrderBy(u => u.EndDate).ToList();
+                var PeriodList = period.Select(x => new ApprovalTypeModel
+                {
+                    ApprovalTypeId = x.ApprovalTypeId,
+                    ApprovalTypeName = x.ApprovalTypeName
+                    
+                });
+                return View(PeriodList);
+            }
+            catch (Exception)
+            {
+                return View("Error");
+            }
+        }
+
     }
 }

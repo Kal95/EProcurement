@@ -113,6 +113,7 @@
                                     <li class="nav-item"><a asp-controller="VendorCategory" asp-action="ItemIndex" class="nav-link active">Item</a></li>
                                     <li class="nav-item"><a asp-controller="VendorCategory" asp-action="CategoryIndex" class="nav-link active">Category</a></li>
                                     <li class="nav-item"><a asp-controller="Report" asp-action="EvaluationPeriodIndex" class="nav-link">Evaluation Period</a></li>
+                                    <li class="nav-item"><a asp-controller="RfqApprovalConfig" asp-action="ApprovalTypeIndex" class="nav-link">Approval Type</a></li>
 
                                 </ul>
                             </li><!-- nav-item -->
@@ -130,7 +131,7 @@
                                     <li class="nav-item"><a asp-controller="Permission" asp-action="Index" class="nav-link">Manage Permissions</a></li>
                                     <li class="nav-item"><a asp-controller="Account" asp-action="AssignUserRole" class="nav-link">Assign User To Role</a></li>
                                     <li class="nav-item"><a asp-controller="Permission" asp-action="AssignRolePermissions" class="nav-link">Assign Role To Permissions</a></li>
-                                    <li class="nav-item"><a asp-controller="RfqApprovalConfig" asp-action="Index" class="nav-link">RFQ Approval Config</a></li>
+                                    <li class="nav-item"><a asp-controller="RfqApprovalConfig" asp-action="Index" class="nav-link">Approval Config</a></li>
                                     <li class="nav-item"><a asp-controller="Report" asp-action="UserToCategoryIndex" class="nav-link">Evaluator Config</a></li>
                                 </ul>
                             </li><!-- nav-item -->
@@ -146,7 +147,8 @@
                                     <li class="nav-item"><a href="@Url.Action("Index", "RfqGen")" class="nav-link">Requests For Quote</a></li>
                                     <li class="nav-item"><a asp-controller="RfqGen" asp-action="RfqInProgress" class="nav-link">Submited Quotes</a></li>
                                     <li class="nav-item"><a asp-controller="RfqApproval" asp-action="Index" class="nav-link">Initiate Approval Memo</a></li>
-                                    <li class="nav-item"><a asp-controller="PO" asp-action="Index" class="nav-link">Initiate PO Approval</a></li>
+                                    <li class="nav-item"><a asp-controller="PO" asp-action="POApproval" class="nav-link">Initiate PO Approval</a></li>
+                                    <li class="nav-item"><a asp-controller="PO" asp-action="GeneratePO" class="nav-link">Generate PO</a></li>
                                     <li class="nav-item"><a asp-controller="GRN" asp-action="Index" class="nav-link">Upload GRN</a></li>
                                 </ul>
                             </li>
@@ -197,16 +199,19 @@
 
             </ul>
         </li>*@
-                        @if (User.IsInRole("Approval") || User.IsInRole("Admin"))
+                        @if (User.IsInRole("Approval"))
                         {
                             <li class="nav-item">
                                 <a href="" class="nav-link with-sub">
                                     <i class="icon ion-ios-filing-outline"></i>
-                                    <span>Memo Approval</span>
+                                    <span>Pending Approvals</span>
                                 </a>
                                 <ul class="nav-sub">
-                                    <li class="nav-item"><a asp-controller="RfqApproval" asp-action="PendingApproval" class="nav-link">Approve Quote</a></li>
-                                    <li class="nav-item"><a asp-controller="PO" asp-action="Index" class="nav-link">Approved Quote(s)</a></li>
+
+                                    <li class="nav-item"><a asp-controller="RfqApproval" asp-action="Index" class="nav-link">Approve Quote</a></li>
+                                    <li class="nav-item"><a asp-controller="PO" asp-action="POApproval" class="nav-link">Approve PO</a></li>
+                                    
+
 
 
                                 </ul>
@@ -217,11 +222,12 @@
                             <li class="nav-item">
                                 <a href="" class="nav-link with-sub">
                                     <i class="icon ion-ios-filing-outline"></i>
-                                    <span>Purchase Order Approval</span>
+                                    <span>Completed Approvals</span>
                                 </a>
                                 <ul class="nav-sub">
-                                    <li class="nav-item"><a asp-controller="RfqApproval" asp-action="PendingApproval" class="nav-link">Approve PO</a></li>
-                                    <li class="nav-item"><a asp-controller="PO" asp-action="Index" class="nav-link">Approved PO(s)</a></li>
+
+                                    <li class="nav-item"><a asp-controller="PO" asp-action="ApprovedRFQ" class="nav-link">Approved Quote(s)</a></li>
+                                    <li class="nav-item"><a asp-controller="PO" asp-action="ApprovedPO" class="nav-link">Approved PO(s)</a></li>
 
 
                                 </ul>

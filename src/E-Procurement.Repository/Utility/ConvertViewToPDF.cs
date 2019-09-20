@@ -104,9 +104,9 @@ namespace E_Procurement.Repository.Utility
                 _converter.Convert(pdf);
 
                 // send pdf to  mail
-                var subject = "RFQ APPROVAL NOTIFICATION";
+                var subject = "PURCHASE ORDER NOTIFICATION";
 
-                var message = @"A new RFQ has been sent for your approval.</br>
+                var message = @"A new PO has been sent for your approval.</br>
                                  <div>
                                 <p>Dear Sir,
 

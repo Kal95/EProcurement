@@ -1,0 +1,58 @@
+﻿@model E_Procurement.Repository.ApprovalRepo.ApprovalTypeModel
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Vendor Category";
+    ViewBag.PageDesc = "Edit Category";
+    ViewBag.FavIcon = "fa fa-street-view";
+}
+
+<!-- page section -->
+<div class="row row-sm mg-t-20">
+    <div class="col-xl-12">
+        <div class="card pd-20 pd-sm-40 form-layout form-layout-4">
+            <h6 class="card-body-title">Category</h6>
+            <p class="mg-b-20 mg-sm-b-30">Edit</p>
+            <form class="form-horizontal" action="@Url.Action("ApprovalTypeCreate", "RfqApprovalConfig")" method="post">
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(model => model.ApprovalTypeId)
+
+                <br />
+                <div class="col-md-6" style="margin-top:0px">
+                    <div class="row mg-t-20">
+                        <div class="col-md-6" style="margin-top:10px">
+                            <label for="EvaluationPeriod">Evaluation Period:</label>
+                            @Html.EditorFor(model => model.ApprovalTypeName, new { htmlAttributes = new { id = "ApprovalTypeName", @class = "form-control", @type = "text", required = "required", style = "width:450px; height:40px" } })
+                            @Html.ValidationMessageFor(model => model.ApprovalTypeName, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <br />
+
+                </div>
+                <br />
+                @*<div class="row mg-t-20">
+            <div class="col-md-6" style="margin-top:10px">
+                <label for="IsActive">Is Active?</label>
+                @Html.CheckBoxFor(model => model.IsActive, new { @htmlAttributes = new { id = "active", @type = "checkbox", @class = "form-control", style = "width:100px; height:100px" } })
+
+                @Html.ValidationMessageFor(model => model.IsActive, "", new { @class = "text-danger" })
+            </div>
+        </div>*@
+                <!-- ./Text input-->
+                <!-- Button -->
+                <br />
+                <div class="form-group">
+                    <label class="col-md-8 control-label"></label>
+                    <div class="col-md-4">
+
+                        <button type="submit" class="btn btn-info mg-r-5"><span class="glyphicon glyphicon-send"></span>  Submit</button>
+
+                        <a href="@Url.Action("ApprovalTypeIndex", "RfqApprovalConfig")" class="btn btn-secondary"><span class="glyphicon glyphicon-remove"></span> Back</a>
+                    </div>
+
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>

@@ -8,6 +8,8 @@ namespace E_Procurement.Repository.Dtos
     {
         public int DetailsId { get; set; }
         public int RFQId { get; set; }
+        public int ApproverId { get; set; }
+        public int POId { get; set; }
         public int VendorId { get; set; }
         public int ItemId { get; set; }
         public string ItemName { get; set; }
@@ -23,5 +25,37 @@ namespace E_Procurement.Repository.Dtos
         public string VendorAddress { get; set; }
         public string RFQTitle { get; set; }
         public string RFQBody { get; set; }
+        public string Reference { get; set; }
+        public string CreatedBy { get; set; }
+        public string UpdatedBy { get; set; }
+        public string Comments { get; set; }
+
+
+        public int PoId { get; set; }
+      
+        public int ProjectId { get; set; }
+        public int RequisitionId { get; set; }
+   
+        public string Item { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
+        public string RFQStatus { get; set; }
+        public string POStatus { get; set; }
+       
+        public string VendorStatus { get; set; }
+       
+        public string VendorEmail { get; set; }
+     
+        public string ApprovedBy { get; set; }
+      
+        public string PONumber { get; set; }
+        public decimal TotalAmount { get; set; }
+        public DateTime ApprovedDate { get; set; }
+        public DateTime ExpectedDeliveryDate { get; set; }
+        public DateTime CreatedDate { get; set; }
+       
+        public string PhoneNumber { get; set; }
+     
+        public bool IsActive { get; set; }
     }
 }

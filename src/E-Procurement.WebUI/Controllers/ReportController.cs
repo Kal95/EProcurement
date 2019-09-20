@@ -35,6 +35,7 @@ namespace E_Procurement.WebUI.Controllers
             _reportRepository = reportRepository;
             _mapper = mapper;
         }
+
         private void VendorPredefinedInfo(RfqGenModel Model)
         {
             //int CategoryId = Model.VendorCategoryId;

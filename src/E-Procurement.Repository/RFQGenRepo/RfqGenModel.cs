@@ -31,6 +31,7 @@ namespace E_Procurement.WebUI.Models.RFQModel
         //public string Description { get; set; }
         public int RFQId { get; set; }
         public string Item { get; set; }
+        public string Description { get; set; }
         public string RFQStatus { get; set; }
         public DateTime CreatedDate { get; set; }
 
@@ -49,6 +50,8 @@ namespace E_Procurement.WebUI.Models.RFQModel
         public string ContactName { get; set; }
         public string VendorEmail { get; set; }
         public string PhoneNumber { get; set; }
+        public decimal QuotedAmount { get; set; }
+        public decimal QuotedPrice { get; set; }
 
         [Required(ErrorMessage = "You must select at least one Vendor")]
         public List<int> SelectedVendors { get; set; }

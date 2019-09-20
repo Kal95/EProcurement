@@ -36,6 +36,10 @@ namespace E_Procurement.Repository.RfqApprovalConfigRepository
         {
             return await _context.RfqApprovalConfigs.ToListAsync();
         }
+        public async Task<IEnumerable<ApprovalType>> GetApprovalType()
+        {
+            return await _context.ApprovalTypes.ToListAsync();
+        }
 
         public async Task<IEnumerable<RFQApprovalConfig>> GetFinalApprovalAsync()
         {
@@ -76,8 +80,79 @@ namespace E_Procurement.Repository.RfqApprovalConfigRepository
 
             return false;
         }
+        public bool CreateApprovalType(ApprovalTypeModel model, out string Message)
+        {
+            var confirm = _context.ApprovalTypes.Where(x => x.ApprovalTypeName == model.ApprovalTypeName).Count();
+
+            ApprovalType approvalType = new ApprovalType();
+
+            if (confirm == 0)
+            {
+
+                approvalType.ApprovalTypeName = model.ApprovalTypeName;
+
+                approvalType.CreatedBy = model.CreatedBy;
+
+                approvalType.DateCreated = DateTime.Now;
+
+                _context.Add(approvalType);
+
+                _context.SaveChanges();
+
+                Message = "Approval Type created successfully";
+
+                return true;
+            }
+            else
+            {
+                Message = "Approval Type already exist";
+
+                return false;
+            }
+
+        }
+
+        public bool UpdateApprovalType(ApprovalTypeModel model, out string Message)
+        {
+
+            var confirm = _context.ApprovalTypes.Where(x => x.ApprovalTypeName == model.ApprovalTypeName).Count();
+
+            var oldEntry = _context.ApprovalTypes.Where(u => u.ApprovalTypeId == model.ApprovalTypeId).FirstOrDefault();
+
+            if (oldEntry == null)
+            {
+                throw new Exception("No Approval Type exists with this Id");
+            }
+
+            if (confirm == 0)
+            {
+
+                oldEntry.ApprovalTypeName = model.ApprovalTypeName;
+
+                oldEntry.UpdatedBy = model.UpdatedBy;
+
+                oldEntry.LastDateUpdated = DateTime.Now;
+
+                _context.SaveChanges();
+
+                Message = "Aproval Type updated successfully";
+
+                return true;
+            }
+            else
+            {
+                Message = "Approval Type already exist";
+
+                return false;
+            }
+
+        }
+
+        public IEnumerable<ApprovalType> GetApprovalTypes()
+        {
+            return _context.ApprovalTypes.OrderByDescending(u => u.ApprovalTypeId).ToList();
+        }
 
 
-      
     }
 }

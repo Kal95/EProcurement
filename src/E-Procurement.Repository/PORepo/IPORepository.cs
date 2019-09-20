@@ -14,5 +14,15 @@ namespace E_Procurement.Repository.PORepo
         Task<IEnumerable<RFQGenerationModel>> GetPOAsync();
         Task<POGeneration> GetPOByIdAsync(int Id);
         Task<POGeneration> GetPOByPONumberAsync(string PONumber);
+        List<RFQGenerationModel> GetPoGen();
+        List<RFQGenerationModel> GetPoGen2();
+        List<RFQDetails> GetRFQDetails();
+        IEnumerable<Vendor> GetVendors();
+        List<RFQGeneration> GetRFQs();
+        bool POApproval(RFQDetailsModel model, out string Message);
+        IEnumerable<User> GetUser();
+        List<RFQGenerationModel> GetApprovedPO();
+        List<RFQGenerationModel> GetApprovedPO2();
+        List<RFQGenerationModel> GetApprovedRFQ();
     }
 }

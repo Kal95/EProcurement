@@ -14,6 +14,7 @@ using E_Procurement.Repository.PORepo;
 using E_Procurement.Repository.RFQGenRepo;
 using E_Procurement.Repository.VendoRepo;
 using E_Procurement.Repository.ReportRepo;
+using E_Procurement.Repository.ApprovalRepo;
 
 namespace E_Procurement.WebUI.Controllers
 {
@@ -26,13 +27,14 @@ namespace E_Procurement.WebUI.Controllers
         private readonly IVendorRepository _vendorRepository;
         private readonly IRfqGenRepository _rfqGenRepository;
         private readonly IPORepository _poRepository;
-        public HomeController(IRfqGenRepository rfqRepository, IVendorRepository vendorRepository, IPORepository poRepository, IReportRepository reportRepository)
+        private readonly IRfqApprovalRepository _rfqApprovalRepository;
+        public HomeController(IRfqGenRepository rfqRepository, IRfqApprovalRepository rfqApprovalRepository, IVendorRepository vendorRepository, IPORepository poRepository, IReportRepository reportRepository)
         {
             _rfqGenRepository = rfqRepository;
             _poRepository = poRepository;
             _vendorRepository = vendorRepository;
             _reportRepository = reportRepository;
-        
+            _rfqApprovalRepository = rfqApprovalRepository;
         }
 
         //[Route("Identity/Account/Login")]
@@ -69,15 +71,37 @@ namespace E_Procurement.WebUI.Controllers
             }
             else if (User.IsInRole("Approval"))
             {
-                return RedirectToAction("PendingApproval", "RfqApproval");
+                
+                DashboardModel dashboard = new DashboardModel();
+                var user = _reportRepository.GetUser().Where(u => u.UserName == User.Identity.Name).FirstOrDefault();
+                var pendingPO = _poRepository.GetPoGen2().Count().ToString();
+                var pendingRFQ = _rfqApprovalRepository.GetRFQPendingApproval().Count().ToString();
+                var approvedRFQ = _poRepository.GetApprovedRFQ().Count.ToString();
+                var approvedPO = _poRepository.GetApprovedPO2().Count.ToString();
+                if (Convert.ToInt32(pendingRFQ) != 0 || Convert.ToInt32(pendingPO) != 0)
+                {
+                    dashboard.pendingPO = pendingPO;
+                    dashboard.pendingRFQ = pendingRFQ;
+                }
+                else
+                {
+                    dashboard.PO = approvedPO;
+                    dashboard.RFQ = approvedRFQ;
+
+                }
+                dashboard.UserName = user.FullName;
+                return View(dashboard);
+                //return RedirectToAction("ApproverIndex", "Report");
             }
             else
             {
+                var user = _reportRepository.GetUser().Where(u => u.UserName == User.Identity.Name).FirstOrDefault();
+
                 DashboardModel dashboard = new DashboardModel();
                 dashboard.PO = _reportRepository.GetPoGen().Where(u => u.CreatedDate.Year == DateTime.Now.Year).Count().ToString();
                 dashboard.RFQ = _reportRepository.GetRfqGen().Where(u => u.CreatedDate.Year == DateTime.Now.Year).Count().ToString();
                 dashboard.RegVen = _reportRepository.GetVendors().Where(u => u.DateCreated.Year == DateTime.Now.Year).Count().ToString();
-
+                dashboard.UserName = user.FullName;
                 return View(dashboard);
             }
 
@@ -92,7 +116,7 @@ namespace E_Procurement.WebUI.Controllers
             //});
 
         }
-
+      
         public IActionResult Privacy()
         {
             return View();
