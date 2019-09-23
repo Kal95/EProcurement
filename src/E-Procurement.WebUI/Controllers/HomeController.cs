@@ -63,7 +63,7 @@ namespace E_Procurement.WebUI.Controllers
 
                 DashboardModel dashboard = new DashboardModel();
                 dashboard.PO = _reportRepository.GetPoGen().Where(u => u.CreatedDate.Year == DateTime.Now.Year && u.VendorId == vendor.Id).Count().ToString();
-                dashboard.RFQ = _reportRepository.GetRfqGen().Where(u => u.CreatedDate.Year == DateTime.Now.Year && u.VendorId == vendor.Id).Count().ToString();
+                dashboard.RFQ = _rfqGenRepository.GetRfqGen().Where(u => u.CreatedDate.Year == DateTime.Now.Year && u.VendorId == vendor.Id).Count().ToString();
                 dashboard.Category = SelectedCategories;
 
                 return View(dashboard);
@@ -99,7 +99,7 @@ namespace E_Procurement.WebUI.Controllers
 
                 DashboardModel dashboard = new DashboardModel();
                 dashboard.PO = _reportRepository.GetPoGen().Where(u => u.CreatedDate.Year == DateTime.Now.Year).Count().ToString();
-                dashboard.RFQ = _reportRepository.GetRfqGen().Where(u => u.CreatedDate.Year == DateTime.Now.Year).Count().ToString();
+                dashboard.RFQ = _rfqGenRepository.GetRfqGen().Where(u => u.CreatedDate.Year == DateTime.Now.Year).Count().ToString();
                 dashboard.RegVen = _reportRepository.GetVendors().Where(u => u.DateCreated.Year == DateTime.Now.Year).Count().ToString();
                 dashboard.UserName = user.FullName;
                 return View(dashboard);

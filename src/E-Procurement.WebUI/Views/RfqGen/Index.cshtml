@@ -49,24 +49,28 @@
                         <td>@user.StartDate.ToString("dd-MMM-yyyy")</td>
                         <td>@user.EndDate.ToString("dd-MMM-yyyy")</td>
                         <td>
-                            @if (Convert.ToDateTime(user.EndDate) > DateTime.Now)
+                            @if (Convert.ToDateTime(user.EndDate) > DateTime.Now && user.RFQStatus == null)
                             {
                                 <label class="text-success">Active</label>
                             }
-                            else
+                            else if (Convert.ToDateTime(user.EndDate) < DateTime.Now && user.RFQStatus == null)
                             {
                                 <label class="text-danger">Inactive</label>
 
                             }
+                            else
+                            {
+                                @user.RFQStatus
+                            }
                         </td>
                         <td style="width:50px">
-                            @if (Convert.ToDateTime(user.EndDate) > DateTime.Now)
+                            @if (Convert.ToDateTime(user.EndDate) > DateTime.Now && user.RFQStatus == null)
                             {
                                 <a class="btn btn-orange" style="width:120px" data-toggle="modal" data-target="#modaldemo6" href="@Url.Action("Close", "RfqGen",  new { RFQId = user.RFQId})" onclick="myFunction3(@user.RFQId);"><span class="fa fa-pencil"></span><i class="pe-7s-edit btn-icon-wrapper"></i> Close RFQ</a>
 
 
                             }
-                            else
+                            else if (Convert.ToDateTime(user.EndDate) < DateTime.Now && user.RFQStatus == null)
                             {
                                 <a class="btn btn-info mg-r-5" style="width:120px" data-toggle="modal" data-target="#modaldemo5"
                                    href="@Url.Action("Extend", "RfqGen",  new { RFQId = user.RFQId})" onclick="myFunction2(@user.RFQId);"><span class="fa fa-pencil"></span><i class="pe-7s-edit btn-icon-wrapper"></i> Extend RFQ</a>
