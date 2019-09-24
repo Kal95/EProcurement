@@ -84,7 +84,7 @@ namespace E_Procurement.WebUI.Controllers
                                  join rfqDetails in des on rfqs.Id equals rfqDetails.RFQId
                                  //join vend in _context.Vendors on rfqDetails.VendorId equals vend.Id
                                  join v in ven on rfqDetails.VendorId equals v.Id
-                                 where rfqDetails.RFQId == ved && rfqs.EndDate <= DateTime.Now && rfqs.RFQStatus == null
+                                 where rfqDetails.RFQId == ved && rfqs.EndDate <= DateTime.Now /*&& rfqs.RFQStatus == null*/
                                  
               select new RFQDetailsModel()
                 {
@@ -173,7 +173,7 @@ namespace E_Procurement.WebUI.Controllers
                     {
 
                         Alert("RFQ Approval sent.", NotificationType.success);
-                        return RedirectToAction("PendingApproval");
+                        return RedirectToAction("Index");
                     }
                     Alert("RFQ Approval Error.", NotificationType.error);
                     return View(rfqApproval);
