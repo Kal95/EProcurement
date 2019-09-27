@@ -13,6 +13,7 @@ using E_Procurement.WebUI.Models.RFQModel;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace E_Procurement.Repository.PORepo
 {
@@ -29,6 +30,14 @@ namespace E_Procurement.Repository.PORepo
             _pdfConverter = pdfConverter;
             _userManager = userManager;
             _contextAccessor = contextAccessor;
+        }
+        public List<RFQApprovalConfig> GetPOApprovalConfig()
+        {
+            return _context.RfqApprovalConfigs.Where(u=> u.ApprovalTypeId == 2).OrderByDescending(u => u.Id).ToList();
+        }
+        public List<POApprovalTransactions>GetPOApprovals()
+        {
+            return _context.POApprovalTransactions.OrderByDescending(u => u.Id).ToList();
         }
         public List<RFQDetails> GetRFQDetails()
         {
@@ -208,13 +217,13 @@ namespace E_Procurement.Repository.PORepo
                              VendorAddress = vendList.Where(u => u.VendorId == rfqDetails.VendorId && u.RfqId == rfqDetails.RFQId).Select(u => u.VendorAddress).FirstOrDefault(),
                              VendorStatus = vendList.Where(u => u.VendorId == rfqDetails.VendorId && u.RfqId == rfqDetails.RFQId).Select(u => u.VendorStatus).FirstOrDefault(),
                              ContactName = vendList.Where(u => u.VendorId == rfqDetails.VendorId && u.RfqId == rfqDetails.RFQId).Select(u => u.ContactName).FirstOrDefault(),
-                             Item = string.Join(", ", desList.Where(u => u.RfqId == rfqDetails.RFQId).Select(u => u.ItemName)),
+                             Item = string.Join(", ", desList.Where(u => u.RfqId == rfq.Id).Select(u => u.ItemName)),
                              Description = string.Join(", ", descList.Where(u => u.RfqId == rfq.Id).Select(u => u.Description)),
                              VendorName = vendList.Where(u => u.VendorId == rfqDetails.VendorId && u.RfqId == rfq.Id).Select(u => u.VendorName).FirstOrDefault(),
                              //VendorAddress = vend.VendorAddress,
                              //VendorStatus = vend.VendorStatus,
                              //ContactName = vend.ContactName
-                         }).GroupBy(v => new { v.RFQId, v.VendorName }).Select(s => s.FirstOrDefault()).ToList();
+                         }).GroupBy(v => new { v.RFQId, v.Item }).Select(s => s.FirstOrDefault()).ToList();
 
 
 
@@ -274,86 +283,88 @@ namespace E_Procurement.Repository.PORepo
                                 PhoneNumber = v.PhoneNumber
                             }).GroupBy(v => new { v.RfqId, v.VendorName }).Select(s => s.FirstOrDefault());
 
-            //List<RFQGenerationModel> RfqGen = new List<RFQGenerationModel>();
-            //var query = (from po in _context.PoGenerations
-            //             join rfqDetails in _context.RfqDetails on po.RFQId equals rfqDetails.RFQId
-
-            //             join rfq in _context.RfqGenerations on rfqDetails.RFQId equals rfq.Id
-            //             // join po in _context.POGenerations on rfq.Id equals  po.RFQId
-            //             //where approvalStatus.CurrentApprovalLevel == config.ApprovalLevel && config.IsFinalLevel == true
-            //             //&& !(from po in _context.PoGenerations select po.RFQId).Contains(rfq.Id)
-            //             orderby po.Id descending
+            var Con2 = _context.PoGenerations.Where(a => a.POStatus != "Approved").ToList();
             var currentUser = _contextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-            var approved = _context.POApprovalTransactions.Select(u => u.ApproverID).ToList();
-            var config = _context.RfqApprovalConfigs.Where(u => u.ApprovalTypeId == 2).ToList();
-            var config2 = _context.RfqApprovalConfigs.Where(u => u.ApprovalTypeId == 2 && u.UserId == int.Parse(currentUser)).ToList();
-            var ApprovalLevel = _context.RfqApprovalConfigs.Where(u => u.ApprovalTypeId == 2).Select(u => u.ApprovalLevel).ToList();
-            var LevelInApproved = _context.POApprovalTransactions.Select(u => u.ApprovalLevel).ToList();
+            var OthersApproved = _context.POApprovalTransactions.Where(u => Con2.Any(n => u.RFQId == n.RFQId /*&& u.ApproverID != int.Parse(currentUser)*/)).ToList();
+            var CurrentApproved = _context.POApprovalTransactions.Where(u => Con2.Any(n => u.RFQId == n.RFQId && u.ApproverID == int.Parse(currentUser))).Select(u => u.RFQId).ToList();
+            var OthersConfig = _context.RfqApprovalConfigs.Where(u => OthersApproved.Any(n => u.ApprovalTypeId == 2 && u.UserId == n.ApproverID)).ToList();
+            //var CurrentConfig = _context.RfqApprovalConfigs.Where(u => CurrentApproved.Any(n => u.ApprovalTypeId == 2 && u.UserId == n.ApproverID)).ToList();
+            var CurrentConfig = _context.RfqApprovalConfigs.Where(u => u.ApprovalTypeId == 2 && u.UserId == int.Parse(currentUser)).FirstOrDefault();//.ToList();
 
-            var Approver = 0;
-            if (config2.Any(u => u.ApprovalLevel == 1)) { Approver = 1; }
-            if (LevelInApproved.Contains(1) && config2.Any(u => u.ApprovalLevel == 2)) { Approver = 2; }
-            if (LevelInApproved.Contains(2) && config2.Any(u => u.ApprovalLevel == 3)) { Approver = 3; }
-            if (LevelInApproved.Contains(3) && config2.Any(u => u.ApprovalLevel == 4)) { Approver = 4; }
-            if (LevelInApproved.Contains(4) && config2.Any(u => u.ApprovalLevel == 5)) { Approver = 5; }
+            var LevelInApproved = OthersApproved.Where(a => OthersConfig.Any(b => b.ApprovalLevel == a.ApprovalLevel && b.ApprovalTypeId == 2)).Select(u => u.ApprovalLevel).ToList();//_context.POApprovalTransactions.Where(u => con.Any(k => /*u.ApproverID == userId &&*/ k.RFQId == u.RFQId)).Select(u => u.ApprovalLevel).ToList();
+            var LevelInApproved2 = OthersApproved.Where(a => OthersConfig.Any(b => b.ApprovalLevel == a.ApprovalLevel && b.ApprovalTypeId == 2)).ToList();
+
+            List<SelectListItem> Approver = new List<SelectListItem>();
+
+            if (CurrentConfig.ApprovalLevel == 1)
+            {
+                foreach (var c in Con2)
+                {
+                    if (CurrentConfig.ApprovalLevel == 1) { Approver.Add(new SelectListItem() { Text = c.RFQId.ToString(), Value = "1" }); }
+                }
+            }
+            else
+            {
+                //List<int> Approver = new List<int>();
+                foreach (var level in LevelInApproved2)
+                {
+                    //if (CurrentConfig.ApprovalLevel == 1) { Approver.Add(new SelectListItem() { Text = level.RFQId.ToString(), Value = "1" }); }
+                    if (level.ApprovalLevel == 1 && CurrentConfig.ApprovalLevel == 2 && level.ApprovalLevel == CurrentConfig.ApprovalLevel - 1) { Approver.Add(new SelectListItem() { Text = level.RFQId.ToString(), Value = "2" });/*Approver.Add(2);*/ }
+                    if (level.ApprovalLevel == 2 && CurrentConfig.ApprovalLevel == 3 && level.ApprovalLevel == CurrentConfig.ApprovalLevel - 1) { Approver.Add(new SelectListItem() { Text = level.RFQId.ToString(), Value = "3" }); }
+                    if (level.ApprovalLevel == 3 && CurrentConfig.ApprovalLevel == 4 && level.ApprovalLevel == CurrentConfig.ApprovalLevel - 1) { Approver.Add(new SelectListItem() { Text = level.RFQId.ToString(), Value = "4" }); }
+                    if (level.ApprovalLevel == 4 && CurrentConfig.ApprovalLevel == 5 && level.ApprovalLevel == CurrentConfig.ApprovalLevel - 1) { Approver.Add(new SelectListItem() { Text = level.RFQId.ToString(), Value = "5" }); }
+                }
+            }
+            
+                var query = (from vend in _context.Vendors
+                             join rfqDetails in _context.RfqDetails on vend.Id equals rfqDetails.VendorId
+                             join po in _context.PoGenerations on rfqDetails.VendorId equals po.VendorId
+                             //join app in _context.POApprovalTransactions on po.RFQId equals app.RFQId
+                             join rfq in _context.RfqGenerations on po.RFQId equals rfq.Id
+
+                             where Approver.Any(a => Convert.ToInt32(a.Value) == CurrentConfig.ApprovalLevel && Convert.ToInt32(a.Text) == rfq.Id && CurrentConfig.UserId == int.Parse(currentUser)) && !CurrentApproved.Contains(rfq.Id) && po.POStatus != "Approved"
+
+                             orderby rfq.Id, rfq.EndDate descending
+                             select new RFQGenerationModel()
+                             {
+                                 QuotedAmount = QamountList.Where(u => u.VendorId == rfqDetails.VendorId && u.RfqId == rfq.Id).Select(u => u.QuotedAmount).FirstOrDefault(),
+                                 QuotedPrice = PriceList.Where(u => u.VendorId == rfqDetails.VendorId && u.RfqId == rfq.Id).Select(u => u.QuotedPrice).FirstOrDefault(),
+                                 RFQId = rfq.Id,
+                                 ProjectId = rfq.ProjectId,
+                                 RequisitionId = rfq.RequisitionId,
+                                 Reference = rfq.Reference,
+                                 StartDate = rfq.StartDate,
+                                 EndDate = rfq.EndDate,
+                                 QuotedQuantity = rfqDetails.QuotedQuantity,
+
+                                 RFQStatus = rfq.RFQStatus,
+                                 VendorId = vendList.Where(u => u.VendorId == rfqDetails.VendorId && u.RfqId == rfqDetails.RFQId).Select(u => u.VendorId).FirstOrDefault(),
+
+                                 VendorEmail = vendList.Where(u => u.VendorId == rfqDetails.VendorId && u.RfqId == rfqDetails.RFQId).Select(u => u.VendorEmail).FirstOrDefault(),
+                                 PhoneNumber = vendList.Where(u => u.VendorId == rfqDetails.VendorId && u.RfqId == rfqDetails.RFQId).Select(u => u.PhoneNumber).FirstOrDefault(),
+                                 VendorAddress = vendList.Where(u => u.VendorId == rfqDetails.VendorId && u.RfqId == rfqDetails.RFQId).Select(u => u.VendorAddress).FirstOrDefault(),
+                                 VendorStatus = vendList.Where(u => u.VendorId == rfqDetails.VendorId && u.RfqId == rfqDetails.RFQId).Select(u => u.VendorStatus).FirstOrDefault(),
+                                 ContactName = vendList.Where(u => u.VendorId == rfqDetails.VendorId && u.RfqId == rfqDetails.RFQId).Select(u => u.ContactName).FirstOrDefault(),
+                                 Item = string.Join(", ", desList.Where(u => u.RfqId == rfq.Id).Select(u => u.ItemName)),
+                                 Description = string.Join(", ", descList.Where(u => u.RfqId == rfq.Id).Select(u => u.Description)),
+                                 VendorName = vendList.Where(u => u.VendorId == rfqDetails.VendorId && u.RfqId == rfq.Id).Select(u => u.VendorName).FirstOrDefault(),
+                                 //VendorAddress = vend.VendorAddress,
+                                 //VendorStatus = vend.VendorStatus,
+                                 //ContactName = vend.ContactName
+                             }).GroupBy(v => new { v.RFQId, v.Item }).Select(s => s.FirstOrDefault()).ToList();
 
 
+                return query.ToList();
 
-            //if (config2.Any(u => u.ApprovalLevel == 1)) { config = _context.RfqApprovalConfigs.Where(u => u.ApprovalTypeId == 2).ToList(); }
-           // else if (config2.Any(u => u.ApprovalLevel == 2) && LevelInApproved.Any(a => a != 1) ){ config = null; }
-           // else if (config2.Any(u => u.ApprovalLevel == 3) && LevelInApproved.Any(a => a != 2)) { config = null; }
-           // else if (config2.Any(u => u.ApprovalLevel == 4) && LevelInApproved.Any(a => a != 3)) { config = null; }
-           // else if (config2.Any(u => u.ApprovalLevel == 5) && LevelInApproved.Any(a => a != 4)) { config = null; }
-
-            var query = (from vend in _context.Vendors
-                         join rfqDetails in _context.RfqDetails on vend.Id equals rfqDetails.VendorId
-                         join po in _context.PoGenerations on rfqDetails.VendorId equals po.VendorId
-           
-                         join rfq in _context.RfqGenerations on po.RFQId equals rfq.Id
-
-                         where config.Any(u => u.UserId == int.Parse(currentUser) && u.ApprovalLevel == Approver) && !approved.Contains(int.Parse(currentUser)) && po.POStatus != "Approved"
-
-                         //&& !(from ap in approved select ap.RFQId).Contains(rfq.Id) && config.ApprovalTypeId == 2
-                         orderby rfq.Id, rfq.EndDate descending
-                         select new RFQGenerationModel()
-                         {
-                             QuotedAmount = QamountList.Where(u => u.VendorId == rfqDetails.VendorId && u.RfqId == rfq.Id).Select(u => u.QuotedAmount).FirstOrDefault(),
-                             QuotedPrice = PriceList.Where(u => u.VendorId == rfqDetails.VendorId && u.RfqId == rfq.Id).Select(u => u.QuotedPrice).FirstOrDefault(),
-                             RFQId = rfq.Id,
-                             ProjectId = rfq.ProjectId,
-                             RequisitionId = rfq.RequisitionId,
-                             Reference = rfq.Reference,
-                             StartDate = rfq.StartDate,
-                             EndDate = rfq.EndDate,
-                             QuotedQuantity = rfqDetails.QuotedQuantity,
-
-                             RFQStatus = rfq.RFQStatus,
-                             VendorId = vendList.Where(u => u.VendorId == rfqDetails.VendorId && u.RfqId == rfqDetails.RFQId).Select(u => u.VendorId).FirstOrDefault(),
-
-                             VendorEmail = vendList.Where(u => u.VendorId == rfqDetails.VendorId && u.RfqId == rfqDetails.RFQId).Select(u => u.VendorEmail).FirstOrDefault(),
-                             PhoneNumber = vendList.Where(u => u.VendorId == rfqDetails.VendorId && u.RfqId == rfqDetails.RFQId).Select(u => u.PhoneNumber).FirstOrDefault(),
-                             VendorAddress = vendList.Where(u => u.VendorId == rfqDetails.VendorId && u.RfqId == rfqDetails.RFQId).Select(u => u.VendorAddress).FirstOrDefault(),
-                             VendorStatus = vendList.Where(u => u.VendorId == rfqDetails.VendorId && u.RfqId == rfqDetails.RFQId).Select(u => u.VendorStatus).FirstOrDefault(),
-                             ContactName = vendList.Where(u => u.VendorId == rfqDetails.VendorId && u.RfqId == rfqDetails.RFQId).Select(u => u.ContactName).FirstOrDefault(),
-                             Item = string.Join(", ", desList.Where(u => u.RfqId == rfqDetails.RFQId).Select(u => u.ItemName)),
-                             Description = string.Join(", ", descList.Where(u => u.RfqId == rfq.Id).Select(u => u.Description)),
-                             VendorName = vendList.Where(u => u.VendorId == rfqDetails.VendorId && u.RfqId == rfq.Id).Select(u => u.VendorName).FirstOrDefault(),
-                             //VendorAddress = vend.VendorAddress,
-                             //VendorStatus = vend.VendorStatus,
-                             //ContactName = vend.ContactName
-                         }).GroupBy(v => new { v.RFQId, v.VendorName }).Select(s => s.FirstOrDefault()).ToList();
-
-
-
-
-            return query.ToList();
-            //return _context.PoGenerations.OrderByDescending(u => u.Id).ToList();
+            
         }
         public List<RFQGenerationModel> GetApprovedRFQ()
         {
             var ven = _context.Vendors.ToList();
 
             var des = _context.RfqDetails.ToList();
+
+            var InitiatedVendor = _context.RfqApprovalTransactions.ToList();
 
             var desList = des.Select(x => new RfqGenModel
             {
@@ -441,20 +452,21 @@ namespace E_Procurement.Repository.PORepo
                              QuotedQuantity = rfqDetails.QuotedQuantity,
 
                              RFQStatus = rfq.RFQStatus,
-                             VendorId = vendList.Where(u => u.VendorId == rfqDetails.VendorId && u.RfqId == rfqDetails.RFQId).Select(u => u.VendorId).FirstOrDefault(),
+                             VendorId = InitiatedVendor.Where(u => u.RFQId == rfq.Id).Select(u => u.VendorId).FirstOrDefault(),
+                             //VendorId = vendList.Where(u => u.VendorId == rfqDetails.VendorId && u.RfqId == rfqDetails.RFQId).Select(u => u.VendorId).FirstOrDefault(),
 
-                             VendorEmail = vendList.Where(u => u.VendorId == rfqDetails.VendorId && u.RfqId == rfqDetails.RFQId).Select(u => u.VendorEmail).FirstOrDefault(),
-                             PhoneNumber = vendList.Where(u => u.VendorId == rfqDetails.VendorId && u.RfqId == rfqDetails.RFQId).Select(u => u.PhoneNumber).FirstOrDefault(),
-                             VendorAddress = vendList.Where(u => u.VendorId == rfqDetails.VendorId && u.RfqId == rfqDetails.RFQId).Select(u => u.VendorAddress).FirstOrDefault(),
-                             VendorStatus = vendList.Where(u => u.VendorId == rfqDetails.VendorId && u.RfqId == rfqDetails.RFQId).Select(u => u.VendorStatus).FirstOrDefault(),
-                             ContactName = vendList.Where(u => u.VendorId == rfqDetails.VendorId && u.RfqId == rfqDetails.RFQId).Select(u => u.ContactName).FirstOrDefault(),
+                             //VendorEmail = vendList.Where(u => u.VendorId == rfqDetails.VendorId && u.RfqId == rfqDetails.RFQId).Select(u => u.VendorEmail).FirstOrDefault(),
+                             //PhoneNumber = vendList.Where(u => u.VendorId == rfqDetails.VendorId && u.RfqId == rfqDetails.RFQId).Select(u => u.PhoneNumber).FirstOrDefault(),
+                             //VendorAddress = vendList.Where(u => u.VendorId == rfqDetails.VendorId && u.RfqId == rfqDetails.RFQId).Select(u => u.VendorAddress).FirstOrDefault(),
+                             //VendorStatus = vendList.Where(u => u.VendorId == rfqDetails.VendorId && u.RfqId == rfqDetails.RFQId).Select(u => u.VendorStatus).FirstOrDefault(),
+                             //ContactName = vendList.Where(u => u.VendorId == rfqDetails.VendorId && u.RfqId == rfqDetails.RFQId).Select(u => u.ContactName).FirstOrDefault(),
                              Item = string.Join(", ", desList.Where(u => u.RfqId == rfqDetails.RFQId).Select(u => u.ItemName)),
                              Description = string.Join(", ", descList.Where(u => u.RfqId == rfq.Id).Select(u => u.Description)),
-                             VendorName = vendList.Where(u => u.VendorId == rfqDetails.VendorId && u.RfqId == rfq.Id).Select(u => u.VendorName).FirstOrDefault(),
+                             //VendorName = vendList.Where(u => u.VendorId == rfqDetails.VendorId && u.RfqId == rfq.Id).Select(u => u.VendorName).FirstOrDefault(),
                              //VendorAddress = vend.VendorAddress,
                              //VendorStatus = vend.VendorStatus,
                              //ContactName = vend.ContactName
-                         }).GroupBy(v => new { v.RFQId, v.VendorName }).Select(s => s.FirstOrDefault()).ToList();
+                         }).GroupBy(v => new { v.RFQId, v.Item}).Select(s => s.FirstOrDefault()).ToList();
 
 
 
@@ -513,15 +525,15 @@ namespace E_Procurement.Repository.PORepo
                                 VendorStatus = v.VendorStatus,
                                 PhoneNumber = v.PhoneNumber
                             }).GroupBy(v => new { v.RfqId, v.VendorName }).Select(s => s.FirstOrDefault());
-            
 
+            var ApprovedPO = _context.PoGenerations.Where(a => a.POStatus == "Approved").ToList();
             var query = (from vend in _context.Vendors
                          join rfqDetails in _context.RfqDetails on vend.Id equals rfqDetails.VendorId
                          join po in _context.PoGenerations on rfqDetails.VendorId equals po.VendorId
 
                          join rfq in _context.RfqGenerations on po.RFQId equals rfq.Id
 
-                         where po.POStatus == "Approved"
+                         where po.POStatus == "Approved" 
 
                          //&& !(from ap in approved select ap.RFQId).Contains(rfq.Id) && config.ApprovalTypeId == 2
                          orderby rfq.Id, rfq.EndDate descending

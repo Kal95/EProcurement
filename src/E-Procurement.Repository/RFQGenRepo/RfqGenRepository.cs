@@ -142,17 +142,17 @@ namespace E_Procurement.Repository.RFQGenRepo
                 {
                     var requisitionURL = _config.GetSection("ExternalAPI:RequisitionURL").Value;
 
-                    var message = "</br><b> Dear </b>" + entry.ContactName;
-                    message += "</br><b> Your company: </b>" + entry.VendorName;
+                    var message = "<b> Dear </b>" + entry.ContactName;
+                    message += "<br><br><b> Your company: </b>" + entry.VendorName + ",";
 
-                    message += "<br>has been chosen to supply the following items: ";
+                    message += "<br> has been chosen to provide quote for the following items: ";
 
-                    message += "<br> "    +string.Join(", ", itemList.Select(u => u.ItemName));
+                    message +=  string.Join(", ", itemList.Select(u => u.ItemName)) + ",";
 
-                    message += " in the following quantities " + string.Join(", ", model.Quantities) + " respectively.";
+                    message += "<br> in the following quantities: " + string.Join(", ", model.Quantities) + " respectively.";
 
-                    message += "</br>Kindly Login to our E-Procurement Platform via " +requisitionURL/*+"/QuoteSending"*/ +" to respond.";
-                    message += "</br>Regards";
+                    message += "<br>Kindly Login to our E-Procurement Platform via " +"<a>"+requisitionURL + "/QuoteSending </a>" + " to respond.";
+                    message += "<br><br>Regards";
 
                     RFQGenerationModel model2 = new RFQGenerationModel();
                     model2.VendorId = entry.Id;
@@ -164,6 +164,7 @@ namespace E_Procurement.Repository.RFQGenRepo
                     model2.RFQTitle = model.RFQTitle.ToUpper();
                     model2.RFQBody = model.RFQBody;
                     model2.RFQCondition = model.RFQCondition;
+                    model2.URL = requisitionURL;
 
                     List<RFQDetailsModel> rFQDetails = new List<RFQDetailsModel>();
                     var itemV = GetItem(model.CategoryId).ToList();

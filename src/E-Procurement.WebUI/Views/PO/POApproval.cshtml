@@ -104,23 +104,35 @@
                                         }
                                         @foreach (var approvalConfig2 in RFQDetails2.Where(u => u.RFQId == approvalConfig.RFQId))
                                         {
-                                            <tr id="Descriptions_" + @approvalConfig2.VendorId>
-                                                <td>@(a = a + 1)</td>
-                                                @*<td>@approvalConfig.RFQId</td>*@
-                                                @*<td>@approvalConfig.ProjectId</td>
-                <td>@approvalConfig.RequisitionId</td>*@
-                                                @*<td>@approvalConfig.RFQStatus</td>*@
-                                                <td>@approvalConfig2.VendorName</td>
-                                                @*<td>@approvalConfig.VendorStatus</td>*@
-                                                <td>@approvalConfig2.ContactName</td>
-                                                <td>@approvalConfig2.TotalAmount</td>
+                                        <tr id="Descriptions_" + @approvalConfig2.VendorId>
+                                            <td>@(a = a + 1)</td>
+                                            @*<td>@approvalConfig.RFQId</td>*@
+                                            @*<td>@approvalConfig.ProjectId</td>
+        <td>@approvalConfig.RequisitionId</td>*@
+                                            @*<td>@approvalConfig.RFQStatus</td>*@
+                                            <td>@approvalConfig2.VendorName</td>
+                                            @*<td>@approvalConfig.VendorStatus</td>*@
+                                            <td>@approvalConfig2.ContactName</td>
+                                            <td>@approvalConfig2.TotalAmount</td>
+                                            @if (User.IsInRole("Procurement") && !User.IsInRole("Approval"))
+                                            {
                                                 <td>
                                                     <a class="btn btn-info mg-r-5" style="width:120px"
-                                                       href="@Url.Action("POApprovalDetails", "PO", new { RFQId = @approvalConfig2.RFQId, VendorId = @approvalConfig2.VendorId })"><span class="fa fa-pencil"></span><i class="pe-7s-edit btn-icon-wrapper"></i> Details</a>
+                                                       href="@Url.Action("POApprovalDetails", "PO", new { RFQId = @approvalConfig2.RFQId, VendorId = @approvalConfig2.VendorId })"><span class="fa fa-pencil"></span><i class="pe-7s-edit btn-icon-wrapper"></i>Details</a>
                                                 </td>
+                                            }
+                                            @if (User.IsInRole("Approval"))
+                                            {
+                                                @if (approvalConfig2.VendorId == approvalConfig.VendorId)
+                                                {
+                                                    <td>
+                                                        <a class="btn btn-info mg-r-5" style="width:120px"
+                                                           href="@Url.Action("POApprovalDetails", "PO", new { RFQId = @approvalConfig2.RFQId, VendorId = @approvalConfig2.VendorId })"><span class="fa fa-pencil"></span><i class="pe-7s-edit btn-icon-wrapper"></i>Details</a>
+                                                    </td>
+                                                }
+                                            }
 
-
-                                            </tr>
+                                        </tr>
 
 
 

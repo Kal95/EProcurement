@@ -128,10 +128,20 @@
                     <input asp-for="Comments" type="text" class="form-control" placeholder="Add your comments.">
                 </div>
             </div><!-- row -->
-            <div class="form-layout-footer mg-t-30">
-                <button type="submit" class="btn btn-info mg-r-5">Send For Approval</button>
-                @*<button class="btn btn-secondary">Cancel</button>*@
-            </div><!-- form-layout-footer -->
+            @if (User.IsInRole("Approval"))
+            {
+                <div class="form-layout-footer mg-t-30">
+                    <button type="submit" class="btn btn-info mg-r-5">Approve</button>
+                    @*<button class="btn btn-secondary">Cancel</button>*@
+                </div><!-- form-layout-footer -->
+            }
+            @if (User.IsInRole("Procurement") && !User.IsInRole("Approval"))
+            {
+                <div class="form-layout-footer mg-t-30">
+                    <button type="submit" class="btn btn-info mg-r-5">Send For Approval</button>
+                    @*<button class="btn btn-secondary">Cancel</button>*@
+                </div><!-- form-layout-footer -->
+            }
         </form>
 
     </div><!-- table-wrapper -->

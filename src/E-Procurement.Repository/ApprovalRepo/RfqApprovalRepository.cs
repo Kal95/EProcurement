@@ -491,7 +491,8 @@ namespace E_Procurement.Repository.RfqApprovalConfigRepository
                                    Description = rfq.Description,
                                    StartDate = rfq.StartDate,
                                    EndDate = rfq.EndDate,
-                                   RFQStatus = rfq.RFQStatus
+                                   RFQStatus = rfq.RFQStatus,
+                                   VendorId = transaction.VendorId
                                }).GroupBy(v => new { v.RFQId, v.Item }).Select(s => s.FirstOrDefault()).ToListAsync();//.Distinct().ToListAsync();
 
 
@@ -503,7 +504,7 @@ namespace E_Procurement.Repository.RfqApprovalConfigRepository
 
             //get current logged on user
             var currentUser = _contextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-
+            //var InitiatedVendor = _context.RfqApprovalTransactions.ToList();
 
             var query =  (from vend in _context.Vendors
                                join rfqDetails in _context.RfqDetails on vend.Id equals rfqDetails.VendorId
@@ -522,7 +523,8 @@ namespace E_Procurement.Repository.RfqApprovalConfigRepository
                                    Description = rfq.Description,
                                    StartDate = rfq.StartDate,
                                    EndDate = rfq.EndDate,
-                                   RFQStatus = rfq.RFQStatus
+                                   RFQStatus = rfq.RFQStatus,
+                                   //VendorId = InitiatedVendor.Where(u => u.RFQId == rfq.Id).Select(u => u.VendorId).FirstOrDefault()
                                }).GroupBy(v => new { v.RFQId, v.Item }).Select(s => s.FirstOrDefault()).ToList();//.Distinct().ToListAsync();
 
 

@@ -176,15 +176,16 @@ namespace E_Procurement.WebUI.Controllers
         {
             try
             {
+                
                 var config= _PORepository.GetPoGen().ToList();
-                //List<RFQGenerationModel> poModel = new List<RFQGenerationModel>();
+             
                 if (User.IsInRole("Procurement") && !User.IsInRole("Approval"))
                 {
                 config = _PORepository.GetPoGen().ToList();
                 }
                 else if (User.IsInRole("Approval"))
                 {
-                    config = _PORepository.GetPoGen2().ToList();
+                    config = _PORepository.GetPoGen2();
                 }
                 //var RfqList = _rfqGenRepository.GetRfqGen().OrderBy(u => u.EndDate).ToList();
                 var ven = _RfqApprovalRepository.GetVendors();
@@ -477,8 +478,9 @@ namespace E_Procurement.WebUI.Controllers
                 var generatePo = await _PORepository.GenerationPOAsync(rfqApproval);
                 if (generatePo)
                 {
-
                     Alert("PO Generated Successfully", NotificationType.success);
+                    return RedirectToAction("GeneratePO");
+                   
                 }
 
                 else
@@ -486,8 +488,7 @@ namespace E_Procurement.WebUI.Controllers
                     Alert("PO cannot be Generated", NotificationType.info);
                     return View(rfqApproval);
                 }
-
-                return RedirectToAction("GeneratePO", "PO");
+                
             }
             catch (Exception ex)
             {

@@ -9,6 +9,7 @@ namespace E_Procurement.Repository.Dtos
         public int DetailsId { get; set; }
         public int RFQId { get; set; }
         public int ApproverId { get; set; }
+        public int ApprovalLevel { get; set; }
         public int POId { get; set; }
         public int VendorId { get; set; }
         public int ItemId { get; set; }

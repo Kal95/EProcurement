@@ -62,6 +62,7 @@ namespace E_Procurement.Repository.Dtos
             public string POWarranty { get; set; }
             public string POTerms { get; set; }
             public string POValidity { get; set; }
+            public string URL { get; set; }
 
     }
 }
