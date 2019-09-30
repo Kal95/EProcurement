@@ -114,7 +114,7 @@
                                             @*<td>@approvalConfig.VendorStatus</td>*@
                                             <td>@approvalConfig2.ContactName</td>
                                             <td>@approvalConfig2.TotalAmount</td>
-                                            @if (User.IsInRole("Procurement") && !User.IsInRole("Approval"))
+                                            @*@if (User.IsInRole("Procurement") && !User.IsInRole("Approval"))
                                             {
                                                 <td>
                                                     <a class="btn btn-info mg-r-5" style="width:120px"
@@ -122,15 +122,15 @@
                                                 </td>
                                             }
                                             @if (User.IsInRole("Approval"))
-                                            {
+                                            {*@
                                                 @if (approvalConfig2.VendorId == approvalConfig.VendorId)
                                                 {
                                                     <td>
                                                         <a class="btn btn-info mg-r-5" style="width:120px"
-                                                           href="@Url.Action("POApprovalDetails", "PO", new { RFQId = @approvalConfig2.RFQId, VendorId = @approvalConfig2.VendorId })"><span class="fa fa-pencil"></span><i class="pe-7s-edit btn-icon-wrapper"></i>Details</a>
+                                                           href="@Url.Action("POApprovalDetails", "PO", new { RFQId = @approvalConfig2.RFQId, VendorId = @approvalConfig2.VendorId })"><span class="fa fa-pencil"></span><i class="pe-7s-edit btn-icon-wrapper"></i> Details</a>
                                                     </td>
                                                 }
-                                            }
+                                            @*}*@
 
                                         </tr>
 

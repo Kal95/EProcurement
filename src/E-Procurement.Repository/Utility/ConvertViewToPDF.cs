@@ -87,11 +87,12 @@ namespace E_Procurement.Repository.Utility
                     Out = Path.Combine(webRootPath, "Uploads", "PO_" + rfqGenerationModel.PONumber + ".pdf") //@"D:\PDFCreator\Employee_Report.pdf"
                 };
                 //Out = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "TicketTemplate", ticketViewModel.TicketNo + ".pdf")) //@"D:\PDFCreator\Employee_Report.pdf"
+                //string HTMLC = await _viewRender.RenderToStringAsync("/Views/PDFTemplates/PO.cshtml", rfqGenerationModel);
                 var objectSettings = new ObjectSettings
                 {
                     PagesCount = true,
-                    HtmlContent = await _viewRender.RenderToStringAsync("/Views/PDFTemplates/PO.cshtml", rfqGenerationModel),
-                    WebSettings = { DefaultEncoding = "utf-8", UserStyleSheet = Path.Combine(Directory.GetCurrentDirectory(), "css", "amanda.css") }
+                    HtmlContent = await _viewRender.RenderToStringAsync("/Views/PDFTemplates/PO_Notification.cshtml", rfqGenerationModel),
+                    WebSettings = { DefaultEncoding = "utf-8", UserStyleSheet = Path.Combine(Directory.GetCurrentDirectory(), "css", "Ticket.css") }
                 };
                 //HeaderSettings = { FontName = "Arial", FontSize = 9, Right = "Page [page] of [toPage]", Line = true },
                 //FooterSettings = { FontName = "Arial", FontSize = 9, Line = true, Center = "Report Footer" }

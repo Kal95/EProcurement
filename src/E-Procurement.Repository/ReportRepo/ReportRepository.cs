@@ -215,6 +215,7 @@ namespace E_Procurement.Repository.ReportRepo
                          //join approvalStatus in _context.RfqApprovalStatuses on transaction.RFQId equals approvalStatus.RFQId
                          //join config in _context.RfqApprovalConfigs on approvalStatus.CurrentApprovalLevel equals config.ApprovalLevel
                          join rfq in _context.RfqGenerations on rfqDetails.RFQId equals rfq.Id
+                         where po.POStatus == "Generated"
                          // join po in _context.POGenerations on rfq.Id equals  po.RFQId
                          //where approvalStatus.CurrentApprovalLevel == config.ApprovalLevel && config.IsFinalLevel == true
                          //&& !(from po in _context.PoGenerations select po.RFQId).Contains(rfq.Id)
@@ -233,16 +234,16 @@ namespace E_Procurement.Repository.ReportRepo
                                    EndDate = rfq.EndDate,
                                    CreatedDate = po.DateCreated,
                                    RFQStatus = rfq.RFQStatus,
-                                   VendorId = vendList.Where(u => u.VendorId == rfqDetails.VendorId && u.RfqId == rfqDetails.RFQId).Select(u => u.VendorId).FirstOrDefault(),
+                                   VendorId = vendList.Where(u => u.VendorId == po.VendorId && u.RfqId == po.RFQId).Select(u => u.VendorId).FirstOrDefault(),
                                    
-                                   VendorEmail = vendList.Where(u => u.VendorId == rfqDetails.VendorId && u.RfqId == rfqDetails.RFQId).Select(u => u.VendorEmail).FirstOrDefault(),
-                                   PhoneNumber = vendList.Where(u => u.VendorId == rfqDetails.VendorId && u.RfqId == rfqDetails.RFQId).Select(u => u.PhoneNumber).FirstOrDefault(),
-                                   VendorAddress = vendList.Where(u => u.VendorId == rfqDetails.VendorId && u.RfqId == rfqDetails.RFQId).Select(u => u.VendorAddress).FirstOrDefault(),
-                                   VendorStatus = vendList.Where(u => u.VendorId == rfqDetails.VendorId && u.RfqId == rfqDetails.RFQId).Select(u => u.VendorStatus).FirstOrDefault(),
-                                   ContactName = vendList.Where(u => u.VendorId == rfqDetails.VendorId && u.RfqId == rfqDetails.RFQId).Select(u => u.ContactName).FirstOrDefault(),
+                                   VendorEmail = vendList.Where(u => u.VendorId == po.VendorId && u.RfqId == po.RFQId).Select(u => u.VendorEmail).FirstOrDefault(),
+                                   PhoneNumber = vendList.Where(u => u.VendorId == po.VendorId && u.RfqId == po.RFQId).Select(u => u.PhoneNumber).FirstOrDefault(),
+                                   VendorAddress = vendList.Where(u => u.VendorId == po.VendorId && u.RfqId == po.RFQId).Select(u => u.VendorAddress).FirstOrDefault(),
+                                   VendorStatus = vendList.Where(u => u.VendorId == po.VendorId && u.RfqId == po.RFQId).Select(u => u.VendorStatus).FirstOrDefault(),
+                                   ContactName = vendList.Where(u => u.VendorId == po.VendorId && u.RfqId == po.RFQId).Select(u => u.ContactName).FirstOrDefault(),
                                    Description = string.Join(", ", desList.Where(u => u.RfqId == po.RFQId).Select(u => u.ItemName)),
                              
-                                   VendorName = vendList.Where(u => u.VendorId == rfqDetails.VendorId && u.RfqId == rfqDetails.RFQId).Select(u => u.VendorName).FirstOrDefault(),
+                                   VendorName = vendList.Where(u => u.VendorId == po.VendorId && u.RfqId == po.RFQId).Select(u => u.VendorName).FirstOrDefault(),
                              //VendorAddress = vend.VendorAddress,
                              //VendorStatus = vend.VendorStatus,
                              //ContactName = vend.ContactName

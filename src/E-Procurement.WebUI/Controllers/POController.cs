@@ -479,7 +479,7 @@ namespace E_Procurement.WebUI.Controllers
                 if (generatePo)
                 {
                     Alert("PO Generated Successfully", NotificationType.success);
-                    return RedirectToAction("GeneratePO");
+                    return RedirectToAction("GeneratePO", "PO");
                    
                 }
 

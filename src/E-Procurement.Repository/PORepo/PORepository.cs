@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Configuration;
 
 namespace E_Procurement.Repository.PORepo
 {
@@ -23,13 +24,16 @@ namespace E_Procurement.Repository.PORepo
         private readonly IConvertViewToPDF _pdfConverter;
         private readonly UserManager<User> _userManager;
         private readonly IHttpContextAccessor _contextAccessor;
+        private IConfiguration _config;
 
-        public PORepository(EProcurementContext context, UserManager<User> userManager, IConvertViewToPDF pdfConverter, IHttpContextAccessor contextAccessor)
+        public PORepository(EProcurementContext context, IConfiguration config, UserManager<User> userManager, IConvertViewToPDF pdfConverter, IHttpContextAccessor contextAccessor)
         {
             _context = context;
             _pdfConverter = pdfConverter;
             _userManager = userManager;
             _contextAccessor = contextAccessor;
+            _config = config;
+        
         }
         public List<RFQApprovalConfig> GetPOApprovalConfig()
         {
@@ -684,22 +688,28 @@ namespace E_Procurement.Repository.PORepo
                 oldEntry.POTitle = rfq.POTitle;
                 oldEntry.POValidity = rfq.POValidity;
                 oldEntry.POWarranty = rfq.POWarranty;
-            
+
                 await _context.SaveChangesAsync();
 
+                //MAP TO RFQ
+                var requisitionURL = _config.GetSection("ExternalAPI:RequisitionURL").Value;
 
+                rfq.PONumber = oldEntry.PONumber;
+                rfq.POTitle = rfq.POTitle.ToUpper();
                 //re gen the detials
-                var Item = await _context.RfqDetails.Where(x => x.RFQId == rfq.RFQId).ToListAsync();
+                var Item = await _context.RfqDetails.Where(x => x.RFQId == rfq.RFQId && x.VendorId == rfq.VendorId).ToListAsync();
                 var totalAmount = Item.Sum(x => x.QuotedAmount);
-
+                rfq.TotalAmount = totalAmount;
+                rfq.URL = requisitionURL;
                 List<RFQDetailsModel> rFQDetails = new List<RFQDetailsModel>();
-                
+
                 var listModel = Item.Select(x => new RFQDetailsModel
                 {
                     RFQId = x.RFQId,
                     VendorId = x.VendorId,
                     ItemId = x.ItemId,
                     ItemName = x.ItemName,
+                    Description = x.ItemDescription,
                     QuotedQuantity = x.QuotedQuantity,
                     AgreedQuantity = x.AgreedQuantity,
                     QuotedAmount = x.QuotedAmount,
@@ -707,7 +717,7 @@ namespace E_Procurement.Repository.PORepo
                 });
 
                 rFQDetails.AddRange(listModel);
-                
+
 
                 rfq.RFQDetails = rFQDetails;
 
@@ -715,8 +725,10 @@ namespace E_Procurement.Repository.PORepo
                 await _pdfConverter.CreatePOPDF(rfq);
                 return true;
             }
-
-            return false;
+            else
+            {
+                return false;
+            }
         }
 
       

@@ -20,7 +20,7 @@
 <body>
 
     <div align="center">
-        <img src="https://localhost:5001/img/cyb-logo.png" style="max-width:1200; height:100;">
+        <img src= "@Model.URL/img/cyb-logo.png" style="max-width:1200px; height:100px;">
     </div>
 
     <div class="content">
@@ -38,7 +38,7 @@
         <div class="col-sm-8">
             <p>Dear Sir,
 
-            <p><b>@Html.DisplayFor(model => model.POTitle.ToUpper())</b></p>
+            <p><b>@Html.DisplayFor(model => model.POTitle)</b></p>
             <p> Reference your Quotation and our negotiation meeting with you, we are pleased to inform you that </p>
             <p> your company has been selected to carry out the above mentioned under the following terms and conditions:</p>
         </div>
@@ -68,14 +68,14 @@
                     }
                     @foreach (var approvalConfig in RFQDetails)
                     {
-                    <tr>
-                        <td>@(i = i + 1)</td>
-                        <td>@approvalConfig.ItemName</td>
-                        <td>@approvalConfig.Description</td>
-                        <td>@approvalConfig.QuotedQuantity</td>
-                        <td align="right">@approvalConfig.QuotedPrice</td>
-                        <td align="right">@approvalConfig.QuotedAmount</td>
-                    </tr>
+                        <tr>
+                            <td>@(i = i + 1)</td>
+                            <td>@approvalConfig.ItemName</td>
+                            <td>@approvalConfig.Description</td>
+                            <td>@approvalConfig.QuotedQuantity</td>
+                            <td align="right">@approvalConfig.QuotedPrice</td>
+                            <td align="right">@approvalConfig.QuotedAmount</td>
+                        </tr>
                     }
 
 
@@ -98,21 +98,18 @@
         <div>
 
             <p>
-                <b>Cost:</b>      @Html.DisplayFor(model => model.POCost)@*we are accepting a total sum of <b> ₦@Html.DisplayFor(model => model.TotalAmount) </b>, Vat exclusive but subject to a deduction of withholding tax, for the supply of one Dell inspiron laptop with the above stated configuration*@
+                <b>Cost:</b>      @Html.DisplayFor(model => model.POCost)
             </p>
 
             <p> Please Note that no Variation in price will be entertained after the acceptance of this offer Letter.</p>
 
             <p>
                 <b> Delivery/Warranty:</b> @Html.DisplayFor(model => model.POWarranty)
-                @*Immediate delivery at our office , 33 saka Tinubu street, victoria Island, Lagos, Upon receipt of this offer letter.Any deffective item shall be replaced at no extra cost to cyverspace Netwrok Limited.*@
+         
             </p>
             <p>
                 <b>Terms of Payments: </b> @Html.DisplayFor(model => model.POTerms)
 
-                @*Full Payment of the Total cost shall be made to delivery.
-
-            if the above terms and conditions are acceptable to you, kindly acknowledge this letter by signing the enclosed copy and returning same to us.*@
 
             </p>
 
