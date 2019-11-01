@@ -46,74 +46,74 @@
                 <tbody>
 
                     @{int rowNo = 0;}
-                    @foreach (var item in Model)
+                    @foreach (var item in Model.Where(a => a.VendorName != null))
                     {
                     <tr>
                         <td>@(rowNo += 1)</td>
                         <td>@item.VendorName</td>
                         @if (item.MOAFilePath != null)
                         {
-                            <td><img src="~/Uploads/VendorDocuments/@item.MOAFilePath" height="100" width="100" /></td>
+                            <td><a class="btn btn-info mg-r-5" target="_blank" href="~/Uploads/VendorDocuments/@item.MOAFilePath"  style="height:110px; width:110px"><span class="fa fa-eye"></span> <br />Click to view <br /><br /> Memorandum <br />Of Association</a></td>
                         }
                         else
                         {
-                            <td height="100" width="100"></td>
+                            <td  style="height:110px; width:110px"></td>
                         }
                         @if (item.BankRefFilePath != null)
                         {
-                            <td><img src="~/Uploads/VendorDocuments/@item.BankRefFilePath" height="100" width="100" /></td>
+                            <td><a class="btn btn-info mg-r-5" target="_blank" href="~/Uploads/VendorDocuments/@item.BankRefFilePath" style="height:110px; width:110px"><span class="fa fa-eye"></span> <br />Click to view <br /><br /> Bank <br />Reference <br /> Letter </a></td>
                         }
                         else
                         {
-                            <td height="100" width="100"></td>
+                            <td  style="height:110px; width:110px"></td>
                         }
                         @if (item.COVFilePath != null)
                         {
-                            <td><img src="~/Uploads/VendorDocuments/@item.COVFilePath" height="100" width="100" /></td>
+                            <td><a class="btn btn-info mg-r-5" target="_blank" href="~/Uploads/VendorDocuments/@item.COVFilePath" style="height:110px; width:110px" ><span class="fa fa-eye"></span> <br />Click to view <br /><br /> Certificate <br />Of VAT <br /> Registration </a></td>
                         }
                         else
                         {
-                            <td height="100" width="100"></td>
+                            <td  style="height:110px; width:110px"></td>
                         }
                         @if (item.RefFilePath != null)
                         {
-                            <td><img src="~/Uploads/VendorDocuments/@item.RefFilePath" height="100" width="100" /></td>
+                            <td><a class="btn btn-info mg-r-5" target="_blank" href="~/Uploads/VendorDocuments/@item.RefFilePath" style="height:110px; width:110px" ><span class="fa fa-eye"></span> <br />Click to view <br /><br /> Reference </a></td>
                         }
                         else
                         {
-                            <td height="100" width="100"></td>
+                            <td  style="height:110px; width:110px"></td>
                         }
                         @if (item.TaxFilePath != null)
                         {
-                            <td><img src="~/Uploads/VendorDocuments/@item.TaxFilePath" height="100" width="100" /></td>
+                            <td><a class="btn btn-info mg-r-5" target="_blank" href="~/Uploads/VendorDocuments/@item.TaxFilePath" style="height:110px; width:110px" ><span class="fa fa-eye"></span> <br />Click to view <br /><br /> Tax <br />Clearance <br /> Certificate </a></td>
                         }
                         else
                         {
-                            <td height="100" width="100"></td>
+                            <td  style="height:110px; width:110px"></td>
                         }
                         @if (item.PODFilePath != null)
                         {
-                            <td><img src="~/Uploads/VendorDocuments/@item.PODFilePath" height="100" width="100" /></td>
+                            <td><a class="btn btn-info mg-r-5" target="_blank" href="~/Uploads/VendorDocuments/@item.PODFilePath" style="height:110px; width:110px" ><span class="fa fa-eye"></span> <br />Click to view <br /><br /> Particulars <br />Of <br /> Directors </a></td>
                         }
                         else
                         {
-                            <td height="100" width="100"></td>
+                            <td  style="height:110px; width:110px"></td>
                         }
                         @if (item.POSFilePath != null)
                         {
-                            <td><img src="~/Uploads/VendorDocuments/@item.POSFilePath" height="100" width="100" /></td>
+                            <td><a class="btn btn-info mg-r-5" target="_blank" href="~/Uploads/VendorDocuments/@item.POSFilePath" style="height:110px; width:110px" ><span class="fa fa-eye"></span> <br />Click to view <br /><br /> Particulars <br />Of <br /> Shareholders </a></td>
                         }
                         else
                         {
-                            <td height="100" width="100"></td>
+                            <td  style="height:110px; width:110px"></td>
                         }
                         @if (item.NOSFilePath != null)
                         {
-                            <td><img src="~/Uploads/VendorDocuments/@item.NOSFilePath" height="100" width="100" /></td>
+                            <td><a class="btn btn-info mg-r-5" target="_blank" href="~/Uploads/VendorDocuments/@item.NOSFilePath" style="height:110px; width:110px" ><span class="fa fa-eye"></span> <br />Click to view <br /><br /> Notice <br />Of Situation <br /> Address </a></td>
                         }
                         else
                         {
-                            <td height="100" width="100"></td>
+                            <td style="height:110px; width:110px"></td>
                         }
 
                         @*<td>@item.BankBranch</td>
