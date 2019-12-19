@@ -81,13 +81,14 @@
                                             <th class="wd-5p">S/N</th>
                                             @*<th class="wd-5p">RFQ No</th>*@
                                             @*<th class="wd-5p">Proj. ID</th>
-                                <th class="wd-5p">Req. ID</th>*@
+        <th class="wd-5p">Req. ID</th>*@
                                             @*<th class="wd-10p">RFQStatus</th>*@
-                                            <th class="wd-25p">Vendor Name</th>
+                                            <th class="wd-5p">Vendor Name</th>
                                             @*<th class="wd-10p">Status</th>*@
-                                            <th class="wd-25p">Contact</th>
-                                            <th class="wd-25p">Amount</th>
-                                            <th class="wd-10p">Status</th>
+                                            <th class="wd-5p">Contact</th>
+                                            <th class="wd-5p">Amount</th>
+                                            <th class="wd-5p">Comments</th>
+                                            <th class="wd-5p">Status</th>
                                             @*<th class="wd-10p"></th>*@
 
 
@@ -118,15 +119,31 @@
                                             <td>@approvalConfig2.TotalAmount</td>
                                             @if (@approvalConfig2.VendorId == @approvalConfig.VendorId)
                                             {
+                                                <td>
+                                                    @{
+                                                        int d = 0;
+                                                    }
+                                                    @{
+                                                        //var RFQDetails = Model.RFQDetails as List<E_Procurement.WebUI.Models.RfqApprovalModel.RFQDetailsViewModel>;
+                                                        var tran = Model.RFQTransaction as List<E_Procurement.Repository.Dtos.RFQDetailsModel>;
+
+                                                    }
+                                                    @foreach (var transaction in tran.Where(u => u.RFQId == approvalConfig.RFQId))
+                                                    {
+
+                                                        <a><p>@(d = d + 1). <b>@transaction.ApprovedBy:</b>  @transaction.Comments </p></a>
+
+                                                    }
+                                                </td>
                                                 <td>@approvalConfig.RFQStatus</td>
                                             }
-                                                @*<td>
-                <a class="btn btn-info mg-r-5" style="width:120px"
-                   href="@Url.Action("POApprovalDetails", "PO", new { RFQId = @approvalConfig2.RFQId, VendorId = @approvalConfig2.VendorId })"><span class="fa fa-pencil"></span><i class="pe-7s-edit btn-icon-wrapper"></i>Details</a>
-            </td>*@
+                                            @*<td>
+            <a class="btn btn-info mg-r-5" style="width:120px"
+               href="@Url.Action("POApprovalDetails", "PO", new { RFQId = @approvalConfig2.RFQId, VendorId = @approvalConfig2.VendorId })"><span class="fa fa-pencil"></span><i class="pe-7s-edit btn-icon-wrapper"></i>Details</a>
+        </td>*@
 
 
-                                            </tr>
+                                        </tr>
 
 
 

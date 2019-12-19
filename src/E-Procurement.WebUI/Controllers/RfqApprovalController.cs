@@ -7,6 +7,7 @@ using E_Procurement.Data.Entity;
 using E_Procurement.Repository.AccountRepo;
 using E_Procurement.Repository.ApprovalRepo;
 using E_Procurement.Repository.Dtos;
+using E_Procurement.Repository.PORepo;
 using E_Procurement.WebUI.Models.RfqApprovalModel;
 using E_Procurement.WebUI.Models.RFQModel;
 using Microsoft.AspNetCore.Authorization;
@@ -21,12 +22,14 @@ namespace E_Procurement.WebUI.Controllers
     public class RfqApprovalController : BaseController
     {
         private readonly IRfqApprovalRepository _RfqApprovalRepository;
+        private readonly IPORepository _PORepository;
         private readonly IMapper _mapper;
         private readonly IAccountManager _accountManager;
 
-        public RfqApprovalController(IRfqApprovalRepository RfqApprovalRepository, IMapper mapper, IAccountManager accountManager)
+        public RfqApprovalController(IRfqApprovalRepository RfqApprovalRepository, IPORepository PORepository, IMapper mapper, IAccountManager accountManager)
         {
             _RfqApprovalRepository = RfqApprovalRepository;
+            _PORepository = PORepository;
             _accountManager = accountManager;
             _mapper = mapper;
           
@@ -48,11 +51,25 @@ namespace E_Procurement.WebUI.Controllers
             var des = _RfqApprovalRepository.GetRFQDetails();
 
             var rfq = _RfqApprovalRepository.GetRFQ();
-            
+
+            var transaction = _RfqApprovalRepository.GetRFQTransactions();
+
+            var user = _PORepository.GetUser();
 
             RFQGenerationModel Model = new RFQGenerationModel();
 
-            List<RFQDetailsModel> poModel = new List<RFQDetailsModel>();
+            List<RFQDetailsModel> transac = new List<RFQDetailsModel>();
+            var tran = (from trans in transaction
+                        join users in user on trans.CreatedBy equals users.Email
+                        select new RFQDetailsModel()
+                        {
+                            ApprovedBy = users.FullName,
+                            Comments = trans.Comments,
+                            RFQId = trans.RFQId
+                        });
+            transac.AddRange(tran);
+
+            List <RFQDetailsModel> poModel = new List<RFQDetailsModel>();
             var ConfigList = RfqApprovalList.Select(x => new RFQDetailsModel
             {
                 VendorId = x.VendorId,
@@ -102,6 +119,7 @@ namespace E_Procurement.WebUI.Controllers
             }
             Model.RFQDetails = poModel;
             Model.RFQDetails2 = poModel2;
+            Model.RFQTransaction = transac;
             return View(Model);
 
             //return View(RfqApproval);

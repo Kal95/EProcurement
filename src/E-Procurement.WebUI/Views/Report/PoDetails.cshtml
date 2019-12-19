@@ -30,22 +30,49 @@
         </div>
 
         <div class="content">
-            <div class="col-sm-8">
-                <br>
-                <p>@Model.CreatedDate.ToString("dd MMM yyyy")</p>
-                <br>
-                <p><b>The Managing Director</p></b>
-                <p><b> @Html.DisplayFor(model => model.VendorName)</p></b>
-                <p><b> @Html.DisplayFor(model => model.VendorAddress)</p></b>
-                @*<p><b>Sabo Yaba</p></b>
-                    <p><b>Lagos.</p></b>*@
+            @*<div class="col-sm-8">
+            <br>
+            <p>@Model.CreatedDate.ToString("dd MMM yyyy")</p>
+            <br>
+            <p><b>The Managing Director</p></b>
+            <p><b> @Html.DisplayFor(model => model.VendorName)</p></b>
+            <p><b> @Html.DisplayFor(model => model.VendorAddress)</p></b>
+
+        </div>*@
+            <div class="col-sm-10">
+                <div class=row>
+                    <div class="col-sm-3">
+                        <br>
+                        <p>@Model.CreatedDate.ToString("dd MMM yyyy")</p>
+                        <br>
+                        <p><b>The Managing Director</p></b>
+                        <p><b> @Html.DisplayFor(model => model.VendorName)</p></b>
+                        <p><b> @Html.DisplayFor(model => model.VendorAddress)</p></b>
+                    </div>
+                    <div class="col-sm">
+
+                    </div>
+                    <div class="col-sm-2">
+
+                    </div>
+                    <div class="col-sm-2">
+                    </div>
+                    
+                    <div class="col-sm-3">
+                        <br>
+                        <p><b>RFQ Ref: @Html.DisplayFor(model => model.Reference)</b></p>
+                        <p><b>PO Ref: @Html.DisplayFor(model => model.PONumber)</b></p>
+
+                    </div>
+
+                </div>
             </div>
 
-            <div class="col-sm-8">
+            <div class="col-sm-12">
                 <p>Dear Sir,
 
-                <p><b>OFFER TO SUPPLY</p></b>
-                <p> Reference your Quotation and our negotiation meeting with you, we are pleased to inform you that </p>
+                <p><b>@Html.DisplayFor(model => model.POTitle)</b></p>
+                <p> Referencing your Quotation and our negotiation meeting with you, we are pleased to inform you that </p>
                 <p> your company has been selected to carry out the above mentioned under the following terms and conditions:</p>
             </div>
 
@@ -56,7 +83,7 @@
                     <thead>
                         <tr>
                             <td>s/n </td>
-                            <td>Item </td>
+                            <td> Item</td>
                             <td class="col-sm-4">Description </td>
                             <td> Qty</td>
                             <td>Unit Price ₦ </td>
@@ -74,14 +101,14 @@
                         }
                         @foreach (var approvalConfig in RFQDetails)
                         {
-                        <tr>
-                            <td>@(i = i + 1)</td>
-                            <td>@approvalConfig.ItemName</td>
-                            <td>@approvalConfig.Description</td>
-                            <td>@approvalConfig.QuotedQuantity</td>
-                            <td align="right">@approvalConfig.QuotedAmount</td>
-                            <td align="right">@approvalConfig.QuotedAmount</td>
-                        </tr>
+                            <tr>
+                                <td>@(i = i + 1)</td>
+                                <td>@approvalConfig.ItemName</td>
+                                <td>@approvalConfig.Description</td>
+                                <td>@approvalConfig.QuotedQuantity</td>
+                                <td align="right">@approvalConfig.QuotedPrice</td>
+                                <td align="right">@approvalConfig.QuotedAmount</td>
+                            </tr>
                         }
 
 
@@ -92,22 +119,38 @@
                         </tr>
 
 
+
+
                 </table>
+
             </div>
 
-            <div align>
+            <div>
+            </div>
 
-                <p><b>Cost:</b> we are accepting a total sum of <b> ₦@Html.DisplayFor(model => model.TotalAmount) </b>, Vat exclusive but subject to a deduction of withholding tax, for the supply of one Dell inspiron laptop with the above stated configuration</p>
+            <div class="col-sm-12">
+
+                <p>
+                    <b>Cost:</b>      @Html.DisplayFor(model => model.POCost)
+                </p>
 
                 <p> Please Note that no Variation in price will be entertained after the acceptance of this offer Letter.</p>
 
-                <p><b> Delivery Line:</b> Immediate delivery at our office , 33 saka Tinubu street, victoria Island, Lagos, Upon receipt of this offer letter.Any deffective item shall be replaced at no extra cost to cyverspace Netwrok Limited.
                 <p>
-                    <b>Terms of Delivery: </b>Full Payment of the Total cost shall be made to delivery.
+                    <b> Delivery/Warranty:</b> @Html.DisplayFor(model => model.POWarranty)
 
-                    if the above terms and conditions are acceptable to you, kindly acknowledge this letter by signing the enclosed copy and returning same to us.
+                </p>
+                <p>
+                    <b>Terms of Payments: </b> @Html.DisplayFor(model => model.POTerms)
 
-                <p>If the above terms and conditions are acceptable to you, kindly acknowledge this letter by signing the enclosed copy and returning same to us.
+
+                </p>
+
+                <p>
+                    <b>Validity of Offer : </b> @Html.DisplayFor(model => model.POValidity)
+                </p>
+                <p>
+                    If the above terms and conditions are acceptable to you, kindly acknowledge this letter by signing the enclosed copy and returning same to us.
 
                 <p>Thank You. </p>
 
@@ -115,34 +158,36 @@
                 <p>For: <b>CYBERSPACE NETWORK LIMITED</b></p>
             </div>
             <BR>
+            <div class="col-sm-12">
+                <div class=row>
+                    <div class="col-sm-3">
+                        <p><b>STANLEY ODUAH</b></p>
+                        <p><img src="~/Uploads/Signatures/@Model.Signature1" style="max-width:100px; height:50px;"></p>
+                        <p>Authorized Signatory</p>
+                    </div>
+                    <div class="col-sm">
 
-            <div class=row>
-                <div class="col-sm-3">
-                    <p><b>VICTOR ABULELE</b></p>
-                    <p>Authorized Signatory</p>
+                    </div>
+                    <div class="col-sm-2">
+
+                    </div>
+                    <div class="col-sm-2">
+
+                    </div>
+                    <div class="col-sm-3">
+                        <p><b>JOE ONWUBUYA</b></p>
+                        <p><img src="~/Uploads/Signatures/@Model.Signature2" style="max-width:100px; height:50px;"></p>
+                        <p>Authorized Signatory</p>
+                    </div>
+
+
+                    <div class="footer"></div>
+                    <br>
                 </div>
-                <div class="col-sm">
 
                 </div>
-                <div class="col-sm-2">
-
-                </div>
-                <div class="col-sm-2">
-
-                </div>
-                <div class="col-sm-3">
-                    <p><b>JOE ONWUBUYA</b></p>
-                    <p>Authorized Signatory</p>
-                </div>
-
-
-                <div class="footer"></div>
-                <br>
-
-
             </div>
         </div>
-    </div>
     </div>
 
     @*</body>

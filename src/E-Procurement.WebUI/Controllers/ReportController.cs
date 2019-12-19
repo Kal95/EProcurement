@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Abp.Web.Mvc.Alerts;
 using AutoMapper;
+using E_Procurement.Repository.ApprovalRepo;
 using E_Procurement.Repository.Dtos;
 using E_Procurement.Repository.PORepo;
 using E_Procurement.Repository.ReportRepo;
@@ -21,14 +22,16 @@ namespace E_Procurement.WebUI.Controllers
     [Authorize]
     public class ReportController : BaseController
     {
+        private readonly IRfqApprovalRepository _rfqApprovalRepository;
         private readonly IReportRepository _reportRepository;
         private readonly IVendorRepository _vendorRepository;
         private readonly IRfqGenRepository _rfqGenRepository;
         private readonly IPORepository _poRepository;
         private readonly IMapper _mapper;
 
-        public ReportController(IRfqGenRepository rfqRepository, IVendorRepository vendorRepository, IPORepository poRepository, IReportRepository reportRepository, IMapper mapper)
+        public ReportController(IRfqGenRepository rfqRepository, IRfqApprovalRepository rfqApprovalRepository, IVendorRepository vendorRepository, IPORepository poRepository, IReportRepository reportRepository, IMapper mapper)
         {
+            _rfqApprovalRepository = rfqApprovalRepository;
             _rfqGenRepository = rfqRepository;
             _poRepository = poRepository;
             _vendorRepository = vendorRepository;
@@ -583,18 +586,30 @@ namespace E_Procurement.WebUI.Controllers
         }
         public ActionResult PoDetails (ReportModel Model)
         {
+            var signature = _rfqApprovalRepository.GetSignatures().Where(a => a.IsActive = true).FirstOrDefault();
             var RFQ = _reportRepository.GetRFQDetails().Where(u => u.RFQId == Model.RfqId && u.VendorId == Model.VendorId).FirstOrDefault();
             var vendor = _reportRepository.GetVendors().Where(u => u.Id == RFQ.VendorId).FirstOrDefault();
             var PO = _reportRepository.GetPoGen().Where(u => u.RFQId == Model.RfqId).FirstOrDefault();
 
             RFQGenerationModel model2 = new RFQGenerationModel();
+            model2.Reference = PO.Reference;
+            model2.PONumber = PO.PONumber;
             model2.VendorId = vendor.Id;
             model2.ContactName = vendor.ContactName;
             model2.VendorName = vendor.VendorName;
             model2.VendorAddress = vendor.VendorAddress;
             model2.VendorEmail = vendor.Email;
             model2.CreatedDate = PO.CreatedDate;
-            
+            model2.POPreamble = PO.POPreamble;
+            model2.POStatus = PO.POStatus;
+            model2.POTerms = PO.POTerms;
+            model2.POTitle = PO.POTitle;
+            model2.POValidity = PO.POValidity;
+            model2.POWarranty = PO.POWarranty;
+            model2.POCost = PO.POCost;
+            model2.Signature1 = signature.Sign1;
+            model2.Signature2 = signature.Sign2;
+
 
             List<RFQDetailsModel> poModel = new List<RFQDetailsModel>();
             var POList = _reportRepository.GetRFQDetails().Where(u => u.RFQId == Model.RfqId && u.VendorId == vendor.Id).ToList();
@@ -636,6 +651,7 @@ namespace E_Procurement.WebUI.Controllers
             model2.RFQTitle = RFQ.RFQTitle.ToUpper();
             model2.RFQBody = RFQ.RFQBody;
             model2.RFQCondition = RFQ.RFQCondition;
+            model2.Reference = rfq.Reference;
 
             List<RFQDetailsModel> rfqModel = new List<RFQDetailsModel>();
             var RFQList = _reportRepository.GetRFQDetails().Where(u => u.RFQId == Model.RfqId && u.VendorId == vendor.Id).ToList();

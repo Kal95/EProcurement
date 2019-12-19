@@ -31,5 +31,6 @@ namespace E_Procurement.Repository.ReportRepo
         IEnumerable<UserToCategoryConfig> GetUserToCategoryConfig();
         IEnumerable<User> GetUser();
         List<ReportModel> GetUserToCategoryList();
+       
     }
 }

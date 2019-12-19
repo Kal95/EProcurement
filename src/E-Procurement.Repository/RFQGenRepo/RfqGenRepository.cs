@@ -165,6 +165,8 @@ namespace E_Procurement.Repository.RFQGenRepo
                     model2.RFQBody = model.RFQBody;
                     model2.RFQCondition = model.RFQCondition;
                     model2.URL = requisitionURL;
+                    model2.Reference = model.Reference;
+                    model2.CreatedDate = DateTime.Now;
 
                     List<RFQDetailsModel> rFQDetails = new List<RFQDetailsModel>();
                     var itemV = GetItem(model.CategoryId).ToList();

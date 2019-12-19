@@ -74,7 +74,11 @@ namespace E_Procurement.WebUI.Controllers
                 
                 DashboardModel dashboard = new DashboardModel();
                 var user = _reportRepository.GetUser().Where(u => u.UserName == User.Identity.Name).FirstOrDefault();
-                var pendingPO = _poRepository.GetPoGen2().Count().ToString();
+                var pendingPO = Convert.ToInt32(0).ToString();
+                if (_poRepository.GetPOApprover().Any(a => a.Id == user.Id))
+                {
+                    pendingPO = _poRepository.GetPoGen2().Count().ToString();
+                }
                 var pendingRFQ = _rfqApprovalRepository.GetRFQPendingApproval().Count().ToString();
                 var approvedRFQ = _poRepository.GetApprovedRFQ().Count.ToString();
                 var approvedPO = _poRepository.GetApprovedPO2().Count.ToString();

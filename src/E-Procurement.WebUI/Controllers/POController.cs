@@ -47,6 +47,21 @@ namespace E_Procurement.WebUI.Controllers
 
                 var rfq = _RfqApprovalRepository.GetRFQ();
 
+                var transaction = _RfqApprovalRepository.GetRFQTransactions();
+
+                var user = _PORepository.GetUser();
+
+                List<RFQDetailsModel> transac = new List<RFQDetailsModel>();
+                var tran = (from trans in transaction
+                            join users in user on trans.CreatedBy equals users.Email
+                            select new RFQDetailsModel()
+                            {
+                                ApprovedBy = users.FullName,
+                                Comments = trans.Comments,
+                                RFQId = trans.RFQId
+                            });
+                transac.AddRange(tran);
+
 
                 RFQGenerationModel Model = new RFQGenerationModel();
 
@@ -96,6 +111,7 @@ namespace E_Procurement.WebUI.Controllers
                 }
                 Model.RFQDetails = poModel;
                 Model.RFQDetails2 = poModel2;
+                Model.RFQTransaction = transac;
                 return View(Model);
             }
             catch (Exception)
@@ -115,6 +131,20 @@ namespace E_Procurement.WebUI.Controllers
 
                 var rfq = _RfqApprovalRepository.GetRFQ();
 
+                var transaction = _RfqApprovalRepository.GetPOTransactions();
+
+                var user = _PORepository.GetUser();
+
+                List<RFQDetailsModel> transac = new List<RFQDetailsModel>();
+                var tran = (from trans in transaction
+                            join users in user on trans.ApprovedBy equals users.Email
+                            select new RFQDetailsModel()
+                            {
+                                ApprovedBy = users.FullName,
+                                Comments = trans.Comments,
+                                RFQId = trans.RFQId
+                            });
+                transac.AddRange(tran);
 
                 RFQGenerationModel Model = new RFQGenerationModel();
 
@@ -164,6 +194,7 @@ namespace E_Procurement.WebUI.Controllers
                 }
                 Model.RFQDetails = poModel;
                 Model.RFQDetails2 = poModel2;
+                Model.RFQTransaction = transac;
                 return View(Model);
             }
             catch (Exception)
@@ -194,6 +225,20 @@ namespace E_Procurement.WebUI.Controllers
 
                 var rfq = _RfqApprovalRepository.GetRFQ();
 
+                var transaction = _RfqApprovalRepository.GetPOTransactions();
+
+                var user = _PORepository.GetUser();
+
+                List<RFQDetailsModel> transac = new List<RFQDetailsModel>();
+                var tran = (from trans in transaction
+                            join users in user on trans.ApprovedBy equals users.Email
+                            select new RFQDetailsModel()
+                            {
+                                ApprovedBy = users.FullName,
+                                Comments = trans.Comments,
+                                RFQId = trans.RFQId
+                            });
+                transac.AddRange(tran);
 
                 RFQGenerationModel Model = new RFQGenerationModel();
 
@@ -243,6 +288,7 @@ namespace E_Procurement.WebUI.Controllers
                 }
                 Model.RFQDetails = poModel;
                 Model.RFQDetails2 = poModel2;
+                Model.RFQTransaction = transac;
                 return View(Model);
             }
             catch (Exception)

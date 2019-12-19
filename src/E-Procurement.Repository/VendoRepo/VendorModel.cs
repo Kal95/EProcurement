@@ -76,5 +76,19 @@ namespace E_Procurement.Repository.VendoRepo
             VendorCategoryList = new List<SelectListItem>();
            
         }
+
+        public int SignId { get; set; }
+        public int UserId1 { get; set; }
+        public int UserId2 { get; set; }
+        public string Signee1 { get; set; }
+        public string Signee2 { get; set; }
+        public string Sign1Path { get; set; }
+        public string Sign2Path { get; set; }
+        public IFormFile Signature1 { get; set; }
+        public IFormFile Signature2 { get; set; }
+       // public string Signature1 { get; set; }
+        //public string Signature2 { get; set; }
+        public IEnumerable<SelectListItem> S1List { get; set; }
+        public IEnumerable<SelectListItem> S2List { get; set; }
     }
 }

@@ -233,9 +233,15 @@ namespace E_Procurement.Repository.ReportRepo
                                    StartDate = rfq.StartDate,
                                    EndDate = rfq.EndDate,
                                    CreatedDate = po.DateCreated,
+                                   POPreamble = po.POPreamble,
+                                   POStatus = po.POStatus,
+                                   POTerms = po.POTerms,
+                                   POTitle = po.POTitle,
+                                   POValidity = po.POValidity,
+                                   POWarranty = po.POWarranty,
+                                   POCost = po.POCost,
                                    RFQStatus = rfq.RFQStatus,
                                    VendorId = vendList.Where(u => u.VendorId == po.VendorId && u.RfqId == po.RFQId).Select(u => u.VendorId).FirstOrDefault(),
-                                   
                                    VendorEmail = vendList.Where(u => u.VendorId == po.VendorId && u.RfqId == po.RFQId).Select(u => u.VendorEmail).FirstOrDefault(),
                                    PhoneNumber = vendList.Where(u => u.VendorId == po.VendorId && u.RfqId == po.RFQId).Select(u => u.PhoneNumber).FirstOrDefault(),
                                    VendorAddress = vendList.Where(u => u.VendorId == po.VendorId && u.RfqId == po.RFQId).Select(u => u.VendorAddress).FirstOrDefault(),
@@ -467,6 +473,7 @@ namespace E_Procurement.Repository.ReportRepo
         {
             return _userManager.Users.OrderByDescending(u => u.Id).ToList();
         }
+       
         public List<ReportModel> GetUserToCategoryList()
         {
 
@@ -511,5 +518,7 @@ namespace E_Procurement.Repository.ReportRepo
 
             return query;//.OrderByDescending(u => u.EndDate).ToList();
         }
+
+       
     }
 }

@@ -25,16 +25,32 @@
     </div>
 
     <div class="content">
-        <div class="col-sm-8">
-           
-            <br>
-            <p>@DateTime.Now.ToString("dd MMM yyyy")</p>
-            <br>
-            <p><b>The Managing Director</p></b>
-            <p><b> @Html.DisplayFor(model => model.VendorName)</p></b>
-            <p><b> @Html.DisplayFor(model => model.VendorAddress)</p></b>
-            @*<p><b>Sabo Yaba</p></b>
-        <p><b>Lagos.</p></b>*@
+        <div class="col-sm-10">
+            <div class=row>
+                <div class="col-sm-3">
+                    <br>
+                    <p>@Model.CreatedDate.ToString("dd MMM yyyy")</p>
+                    <br>
+                    <p><b>The Managing Director</p></b>
+                    <p><b> @Html.DisplayFor(model => model.VendorName)</p></b>
+                    <p><b> @Html.DisplayFor(model => model.VendorAddress)</p></b>
+                </div>
+                <div class="col-sm">
+
+                </div>
+                <div class="col-sm-2">
+
+                </div>
+                <div class="col-sm-2">
+                </div>
+
+                <div class="col-sm-3">
+                    <br>
+                    <p><b>Our Ref: @Html.DisplayFor(model => model.Reference)</b></p>
+
+                </div>
+
+            </div>
         </div>
 
         <div class="col-sm-8">

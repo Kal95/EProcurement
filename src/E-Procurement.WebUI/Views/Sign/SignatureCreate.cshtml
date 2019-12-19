@@ -1,0 +1,149 @@
+﻿@model E_Procurement.Repository.VendoRepo.VendorModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "RFQ";
+    ViewBag.PageDesc = "Create RFQ";
+    ViewBag.FavIcon = "fa fa-street-view";
+}
+
+<!-- page section -->
+<div class="row row-sm mg-t-20">
+    <div class="col-xl-12">
+        <div class="card pd-20 pd-sm-40 form-layout form-layout-4">
+            <h6 class="card-body-title">Signature Setup</h6>
+            
+            <form class="form-horizontal" action="@Url.Action("SignatureCreate","Sign")" method="post" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+                @*<h2 class="text-center">Basic forms Example</h2>*@
+                <div class="row mg-t-20" style="display:flex; justify-content:space-between">
+                    <div class="col-md-8" >
+                        <div class="row mg-t-20">
+                            <div class="col-md-6" style="margin-top:1px">
+                                <label for="VendorName">1st User:</label>
+                                @Html.DropDownListFor(model => model.UserId1, Model.S1List, "-- Select 1st User --", htmlAttributes: new { id = "UserId1", @class = "form-control", style = "width:400px; height:40px", onchange = "document.forms[1].submit();" })
+                               
+                            </div>
+
+                            <div class="col-md-6" style="margin-top:1px">
+                                <label for="StartDate">1st Signature:</label>
+                                <input type="file" id="Sign1" name="Signature1" class="form-control" accept=".jpg, .jpeg, .png" required="required" style="width:220px; height:40px" />
+                                @Html.ValidationMessageFor(model => model.Signature1, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div></div>
+                        <div class="row mg-t-20">
+                            <div class="col-md-6" style="margin-top:10px">
+                                <label for="VendorName">2nd User:</label>
+                                @Html.DropDownListFor(model => model.UserId2, Model.S2List, "-- Select 2nd User --", htmlAttributes: new { id = "UserId2", @class = "form-control", style = "width:400px; height:40px" })
+                               
+                            </div>
+
+                            <div class="col-md-6" style="margin-top:10px">
+                                <label for="StartDate">2nd Signature:</label>
+                                <input type="file" id="Sign2" name="Signature2" class="form-control" accept=".jpg, .jpeg, .png" required="required" style="width:220px; height:40px" />
+                                @Html.ValidationMessageFor(model => model.Signature2, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+
+
+                        <!-- Button -->
+                        <div class="form-group">
+                            <label class="col-md-8 control-label"></label>
+                            <div class="col-md-4">
+
+                                <button type="submit" class="btn btn-info mg-r-5"><span class="glyphicon glyphicon-send"></span>  Submit</button>
+
+                                <a href="@Url.Action("SignatureIndex","Sign")" class="btn btn-secondary"><span class="glyphicon glyphicon-remove"></span> Back</a>
+                            </div>
+
+                        </div>
+
+</form>
+        </div>
+    </div>
+</div>
+
+
+
+@*@using (Html.BeginForm("Index", "Home", FormMethod.Post))
+    {
+        @Html.DropDownListFor(m => m.CategoryId, Model.ItemCategoryList, "Please select", new { onchange = "document.forms[0].submit();" })
+        <br />
+        <br />
+
+        @Html.DropDownListFor(m => m.ItemId, Model.ItemList, "Please select", new { onchange = "document.forms[0].submit();", disabled = "disabled" })
+        <br />
+        <br />
+
+        @Html.DropDownListFor(m => m.VendorId, Model.VendorList, "Please select", new { disabled = "disabled" })
+        <br />
+        <br />
+        <input type="submit" value="Submit" />
+    }*@
+<script type="text/javascript">
+
+    function DoPostBack() {
+        var select = document.getElementById("UserId1");
+        var option = select.options[select.selectedIndex];
+        if (option.value != "") {
+            var Table = document.getElementById("example");
+            Table.innerHTML = "";
+            document.forms[1].action = "/Sign/SignatureCreate";
+            document.forms[1].submit();
+        }
+        else {
+            var Table = document.getElementById("example");
+            Table.innerHTML = "";
+            document.forms[1].action = "/Sign/SignatureCreate";
+            document.forms[1].submit();
+        }
+    }
+
+
+    $(function () {
+
+        if ($("#ItemId option").length > 1) {
+            $("#ItemId").removeAttr("disabled");
+        }
+
+        if ($("#VendorId option").length > 1) {
+            $("#VendorId").removeAttr("disabled");
+        }
+
+        if ($("#CategoryId").val() != "" && $("#ItemId").val() != "" && $("#VendorId").val() != "") {
+            var message = "Category: " + $("#CategoryId option:selected").text();
+            message += "\nItem: " + $("#ItemId option:selected").text();
+            message += "\nVendor: " + $("#VendorId option:selected").text();
+            alert(message);
+        }
+
+    });
+
+    function myFunction(id) {
+
+        //alert(id);
+
+        if ($(`#myInput_${id}`).prop('checked')) {
+            $(`#Descriptions_${id}`).show();
+            $(`#Quantities_${id}`).show();
+            $(`#Descriptions_${id}`).attr("disabled", false);
+            $(`#Quantities_${id}`).attr("disabled", false);
+            $(`#Descriptions_${id}`).prop('required', true);
+            $(`#Quantities_${id}`).prop('required', true);
+        }
+        else {
+            $(`#Descriptions_${id}`).attr("disabled", "");
+            $(`#Quantities_${id}`).attr("disabled", "");
+            $(`#Descriptions_${id}`).prop('required', false);
+            $(`#Quantities_${id}`).prop('required', false);
+            $(`#Descriptions_${id}`).hide();
+            $(`#Quantities_${id}`).hide();
+        }
+
+    }
+
+</script>
+
+

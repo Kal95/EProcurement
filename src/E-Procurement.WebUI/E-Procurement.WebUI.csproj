@@ -87,6 +87,7 @@
     <Folder Include="Service\Interface\" />
     <Folder Include="wwwroot\Uploads\Invoice\" />
     <Folder Include="wwwroot\Uploads\GRN\" />
+    <Folder Include="wwwroot\Uploads\Signatures\" />
   </ItemGroup>
 
 

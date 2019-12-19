@@ -26,6 +26,7 @@ namespace E_Procurement.Repository.Dtos
             public string VendorEmail { get; set; }
             public List<RFQDetailsModel> RFQDetails { get; set; }
             public List<RFQDetailsModel> RFQDetails2 { get; set; }
+            public List<RFQDetailsModel> RFQTransaction { get; set; }
             public string ApprovedBy { get; set; }
             public string Comments { get; set; }
             public string PONumber { get; set; }
@@ -63,6 +64,8 @@ namespace E_Procurement.Repository.Dtos
             public string POTerms { get; set; }
             public string POValidity { get; set; }
             public string URL { get; set; }
+            public string Signature1 { get; set; }
+            public string Signature2 { get; set; }
 
     }
 }

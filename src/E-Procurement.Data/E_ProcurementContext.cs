@@ -47,6 +47,7 @@ namespace E_Procurement.Data
         public DbSet<EvaluationPeriodConfig> EvaluationPeriodConfigs { get; set; }
         public DbSet<UserToCategoryConfig> UserToCategoryConfigs { get; set; }
         public DbSet<ApprovalType> ApprovalTypes { get; set; }
+        public DbSet<Signature> Signatures { get; set; }
 
         public DbSet<Permission> Permissions { get; set; }
         public DbSet<PermissionRole> PermissionRoles { get; set; }

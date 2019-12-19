@@ -16,6 +16,8 @@ using System.Numerics;
 using System.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using E_Procurement.WebUI.Models.RFQModel;
+using E_Procurement.Repository.VendoRepo;
+using Microsoft.AspNetCore.Identity;
 
 namespace E_Procurement.Repository.RfqApprovalConfigRepository
 {
@@ -25,15 +27,108 @@ namespace E_Procurement.Repository.RfqApprovalConfigRepository
         private readonly ISMTPService _emailSender;
         private readonly IHttpContextAccessor _contextAccessor;
         private IConfiguration _config;
+        private readonly UserManager<User> _userManager;
 
-        public RfqApprovalRepository(EProcurementContext context, IConfiguration config, ISMTPService emailSender, IHttpContextAccessor contextAccessor)
+        public RfqApprovalRepository(EProcurementContext context, UserManager<User> userManager, IConfiguration config, ISMTPService emailSender, IHttpContextAccessor contextAccessor)
         {
             _context = context;
             _emailSender = emailSender;
             _config = config;
             _contextAccessor = contextAccessor;
+            _userManager = userManager;
         }
-        
+        public IEnumerable<User> GetApprovalRoles_Users()
+        {
+            var Roles = _context.Roles.Where(a => a.Name == "Approval").ToList();
+            var UserRole = _context.UserRoles.Where(a => Roles.Any(b => a.RoleId == b.Id)).ToList();
+            return _userManager.Users.Where(a => UserRole.Any(b => a.Id == b.UserId)).OrderByDescending(u => u.Id).ToList();
+        }
+
+        public bool CreateSignature(VendorModel model, out string Message)
+        {
+            var confirm = _context.Signatures.Where(x => x.Signee1 == model.Signee1 && x.Signee2 == model.Signee2).Count();
+
+            Signature signature = new Signature();
+
+
+            if (confirm == 0)
+            {
+
+                signature.CreatedBy = model.CreatedBy;
+                signature.DateCreated = DateTime.Now;
+                signature.Signee1 = model.Signee1;
+                signature.Signee2 = model.Signee2;
+                signature.IsActive = false;
+                signature.Sign1 = model.Sign1Path;
+                signature.Sign2 = model.Sign2Path;
+
+                _context.Signatures.Add(signature);
+
+                _context.SaveChanges();
+
+                Message = "Signature created successfully";
+
+                return true;
+            }
+            else
+            {
+                Message = "Signature already exist";
+
+                return false;
+            }
+
+        }
+
+        public bool ActivateSignature(VendorModel model, out string Message)
+        {
+            var confirm = _context.Signatures.Where(x => x.Id == model.SignId && x.IsActive == true).Count();
+
+            var oldEntry = _context.Signatures.Where(u => u.Id == model.SignId).FirstOrDefault();
+            var deactivate = _context.Signatures.Where(a => a.Id != oldEntry.Id).ToList();
+
+            if (oldEntry == null)
+            {
+                throw new Exception("No Signature exists with this Id");
+            }
+
+            if (confirm == 0)
+            {
+
+                oldEntry.IsActive = true;
+                foreach(var item in deactivate)
+                {
+                    item.IsActive = false;
+                }
+
+                _context.SaveChanges();
+
+                Message = "Signature Activated successfully";
+
+                return true;
+            }
+            else
+            {
+                Message = "Signature is already Active";
+
+                return false;
+            }
+
+        }
+        public List<Signature> GetSignatures()
+        {
+            var transac = _context.Signatures.OrderByDescending(a => a.IsActive == true).ToList();
+            return transac;
+        }
+        public List<POApprovalTransactions> GetPOTransactions()
+        {
+            var transac = _context.POApprovalTransactions.ToList();
+            return transac;
+        }
+        public List<RFQApprovalTransactions> GetRFQTransactions()
+        {
+            var transac = _context.RfqApprovalTransactions.ToList();
+            return transac;
+        }
         public List<Vendor> GetVendors()
         {
             var vendor = _context.Vendors.ToList();
@@ -140,36 +235,29 @@ namespace E_Procurement.Repository.RfqApprovalConfigRepository
                 using (var transaction = await _context.Database.BeginTransactionAsync(System.Data.IsolationLevel.ReadUncommitted))
                 {
                     var currentLevel = _context.RfqApprovalStatuses.Where(x => x.RFQId == rFQApproval.RFQId).First();
-                    var rfqLevel = _context.RfqApprovalConfigs.Where(x => x.ApprovalLevel == currentLevel.CurrentApprovalLevel + 1).First();                    
+                    
+                    var ThisrfqLevel = _context.RfqApprovalConfigs.Where(x => x.ApprovalLevel == currentLevel.CurrentApprovalLevel).First();
                     var rfq = _context.RfqGenerations.Where(x => x.Id == rFQApproval.RFQId).First();
                     string approvalEmail = "";
-                    //add to approval transactions
-                    RFQApprovalTransactions rfqTransaction = new RFQApprovalTransactions
-                    {
-                       // ApprovalLevel = rfqLevel.ApprovalLevel,
-                        RFQId = rFQApproval.RFQId,
-                        VendorId = rFQApproval.VendorId,
-                        ApprovalLevel = rfqLevel.ApprovalLevel,
-                        ApprovedBy = currentUser,
-                        Comments = rFQApproval.Comments
-                    };
-
-                    approvalEmail = rfqLevel.Email;
-
-                    // add to approval status
-                    currentLevel.RFQId = rFQApproval.RFQId;
-                    currentLevel.CurrentApprovalLevel = rfqLevel.ApprovalLevel;
                    
 
-                    _context.Update<RFQApprovalStatus>(currentLevel); 
-
-                    await _context.AddAsync(rfqTransaction);
-                   // await _context.AddAsync(rfqstatus);
-
                     // check if approval is the final
-                    if (rfqLevel.IsFinalLevel)
+                    if (ThisrfqLevel.IsFinalLevel)
                     {
-                       
+                        //add to approval transactions
+                        RFQApprovalTransactions rfqTransaction = new RFQApprovalTransactions
+                        {
+                            // ApprovalLevel = rfqLevel.ApprovalLevel,
+                            RFQId = rFQApproval.RFQId,
+                            VendorId = rFQApproval.VendorId,
+                            ApprovalLevel = ThisrfqLevel.ApprovalLevel,
+                            ApprovedBy = currentUser,
+                            Comments = rFQApproval.Comments
+                        };
+
+                        await _context.AddAsync(rfqTransaction);
+                        // await _context.AddAsync(rfqstatus);
+
                         rfq.RFQStatus = "Approved";
                         rfqTransaction.ApprovalStatus = "Approved";
                         _context.Update<RFQGeneration>(rfq);
@@ -179,6 +267,30 @@ namespace E_Procurement.Repository.RfqApprovalConfigRepository
                     }
                     else
                     {
+                        var rfqLevel = _context.RfqApprovalConfigs.Where(x => x.ApprovalLevel == currentLevel.CurrentApprovalLevel + 1).First();
+                        //add to approval transactions
+                        RFQApprovalTransactions rfqTransaction = new RFQApprovalTransactions
+                        {
+                            // ApprovalLevel = rfqLevel.ApprovalLevel,
+                            RFQId = rFQApproval.RFQId,
+                            VendorId = rFQApproval.VendorId,
+                            ApprovalLevel = ThisrfqLevel.ApprovalLevel,
+                            ApprovedBy = currentUser,
+                            Comments = rFQApproval.Comments
+                        };
+
+                        await _context.AddAsync(rfqTransaction);
+                        // await _context.AddAsync(rfqstatus);
+
+                        approvalEmail = rfqLevel.Email;
+
+                        // add to approval status
+                        currentLevel.RFQId = rFQApproval.RFQId;
+                        currentLevel.CurrentApprovalLevel = rfqLevel.ApprovalLevel;
+
+
+                        _context.Update<RFQApprovalStatus>(currentLevel);
+
                         //send mail to approval
                         var subject = "RFQ APPROVAL NOTIFICATION";
 

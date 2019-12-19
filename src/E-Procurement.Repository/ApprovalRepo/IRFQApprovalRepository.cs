@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using E_Procurement.Repository.VendoRepo;
 
 namespace E_Procurement.Repository.ApprovalRepo
 {
@@ -25,5 +26,11 @@ namespace E_Procurement.Repository.ApprovalRepo
         List<RFQDetails> GetRFQDetails();
         List<RFQGeneration> GetRFQ();
         List<RFQGenerationModel> GetRFQPendingApproval();
+        List<RFQApprovalTransactions> GetRFQTransactions();
+        List<POApprovalTransactions> GetPOTransactions();
+        List<Signature> GetSignatures();
+        IEnumerable<User> GetApprovalRoles_Users();
+        bool CreateSignature(VendorModel model, out string Message);
+        bool ActivateSignature(VendorModel model, out string Message);
     }
 }

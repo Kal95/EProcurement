@@ -235,6 +235,13 @@ namespace E_Procurement.Repository.PORepo
             return query.ToList();
             //return _context.PoGenerations.OrderByDescending(u => u.Id).ToList();
         }
+        public List<RFQApprovalConfig> GetPOApprover()
+        {
+            var currentUser = _contextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var approver = _context.RfqApprovalConfigs.Where(u => u.ApprovalTypeId == 2 && u.UserId == int.Parse(currentUser));
+
+            return approver.ToList();
+        }
         public List<RFQGenerationModel> GetPoGen2()
         {
             var ven = _context.Vendors.ToList();
@@ -674,6 +681,7 @@ namespace E_Procurement.Repository.PORepo
         }
         public async  Task<bool> GenerationPOAsync(RFQGenerationModel rfq)
         {
+            var RFQ = _context.RfqGenerations.Where(a => a.Id == rfq.RFQId).FirstOrDefault();
             var oldEntry = _context.PoGenerations.Where(u => u.RFQId == rfq.RFQId).FirstOrDefault();
             if (rfq != null)
             {
@@ -688,19 +696,25 @@ namespace E_Procurement.Repository.PORepo
                 oldEntry.POTitle = rfq.POTitle;
                 oldEntry.POValidity = rfq.POValidity;
                 oldEntry.POWarranty = rfq.POWarranty;
+                oldEntry.Reference = RFQ.Reference;
 
                 await _context.SaveChangesAsync();
 
                 //MAP TO RFQ
                 var requisitionURL = _config.GetSection("ExternalAPI:RequisitionURL").Value;
+                var signature = _context.Signatures.Where(a => a.IsActive == true).FirstOrDefault();
 
+                rfq.Reference = RFQ.Reference;
                 rfq.PONumber = oldEntry.PONumber;
                 rfq.POTitle = rfq.POTitle.ToUpper();
+                rfq.CreatedDate = DateTime.Now;
                 //re gen the detials
                 var Item = await _context.RfqDetails.Where(x => x.RFQId == rfq.RFQId && x.VendorId == rfq.VendorId).ToListAsync();
                 var totalAmount = Item.Sum(x => x.QuotedAmount);
                 rfq.TotalAmount = totalAmount;
                 rfq.URL = requisitionURL;
+                rfq.Signature1 = signature.Sign1;
+                rfq.Signature2 = signature.Sign2;
                 List<RFQDetailsModel> rFQDetails = new List<RFQDetailsModel>();
 
                 var listModel = Item.Select(x => new RFQDetailsModel
