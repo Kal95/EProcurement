@@ -66,6 +66,8 @@ namespace E_Procurement.Repository.Dtos
             public string URL { get; set; }
             public string Signature1 { get; set; }
             public string Signature2 { get; set; }
+            public bool FinalApprover { get; set; }
+            public string ApproverName { get; set; }
 
     }
 }

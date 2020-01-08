@@ -142,7 +142,10 @@ namespace E_Procurement.WebUI.Controllers
                             {
                                 ApprovedBy = users.FullName,
                                 Comments = trans.Comments,
-                                RFQId = trans.RFQId
+                                RFQId = trans.RFQId,
+                                VendorId = trans.VendorId,
+                                POStatus = trans.ApprovalStatus
+                                
                             });
                 transac.AddRange(tran);
 
@@ -229,6 +232,12 @@ namespace E_Procurement.WebUI.Controllers
 
                 var user = _PORepository.GetUser();
 
+                var ApproverId = user.Where(a => a.UserName == User.Identity.Name).FirstOrDefault();
+
+                var POApprover = _PORepository.GetPOApprovalConfig().Where(a => a.UserId == ApproverId.Id).Select(a => a.IsFinalLevel).FirstOrDefault();
+
+                var POApproverName = ApproverId.FullName;
+
                 List<RFQDetailsModel> transac = new List<RFQDetailsModel>();
                 var tran = (from trans in transaction
                             join users in user on trans.ApprovedBy equals users.Email
@@ -289,6 +298,8 @@ namespace E_Procurement.WebUI.Controllers
                 Model.RFQDetails = poModel;
                 Model.RFQDetails2 = poModel2;
                 Model.RFQTransaction = transac;
+                Model.FinalApprover = POApprover;
+                Model.ApproverName = POApproverName;
                 return View(Model);
             }
             catch (Exception)
@@ -342,6 +353,96 @@ namespace E_Procurement.WebUI.Controllers
             return View(model2);
         }
 
+        public ActionResult PODivert(RFQDetailsModel Model)
+        {
+            var RFQ = _PORepository.GetRFQDetails().Where(u => u.RFQId == Model.RFQId && u.VendorId == Model.VendorId).FirstOrDefault();
+            var vendor = _PORepository.GetVendors().Where(u => u.Id == RFQ.VendorId).FirstOrDefault();
+            var RFQin = _PORepository.GetRFQs().Where(u => u.Id == Model.RFQId).FirstOrDefault();
+            //var PO = _reportRepository.GetPoGen().Where(u => u.RFQId == Model.RFQId).FirstOrDefault();
+
+            RFQGenerationModel model2 = new RFQGenerationModel();
+            model2.VendorId = vendor.Id;
+            model2.ContactName = vendor.ContactName;
+            model2.VendorName = vendor.VendorName;
+            model2.VendorAddress = vendor.VendorAddress;
+            model2.VendorEmail = vendor.Email;
+            model2.Reference = RFQin.Reference;
+            model2.RFQStatus = RFQin.RFQStatus;
+            model2.StartDate = RFQin.StartDate;
+            model2.EndDate = RFQin.EndDate;
+            //model2.CreatedDate = PO.CreatedDate;
+
+
+            List<RFQDetailsModel> poModel = new List<RFQDetailsModel>();
+            var POList = _PORepository.GetRFQDetails().Where(u => u.RFQId == Model.RFQId && u.VendorId == vendor.Id).ToList();
+            model2.TotalAmount = POList.Sum(x => x.QuotedAmount);
+            var listModel = POList.Select(x => new RFQDetailsModel
+            {
+                RFQId = x.RFQId,
+                VendorId = x.VendorId,
+                ItemId = x.ItemId,
+                ItemName = x.ItemName,
+                Description = x.ItemDescription,
+                QuotedQuantity = x.QuotedQuantity,
+                AgreedQuantity = x.AgreedQuantity,
+                QuotedAmount = x.QuotedAmount,
+                AgreedAmount = x.AgreedAmount,
+                QuotedPrice = x.QuotedPrice
+
+            });
+            poModel.AddRange(listModel);
+
+
+            model2.RFQDetails = poModel;
+
+            return View(model2);
+        }
+
+        [HttpPost]
+        //[ValidateAntiForgeryToken]
+        public ActionResult PODiverting(RFQDetailsModel Model)
+        {
+            try
+            {
+                string message;
+
+                var RFQ = _PORepository.GetRFQDetails().Where(u => u.RFQId == Model.RFQId && u.VendorId == Model.VendorId).FirstOrDefault();
+                //var vendor = _PORepository.GetVendors().Where(u => u.Id == RFQ.VendorId).FirstOrDefault();
+                //var RFQin = _PORepository.GetRFQs().Where(u => u.Id == Model.RFQId).FirstOrDefault();
+
+                var userId = _PORepository.GetUser().Where(u => u.UserName == User.Identity.Name).Select(u => u.Id).FirstOrDefault();
+
+                Model.ApproverId = userId;
+                Model.CreatedBy = User.Identity.Name;
+                Model.RFQId = Model.RFQId;
+                Model.QuotedAmount = RFQ.QuotedAmount;
+
+                var status = _PORepository.PODivert(Model, out message);
+
+
+                if (status == true)
+                {
+
+                    Alert("PO Approved Successfully", NotificationType.success);
+                }
+
+                else
+                {
+                    Alert("PO cannot be Approved", NotificationType.info);
+                    return View(Model);
+                }
+
+                return RedirectToAction("POApproval", "PO");
+
+            }
+            catch (Exception)
+            {
+
+                return View("Error");
+            }
+
+        }
+
         [HttpPost]
         //[ValidateAntiForgeryToken]
         public ActionResult POApproval(RFQDetailsModel Model)
@@ -387,6 +488,8 @@ namespace E_Procurement.WebUI.Controllers
 
         }
 
+       
+
         public ActionResult GeneratePO()
         {
             try
@@ -399,6 +502,21 @@ namespace E_Procurement.WebUI.Controllers
 
                 var rfq = _RfqApprovalRepository.GetRFQ();
 
+                var transaction = _RfqApprovalRepository.GetPOTransactions();
+
+                var user = _PORepository.GetUser();
+
+
+                List<RFQDetailsModel> transac = new List<RFQDetailsModel>();
+                var tran = (from trans in transaction
+                            join users in user on trans.ApprovedBy equals users.Email
+                            select new RFQDetailsModel()
+                            {
+                                ApprovedBy = users.FullName,
+                                Comments = trans.Comments,
+                                RFQId = trans.RFQId
+                            });
+                transac.AddRange(tran);
 
                 RFQGenerationModel Model = new RFQGenerationModel();
 
@@ -448,6 +566,7 @@ namespace E_Procurement.WebUI.Controllers
                 }
                 Model.RFQDetails = poModel;
                 Model.RFQDetails2 = poModel2;
+                Model.RFQTransaction = transac;
                 return View(Model);
             }
             catch (Exception)

@@ -134,6 +134,58 @@ namespace E_Procurement.Repository.PORepo
             }
 
         }
+
+        public bool PODivert(RFQDetailsModel model, out string Message)
+        {
+            var confirm = _context.RfqGenerations.Where(x => x.Reference == model.Reference /*&& x.IsActive == model.IsActive*/).Count();
+
+            var oldEntry = _context.PoGenerations.Where(u => u.RFQId == model.RFQId).FirstOrDefault();
+            var oldEntry2 = _context.POApprovalTransactions.Where(u => u.POId == model.POId && u.RFQId == model.RFQId && u.ApproverID != model.ApproverId).ToList();
+            var Approver = _context.RfqApprovalConfigs.Where(u => u.ApprovalTypeId == 2).ToList();
+            var Approver2 = Approver.Where(u => u.UserId == model.ApproverId);
+
+
+            POGeneration generation = new POGeneration();
+            POApprovalTransactions transactions = new POApprovalTransactions();
+           
+            if (!oldEntry.Id.Equals(null) && oldEntry2.Count() == 0)
+            {
+               
+                if (Approver2.Any(u => u.IsFinalLevel) == true)
+                {
+                    transactions.ApprovalLevel = Approver2.Select(u => u.ApprovalLevel).SingleOrDefault();
+                    transactions.ApprovalStatus = "Approved";
+                    transactions.ApprovedBy = model.CreatedBy;
+                    transactions.ApproverID = model.ApproverId;
+                    transactions.Comments = model.Comments;
+                    transactions.DateApproved = DateTime.Now;
+                    transactions.POId = oldEntry.Id;
+                    transactions.RFQId = model.RFQId;
+                    transactions.VendorId = model.VendorId;
+                    _context.Add(transactions);
+
+                    oldEntry.POStatus = "Approved";
+                    oldEntry.VendorId = model.VendorId;
+                    oldEntry.UpdatedBy = model.UpdatedBy;
+                    oldEntry.LastDateUpdated = DateTime.Now;
+
+                    _context.SaveChanges();
+
+                }
+
+
+                Message = "";
+                return true;
+            }
+
+            else
+            {
+                Message = "";
+
+                return false;
+            }
+
+        }
         public IEnumerable<User> GetUser()
         {
             return _userManager.Users.OrderByDescending(u => u.Id).ToList();

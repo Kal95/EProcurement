@@ -119,34 +119,41 @@
                                             <td>@approvalConfig2.ContactName</td>
                                             <td>@approvalConfig2.TotalAmount</td>
                                             @*<td>@approvalConfig.POStatus</td>*@
-                                            @if (@approvalConfig2.VendorId == @approvalConfig.VendorId)
-                                            {
-                                                <td>
-                                                    @{
-                                                        int d = 0;
-                                                    }
-                                                    @{
-                                                        //var RFQDetails = Model.RFQDetails as List<E_Procurement.WebUI.Models.RfqApprovalModel.RFQDetailsViewModel>;
-                                                        var tran = Model.RFQTransaction as List<E_Procurement.Repository.Dtos.RFQDetailsModel>;
+                                            @*@if (@approvalConfig2.VendorId == @approvalConfig.VendorId)
+                                            {*@
+                                            <td>
+                                                @{
+                                                    int d = 0;
+                                                }
+                                                @{
+                                                    //var RFQDetails = Model.RFQDetails as List<E_Procurement.WebUI.Models.RfqApprovalModel.RFQDetailsViewModel>;
+                                                    var tran = Model.RFQTransaction as List<E_Procurement.Repository.Dtos.RFQDetailsModel>;
 
-                                                    }
-                                                    @if (tran.Where(u => u.RFQId == approvalConfig.RFQId).Count() == 0)
+                                                }
+                                              
+                                                @if (tran.Where(u => u.RFQId == approvalConfig.RFQId).Count() == 0)
+                                                {
+                                                    <a><b>No Comments</b></a>
+                                                }
+                                                else
+                                                {
+                                                    @foreach (var transaction in tran.Where(u => u.RFQId == approvalConfig.RFQId && u.VendorId == approvalConfig2.VendorId))
                                                     {
-                                                        <a><b>No Comments</b></a>
-                                                    }
-                                                    else
-                                                    {
-                                                        @foreach (var transaction in tran.Where(u => u.RFQId == approvalConfig.RFQId))
-                                                        {
 
 
 
-                                                            <a><p>@(d = d + 1). <b>@transaction.ApprovedBy:</b>  @transaction.Comments </p></a>
-                                                        }
-                                                    }
+                                                    <a><p>@(d = d + 1). <b>@transaction.ApprovedBy:</b>  @transaction.Comments </p></a>
+                                                 }
+
+                                                }
+                                            </td>
+                                            <td>
+                                                @foreach (var transaction in tran.Where(u => u.RFQId == approvalConfig.RFQId && u.VendorId == approvalConfig2.VendorId && u.POStatus != "Pending"))
+                                                {
+                                                    @transaction.POStatus
+                                                }
                                                 </td>
-                                                <td>@approvalConfig.POStatus</td>
-                                            }
+                                            @*}*@
                                             @*<td>
             <a class="btn btn-info mg-r-5" style="width:120px"
                href="@Url.Action("POApprovalDetails", "PO", new { RFQId = @approvalConfig2.RFQId, VendorId = @approvalConfig2.VendorId })"><span class="fa fa-pencil"></span><i class="pe-7s-edit btn-icon-wrapper"></i>Details</a>

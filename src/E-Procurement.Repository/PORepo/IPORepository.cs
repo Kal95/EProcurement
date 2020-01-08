@@ -20,6 +20,7 @@ namespace E_Procurement.Repository.PORepo
         IEnumerable<Vendor> GetVendors();
         List<RFQGeneration> GetRFQs();
         bool POApproval(RFQDetailsModel model, out string Message);
+        bool PODivert(RFQDetailsModel model, out string Message);
         IEnumerable<User> GetUser();
         List<RFQGenerationModel> GetApprovedPO();
         List<RFQGenerationModel> GetApprovedPO2();
