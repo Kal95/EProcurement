@@ -4,46 +4,45 @@
 }
 
 
-<div class="card pd-20 pd-sm-40">
-    <h6 class="card-body-title">Role</h6>
-    <p class="mg-b-20 mg-sm-b-30">Create Role</p>
+<div class="main-card mb-3 card">
+    @*<h6 class="card-body-title">Role</h6>
+        <p class="mg-b-20 mg-sm-b-30">Create Role</p>*@
+    <div class="card-body">
+        <div class="right">
+            <a asp-controller="Account" asp-action="CreateRole" alt="Create" class="btn btn-primary"> Create Role </a>
+        </div>
+        <hr />
+        <div class="table-wrapper">
+            <table id="datatable1" class="table table-hover table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th class="wd-15p">Name</th>
+                        <th class="wd-10p"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var role in Model)
+                    {
+                        <tr>
+                            <td>@role.Name</td>
+                            <td><a asp-controller="Account" asp-action="EditRole" asp-route-id="@role.Id" alt="Edit" class="btn btn-primary btn-icon"> <div><i class="fa fa-pencil"></i></div></a>|<a asp-action="Delete" asp-route-id="@role.Id" class="btn btn-danger btn-icon"><div><i class="fa fa-trash-o"></i></div></a> </td>
 
-    <div class="right">
-        <a asp-controller="Account" asp-action="CreateRole" alt="Create" class="btn btn-primary"> Create Role </a>
-    </div>
-    <div class="table-wrapper">
-        <table id="datatable1" class="table display responsive nowrap">
-            <thead>
-                <tr>
-                    <th class="wd-15p">Name</th>
-                    <th class="wd-10p"></th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var role in Model)
-                {
-                <tr>
-                    <td>@role.Name</td>
-                    <td><a asp-controller="Account" asp-action="EditRole" asp-route-id="@role.Id" alt="Edit" class="btn btn-primary btn-icon"> <div><i class="fa fa-pencil"></i></div></a>|<a asp-action="Delete" asp-route-id="@role.Id"  class="btn btn-danger btn-icon" ><div><i class="fa fa-trash-o"></i></div></a> </td>
-
-                </tr>
-                }
-            </tbody>
-        </table>
-    </div><!-- table-wrapper -->
-</div><!-- card -->
-
-
-
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div><!-- table-wrapper -->
+        </div>
+    </div><!-- card -->
     @*<script>
-        $('#datatable1').DataTable({
-            responsive: true,
-            language: {
-                searchPlaceholder: 'Search...',
-                sSearch: '',
-                lengthMenu: '_MENU_ items/page',
-            }
-        });
-    </script>*@
+            $('#datatable1').DataTable({
+                responsive: true,
+                language: {
+                    searchPlaceholder: 'Search...',
+                    sSearch: '',
+                    lengthMenu: '_MENU_ items/page',
+                }
+            });
+        </script>*@
 
 

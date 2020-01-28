@@ -6,19 +6,19 @@
 
 <div class="card pd-20 pd-sm-40">
     <h6 class="card-body-title">PO</h6>
-    <p class="mg-b-20 mg-sm-b-30"> List </p>
+    @*<p class="mg-b-20 mg-sm-b-30"> List </p>*@
 
     @*<div class="right">
         <a asp-controller="RfqApprovalConfig" asp-action="Create" alt="Create" class="btn btn-primary"> Create Approval Config </a>
     </div>*@
     <div class="table-wrapper">
-        <table id="datatable1" class="table table-striped dataTable display responsive nowrap mg-b-0">
+        <table id="datatable1" class="table table-hover table-striped table-bordered">
             <thead>
                 <tr>
                     <th>
-                        <label class="ckbox mg-b-0">
+                        @*<label class="ckbox mg-b-0">
                             <input type="checkbox"><span></span>
-                        </label>
+                        </label>*@
                     </th>
                     <th class="wd-5p">S/N</th>
                     <th class="wd-5p">RFQ No</th>
@@ -55,8 +55,8 @@
                     <td>@approvalConfig.RFQStatus</td>
                     <td>@approvalConfig.VendorName</td>
                     <td>@approvalConfig.VendorAddress</td>
-                    <td>@approvalConfig.VendorStatus</td>
                     <td>@approvalConfig.ContactName</td>
+                    <td>@approvalConfig.VendorStatus</td>
                     <td><a asp-controller="GRN" asp-action="PODetails" asp-route-id="@approvalConfig.RFQId" alt="Edit" class="btn btn-primary btn-icon"> <div><i class="fa fa-pencil"></i></div></a> </td>
 
                 </tr>
