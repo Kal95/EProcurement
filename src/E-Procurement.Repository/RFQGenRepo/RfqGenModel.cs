@@ -23,6 +23,7 @@ namespace E_Procurement.WebUI.Models.RFQModel
         public int VendorId { get; set; }
         public int PoId { get; set; }
         public string CreatedBy { get; set; }
+        public string InitiatedBy { get; set; }
         public bool IsActive { get; set; }
         public string UpdatedBy { get; set; }
 

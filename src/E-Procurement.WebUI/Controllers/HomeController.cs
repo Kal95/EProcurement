@@ -69,9 +69,9 @@ namespace E_Procurement.WebUI.Controllers
                 return View(dashboard);
 
             }
-            else if (User.IsInRole("Approval"))
+            else if (User.IsInRole("Initiator"))
             {
-                
+
                 DashboardModel dashboard = new DashboardModel();
                 var user = _reportRepository.GetUser().Where(u => u.UserName == User.Identity.Name).FirstOrDefault();
                 var pendingPO = Convert.ToInt32(0).ToString();
@@ -80,8 +80,8 @@ namespace E_Procurement.WebUI.Controllers
                     pendingPO = _poRepository.GetPoGen2().Count().ToString();
                 }
                 var pendingRFQ = _rfqApprovalRepository.GetRFQPendingApproval().Count().ToString();
-                var approvedRFQ = _poRepository.GetApprovedRFQ().Count.ToString();
-                var approvedPO = _poRepository.GetApprovedPO2().Count.ToString();
+                var approvedRFQ = _poRepository.GetRFQUpdate().Count.ToString();
+                var approvedPO = _poRepository.GetPOUpdate().Count.ToString();
                 if (Convert.ToInt32(pendingRFQ) != 0 || Convert.ToInt32(pendingPO) != 0)
                 {
                     dashboard.pendingPO = pendingPO;
@@ -89,6 +89,46 @@ namespace E_Procurement.WebUI.Controllers
                 }
                 else
                 {
+                    dashboard.PO = approvedPO;
+                    dashboard.RFQ = approvedRFQ;
+
+                }
+                dashboard.UserName = user.FullName;
+                return View(dashboard);
+                //return RedirectToAction("ApproverIndex", "Report");
+            }
+            else if (User.IsInRole("Approval"))
+            {
+                
+                DashboardModel dashboard = new DashboardModel();
+                var user = _reportRepository.GetUser().Where(u => u.UserName == User.Identity.Name).FirstOrDefault();
+                //var pendingPO = Convert.ToInt32(0).ToString();
+                var pendingRFQ = _rfqApprovalRepository.GetRFQPendingApproval().Count().ToString();
+
+                if (_poRepository.GetPOApprover().Count() != 0)
+                {
+                    var pendingPO = _poRepository.GetPoGen2().Count().ToString();
+
+                    //{
+                    //    pendingPO = _poRepository.GetPoGen2().Count().ToString();
+                    //}
+
+                    if (Convert.ToInt32(pendingRFQ) != 0 || Convert.ToInt32(pendingPO) != 0)
+                    {
+                        dashboard.pendingPO = pendingPO;
+                        dashboard.pendingRFQ = pendingRFQ;
+                    }
+                }
+                else if (_poRepository.GetPOApprover().Count() == 0 && Convert.ToInt32(pendingRFQ) != 0)
+                {
+                    dashboard.pendingPO = "0";
+                    dashboard.pendingRFQ = pendingRFQ;
+                }
+                else
+                {
+                    var approvedRFQ = _poRepository.GetApprovedRFQ().Count.ToString();
+                    var approvedPO = _poRepository.GetApprovedPO2().Count.ToString();
+
                     dashboard.PO = approvedPO;
                     dashboard.RFQ = approvedRFQ;
 

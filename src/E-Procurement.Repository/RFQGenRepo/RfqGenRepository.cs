@@ -12,6 +12,7 @@ using E_Procurement.Data;
 using E_Procurement.Data.Entity;
 using E_Procurement.Repository.Dtos;
 using E_Procurement.Repository.Interface;
+using E_Procurement.Repository.ReportRepo;
 using E_Procurement.WebUI.Models.RFQModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -27,14 +28,16 @@ namespace E_Procurement.Repository.RFQGenRepo
         private readonly IHttpContextAccessor _contextAccessor;
         private IConvertViewToPDF _pdfConverter;
         private IConfiguration _config;
+        private readonly IReportRepository _reportRepository;
 
-        public RfqGenRepository(EProcurementContext context, IConfiguration config, ISMTPService emailSender, IHttpContextAccessor contextAccessor, IConvertViewToPDF pdfConverter)
+        public RfqGenRepository(EProcurementContext context, IConfiguration config, ISMTPService emailSender, IHttpContextAccessor contextAccessor, IConvertViewToPDF pdfConverter, IReportRepository reportRepository)
         {
             _context = context;
             _emailSender = emailSender;
             _contextAccessor = contextAccessor;
             _pdfConverter = pdfConverter;
             _config = config;
+            _reportRepository = reportRepository;
         }
 
 
@@ -62,6 +65,7 @@ namespace E_Procurement.Repository.RFQGenRepo
                     RfqGen.RFQStatus = model.RfqStatus;
 
                     //RfqGen.IsActive = true;
+                    RfqGen.InitiatedBy = model.InitiatedBy;
 
                     RfqGen.CreatedBy = model.CreatedBy;
 
@@ -130,11 +134,13 @@ namespace E_Procurement.Repository.RFQGenRepo
                 _context.SaveChanges();
 
                 //get PDF data
-              
+
                 var items = GetItem(model.CategoryId).ToList();
                 var itemList = items.Where(a => model.SelectedItems.Any(b => b == a.Id.ToString())).ToList();
                 var selectedV = model.SelectedVendors.ToList();
                 var vendors = _context.Vendors.OrderByDescending(u => u.Id).ToList();
+
+                var message = "";
 
                 var vendorList = vendors.Where(a => selectedV.Any(b => b == a.Id)).ToList();
                 //var selected3 = model.SelectedVendors.Zip(model.SelectedItems, (x, y) => new { X = x, Y = y });
@@ -142,7 +148,7 @@ namespace E_Procurement.Repository.RFQGenRepo
                 {
                     var requisitionURL = _config.GetSection("ExternalAPI:RequisitionURL").Value;
 
-                    var message = "<b> Dear </b>" + entry.ContactName;
+                    message = "<b> Dear </b>" + entry.ContactName;
                     message += "<br><br><b> Your company: </b>" + entry.VendorName + ",";
 
                     message += "<br> has been chosen to provide quote for the following items: ";
@@ -194,6 +200,20 @@ namespace E_Procurement.Repository.RFQGenRepo
                    // _emailSender.SendEmailAsync(entry.Email, subject, message, filePath);
                    // _emailSender.SendEmailAsync(entry.Email, subject, message,"");
                 }
+
+                //Send Email to Initiator
+                var user = _reportRepository.GetUser().Where(u => u.Email == model.InitiatedBy).FirstOrDefault();
+
+                var subject = "RFQ NOTIFICATION";
+                message = "</br><b> Dear </b>" + user.FullName;
+                message += "<br> Please be informed that your request with Reference: " + model.Reference + " has been initiated";
+                message += "<br> With the following items as requested by you: ";
+                message += "<br>" + string.Join(", ", itemList.Select(u => u.ItemName)) + ",";
+
+                message += "<br> in the following quantities: " + string.Join(", ", model.Quantities) + " respectively.";
+                message += "<br>Regards";
+
+                _emailSender.SendEmailAsync(model.InitiatedBy, subject, message, "");
 
                 Message = "RFQ generated successfully";
 

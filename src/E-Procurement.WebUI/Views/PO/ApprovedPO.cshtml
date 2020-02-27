@@ -5,7 +5,15 @@
 
 
 <div class="card pd-20 pd-sm-40">
+    
+    @if (User.IsInRole("Initiator"))
+    {
+    <h6 class="card-body-title"> Purchase Order(s)</h6>
+    }
+    else
+    {
     <h6 class="card-body-title"> Approved Purchase Order(s)</h6>
+    }
     @*<p class="mg-b-20 mg-sm-b-30">  </p>*@
 
     @*<div class="right">
@@ -52,7 +60,7 @@
                             <td>@(i = i + 1)</td>
                             <td>@approvalConfig.RFQId</td>
                             @*<td>@approvalConfig.ProjectId</td>
-                <td>@approvalConfig.RequisitionId</td>*@
+                                <td>@approvalConfig.RequisitionId</td>*@
                             <td>@approvalConfig.Reference</td>
                             <td style="width:150px">@approvalConfig.Item</td>
                             <td style="width:150px">@approvalConfig.Description</td>
@@ -65,9 +73,9 @@
                                 </a>
                             </td>
                             @*<td style="width:50px"><a asp-controller="RfqApproval" asp-action="RfqVendorsDetails" asp-route-id="@approvalConfig.RFQId" alt="Edit" class="btn btn-primary btn-icon"> <div><i class="fa fa-pencil"></i></div></a> </td>
-                <td>
-                    <input type="checkbox" @Model value="@approvalConfig.VendorId" checked="checked" name="SelectedItems" id="myInput_@approvalConfig.VendorId" onclick="myFunction(@approvalConfig.VendorId)" />
-                </td>*@
+                                <td>
+                                    <input type="checkbox" @Model value="@approvalConfig.VendorId" checked="checked" name="SelectedItems" id="myInput_@approvalConfig.VendorId" onclick="myFunction(@approvalConfig.VendorId)" />
+                                </td>*@
                         </tr>
 
                         <tr class="collapse" id="collapseItem_@(i)">
@@ -82,7 +90,7 @@
                                             <th class="wd-5p">S/N</th>
                                             @*<th class="wd-5p">RFQ No</th>*@
                                             @*<th class="wd-5p">Proj. ID</th>
-        <th class="wd-5p">Req. ID</th>*@
+                                                <th class="wd-5p">Req. ID</th>*@
                                             @*<th class="wd-10p">RFQStatus</th>*@
                                             <th class="wd-5p">Vendor Name</th>
                                             @*<th class="wd-10p">Status</th>*@
@@ -108,59 +116,59 @@
                                         }
                                         @foreach (var approvalConfig2 in RFQDetails2.Where(u => u.RFQId == approvalConfig.RFQId))
                                         {
-                                        <tr id="Descriptions_" + @approvalConfig2.VendorId>
-                                            <td>@(a = a + 1)</td>
-                                            @*<td>@approvalConfig.RFQId</td>*@
-                                            @*<td>@approvalConfig.ProjectId</td>
-        <td>@approvalConfig.RequisitionId</td>*@
-                                            @*<td>@approvalConfig.RFQStatus</td>*@
-                                            <td>@approvalConfig2.VendorName</td>
-                                            @*<td>@approvalConfig.VendorStatus</td>*@
-                                            <td>@approvalConfig2.ContactName</td>
-                                            <td>@approvalConfig2.TotalAmount</td>
-                                            @*<td>@approvalConfig.POStatus</td>*@
-                                            @*@if (@approvalConfig2.VendorId == @approvalConfig.VendorId)
-                                            {*@
-                                            <td>
-                                                @{
-                                                    int d = 0;
-                                                }
-                                                @{
-                                                    //var RFQDetails = Model.RFQDetails as List<E_Procurement.WebUI.Models.RfqApprovalModel.RFQDetailsViewModel>;
-                                                    var tran = Model.RFQTransaction as List<E_Procurement.Repository.Dtos.RFQDetailsModel>;
+                                            <tr id="Descriptions_" + @approvalConfig2.VendorId>
+                                                <td>@(a = a + 1)</td>
+                                                @*<td>@approvalConfig.RFQId</td>*@
+                                                @*<td>@approvalConfig.ProjectId</td>
+                                                    <td>@approvalConfig.RequisitionId</td>*@
+                                                @*<td>@approvalConfig.RFQStatus</td>*@
+                                                <td>@approvalConfig2.VendorName</td>
+                                                @*<td>@approvalConfig.VendorStatus</td>*@
+                                                <td>@approvalConfig2.ContactName</td>
+                                                <td>@approvalConfig2.TotalAmount</td>
+                                                @*<td>@approvalConfig.POStatus</td>*@
+                                                @*@if (@approvalConfig2.VendorId == @approvalConfig.VendorId)
+                                                    {*@
+                                                <td>
+                                                    @{
+                                                        int d = 0;
+                                                    }
+                                                    @{
+                                                        //var RFQDetails = Model.RFQDetails as List<E_Procurement.WebUI.Models.RfqApprovalModel.RFQDetailsViewModel>;
+                                                        var tran = Model.RFQTransaction as List<E_Procurement.Repository.Dtos.RFQDetailsModel>;
 
-                                                }
-                                              
-                                                @if (tran.Where(u => u.RFQId == approvalConfig.RFQId).Count() == 0)
-                                                {
-                                                    <a><b>No Comments</b></a>
-                                                }
-                                                else
-                                                {
-                                                    @foreach (var transaction in tran.Where(u => u.RFQId == approvalConfig.RFQId && u.VendorId == approvalConfig2.VendorId))
+                                                    }
+
+                                                    @if (tran.Where(u => u.RFQId == approvalConfig.RFQId).Count() == 0)
                                                     {
+                                                        <a><b>No Comments</b></a>
+                                                    }
+                                                    else
+                                                    {
+                                                        @foreach (var transaction in tran.Where(u => u.RFQId == approvalConfig.RFQId && u.VendorId == approvalConfig2.VendorId))
+                                                        {
 
 
 
-                                                    <a><p>@(d = d + 1). <b>@transaction.ApprovedBy:</b>  @transaction.Comments </p></a>
-                                                 }
+                                                            <a><p>@(d = d + 1). <b>@transaction.ApprovedBy:</b>  @transaction.Comments </p></a>
+                                                        }
 
-                                                }
-                                            </td>
-                                            <td>
-                                                @foreach (var transaction in tran.Where(u => u.RFQId == approvalConfig.RFQId && u.VendorId == approvalConfig2.VendorId && u.POStatus != "Pending"))
-                                                {
-                                                    @transaction.POStatus
-                                                }
+                                                    }
                                                 </td>
-                                            @*}*@
-                                            @*<td>
-            <a class="btn btn-info mg-r-5" style="width:120px"
-               href="@Url.Action("POApprovalDetails", "PO", new { RFQId = @approvalConfig2.RFQId, VendorId = @approvalConfig2.VendorId })"><span class="fa fa-pencil"></span><i class="pe-7s-edit btn-icon-wrapper"></i>Details</a>
-        </td>*@
+                                                <td>
+                                                    @foreach (var transaction in tran.Where(u => u.RFQId == approvalConfig.RFQId && u.VendorId == approvalConfig2.VendorId && u.POStatus != "Pending"))
+                                                    {
+                                                        @transaction.POStatus
+                                                    }
+                                                </td>
+                                                @*}*@
+                                                @*<td>
+                                                        <a class="btn btn-info mg-r-5" style="width:120px"
+                                                           href="@Url.Action("POApprovalDetails", "PO", new { RFQId = @approvalConfig2.RFQId, VendorId = @approvalConfig2.VendorId })"><span class="fa fa-pencil"></span><i class="pe-7s-edit btn-icon-wrapper"></i>Details</a>
+                                                    </td>*@
 
 
-                                        </tr>
+                                            </tr>
 
 
 
@@ -170,7 +178,7 @@
                                 </table>
                             </td>
                         </tr>
-                     
+
                     }
                 </tbody>
             </table>

@@ -28,5 +28,7 @@ namespace E_Procurement.Repository.PORepo
         List<POApprovalTransactions> GetPOApprovals();
         List<RFQApprovalConfig> GetPOApprovalConfig();
         List<RFQApprovalConfig> GetPOApprover();
+        List<RFQGenerationModel> GetPOUpdate();
+        List<RFQGenerationModel> GetRFQUpdate();
     }
 }

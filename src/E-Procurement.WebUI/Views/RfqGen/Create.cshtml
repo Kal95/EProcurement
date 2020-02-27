@@ -119,6 +119,11 @@
                     </div>
                     <div class="col-md-4" style="margin-top:10px">
                         <div class="row mg-t-20">
+                            <label for="RFQTitle">RFQ Initiated By:</label>
+                            @Html.TextBoxFor(model => model.InitiatedBy, htmlAttributes: new { id = "InitiatedBy", @style = "width:450px; height:40px", @class = "form-control", @type = "text", required = "required" })
+
+                        </div>
+                        <div class="row mg-t-20" style="margin-top:30px">
                             <label for="RFQTitle">RFQ Title:</label>
                             @Html.TextBoxFor(model => model.RFQTitle, htmlAttributes: new { id = "RFQTitle", @style = "width:450px; height:40px", @class = "form-control", @type = "text", required = "required" })
 

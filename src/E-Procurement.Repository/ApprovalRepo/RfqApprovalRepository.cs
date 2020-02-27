@@ -18,6 +18,7 @@ using Microsoft.Extensions.Configuration;
 using E_Procurement.WebUI.Models.RFQModel;
 using E_Procurement.Repository.VendoRepo;
 using Microsoft.AspNetCore.Identity;
+using E_Procurement.Repository.ReportRepo;
 
 namespace E_Procurement.Repository.RfqApprovalConfigRepository
 {
@@ -28,14 +29,16 @@ namespace E_Procurement.Repository.RfqApprovalConfigRepository
         private readonly IHttpContextAccessor _contextAccessor;
         private IConfiguration _config;
         private readonly UserManager<User> _userManager;
+        private readonly IReportRepository _reportRepository;
 
-        public RfqApprovalRepository(EProcurementContext context, UserManager<User> userManager, IConfiguration config, ISMTPService emailSender, IHttpContextAccessor contextAccessor)
+        public RfqApprovalRepository(EProcurementContext context, UserManager<User> userManager, IConfiguration config, ISMTPService emailSender, IHttpContextAccessor contextAccessor, IReportRepository reportRepository)
         {
             _context = context;
             _emailSender = emailSender;
             _config = config;
             _contextAccessor = contextAccessor;
             _userManager = userManager;
+            _reportRepository = reportRepository;
         }
         public IEnumerable<User> GetApprovalRoles_Users()
         {
@@ -264,6 +267,17 @@ namespace E_Procurement.Repository.RfqApprovalConfigRepository
                         await _context.SaveChangesAsync();
                         //approvalEmail = "";
                         // email 
+
+                        //Send Email to Initiator
+                        var user = _reportRepository.GetUser().Where(u => u.Email == rfq.InitiatedBy).FirstOrDefault();
+                        var message = "";
+                        var subject = "PO NOTIFICATION";
+                        message = "</br><b> Dear </b>" + user.FullName;
+                        message += "<br> Please be informed that Request For Quote for your request with Reference: " + rfq.Reference + " has been Approved";
+
+                        message += "<br>Regards";
+
+                        await _emailSender.SendEmailAsync(user.Email, subject, message, "");
                     }
                     else
                     {

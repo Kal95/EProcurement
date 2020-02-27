@@ -15,6 +15,7 @@ namespace E_Procurement.Data.Entity
         public DateTime EndDate { get; set; }
         public string RFQStatus { get; set; }
         public string AlteredBy { get; set; }
+        public string InitiatedBy { get; set; }
         public DateTime DateAltered { get; set; }
     }
 }

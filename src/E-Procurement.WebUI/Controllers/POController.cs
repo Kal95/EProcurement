@@ -41,6 +41,11 @@ namespace E_Procurement.WebUI.Controllers
             {
                 var config = _PORepository.GetApprovedRFQ().ToList();
 
+                if (User.IsInRole("Initiator"))
+                {
+                    config = _PORepository.GetRFQUpdate().ToList();
+                }
+
                 var ven = _RfqApprovalRepository.GetVendors();
 
                 var des = _RfqApprovalRepository.GetRFQDetails();
@@ -124,6 +129,11 @@ namespace E_Procurement.WebUI.Controllers
             try
             {
                 var config = _PORepository.GetApprovedPO2().ToList();
+
+                if (User.IsInRole("Initiator"))
+                {
+                    config = _PORepository.GetPOUpdate().ToList();
+                }
 
                 var ven = _RfqApprovalRepository.GetVendors();
 
