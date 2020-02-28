@@ -272,7 +272,7 @@ namespace E_Procurement.Repository.RfqApprovalConfigRepository
                         var user = _reportRepository.GetUser().Where(u => u.Email == rfq.InitiatedBy).FirstOrDefault();
                         var message = "";
                         var subject = "PO NOTIFICATION";
-                        message = "</br><b> Dear </b>" + user.FullName;
+                        message = "</br><b> Dear </b>" + user.FullName + "</br>";
                         message += "<br> Please be informed that Request For Quote for your request with Reference: " + rfq.Reference + " has been Approved";
 
                         message += "<br>Regards";

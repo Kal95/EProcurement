@@ -10,6 +10,7 @@ using System.Web.Mvc;
 using DinkToPdf.Contracts;
 using E_Procurement.Data;
 using E_Procurement.Data.Entity;
+using E_Procurement.Repository.AccountRepo;
 using E_Procurement.Repository.Dtos;
 using E_Procurement.Repository.Interface;
 using E_Procurement.Repository.ReportRepo;
@@ -29,8 +30,9 @@ namespace E_Procurement.Repository.RFQGenRepo
         private IConvertViewToPDF _pdfConverter;
         private IConfiguration _config;
         private readonly IReportRepository _reportRepository;
+        private readonly IAccountManager _accountManager;
 
-        public RfqGenRepository(EProcurementContext context, IConfiguration config, ISMTPService emailSender, IHttpContextAccessor contextAccessor, IConvertViewToPDF pdfConverter, IReportRepository reportRepository)
+        public RfqGenRepository(EProcurementContext context, IConfiguration config, ISMTPService emailSender, IHttpContextAccessor contextAccessor, IConvertViewToPDF pdfConverter, IReportRepository reportRepository, IAccountManager accountManager)
         {
             _context = context;
             _emailSender = emailSender;
@@ -38,6 +40,7 @@ namespace E_Procurement.Repository.RFQGenRepo
             _pdfConverter = pdfConverter;
             _config = config;
             _reportRepository = reportRepository;
+            _accountManager = accountManager;
         }
 
 
@@ -203,17 +206,44 @@ namespace E_Procurement.Repository.RFQGenRepo
 
                 //Send Email to Initiator
                 var user = _reportRepository.GetUser().Where(u => u.Email == model.InitiatedBy).FirstOrDefault();
+                var user2 = _reportRepository.GetUser().Where(u => u.Email == model.InitiatedBy).Count();
+                if (user2 == 0)
+                {
+                    User user3 = new User();
+                    user3.Email = model.InitiatedBy;
+                    user3.UserName = model.InitiatedBy;
+                    user3.FirstName = "User";
+                    var Password = "Password1$";
+                    var Role = "Initiator";
+                    var result =  _accountManager.CreateUserAsync(user3, Password, Role);
 
-                var subject = "RFQ NOTIFICATION";
-                message = "</br><b> Dear </b>" + user.FullName;
-                message += "<br> Please be informed that your request with Reference: " + model.Reference + " has been initiated";
-                message += "<br> With the following items as requested by you: ";
-                message += "<br>" + string.Join(", ", itemList.Select(u => u.ItemName)) + ",";
+                    if (result.Result)
+                    {
+                        var subject = "RFQ NOTIFICATION";
+                        message = "</br><b> Dear " + user3.FirstName +",</b><br>";
+                        message += "<br> Please be informed that RFQ has been sent to Vendors for your request with Reference: " + model.Reference + ",<br>";
+                        message += "<br><U> Details are as follows:</U> ";
+                        message += "<br>" + string.Join(", ", itemList.Select(u => u.ItemName)) + ",";
+                        message += "<br> in the following quantities: " + string.Join(", ", model.Quantities) + " respectively.<br>";
+                        message += "<br>Your signin details have also been sent to your mail to enable you track the progress of your request.";
+                        message += "<br>Regards";
 
-                message += "<br> in the following quantities: " + string.Join(", ", model.Quantities) + " respectively.";
-                message += "<br>Regards";
+                        _emailSender.SendEmailAsync(model.InitiatedBy, subject, message, "");
+                    }
+                }
+                else
+                {
+                    var subject = "RFQ NOTIFICATION";
+                    message = "</br><b> Dear " + user.FullName + ",</b><br>";
+                    message += "<br> Please be informed that RFQ has been sent to Vendors for your request with Reference: " + model.Reference + ",<br>";
+                    message += "<br><U> Details are as follows:</U> ";
+                    message += "<br>" + string.Join(", ", itemList.Select(u => u.ItemName)) + ",";
+                    message += "<br> in the following quantities: " + string.Join(", ", model.Quantities) + " respectively.<br>";
+                    message += "<br>Regards";
 
-                _emailSender.SendEmailAsync(model.InitiatedBy, subject, message, "");
+                    _emailSender.SendEmailAsync(model.InitiatedBy, subject, message, "");
+                }
+                
 
                 Message = "RFQ generated successfully";
 

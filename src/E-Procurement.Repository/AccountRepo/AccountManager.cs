@@ -193,14 +193,14 @@ namespace E_Procurement.Repository.AccountRepo
                 var requisitionURL = _config.GetSection("ExternalAPI:RequisitionURL").Value;
 
                 var subject = "SIGNUP NOTIFICATION";
-                var message = "</br><b> Dear </b>" + user.FullName;
-                message += "</br><b> You have been successfully registered on Cyberspace E-procurement Portal.</br>";
-                message += "</br>Kindly, log in via <a href='" + requisitionURL + "' >"+ requisitionURL + " </a> to validate your details.</br>";
-                message += "</br><U>LOGIN DETAILS </U>";
-                message += "</br>Email :  " + user.Email;
-                message += "</br>Password :  " + password;
-                message += "</br>Remember to change your password upon login.";
-                message += "</br>Regards";
+                var message = "</br><b> Dear </b>" + user.FullName + ",";
+                message += "<br><b> You have been successfully registered on Cyberspace E-procurement Portal.<br>";
+                message += "<br>Kindly, log in via <a href='" + requisitionURL + "' >"+ requisitionURL + " </a> to validate your details.<br>";
+                message += "<br><U>LOGIN DETAILS </U>";
+                message += "<br>Email :  " + user.Email;
+                message += "<br>Password :  " + password;
+                message += "<br>Remember to change your password upon login.";
+                message += "<br>Regards";
 
                 await _emailSender.SendEmailAsync(user.Email, subject, message, "");
 

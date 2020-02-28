@@ -120,7 +120,7 @@
                     <div class="col-md-4" style="margin-top:10px">
                         <div class="row mg-t-20">
                             <label for="RFQTitle">RFQ Initiated By:</label>
-                            @Html.TextBoxFor(model => model.InitiatedBy, htmlAttributes: new { id = "InitiatedBy", @style = "width:450px; height:40px", @class = "form-control", @type = "text", required = "required" })
+                            @Html.TextBoxFor(model => model.InitiatedBy, htmlAttributes: new { id = "InitiatedBy", @style = "width:450px; height:40px", @class = "form-control", @type = "email", pattern = "[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,}+.[A-Z]{2,}", placeholder = "Enter Email", required = "required" })
 
                         </div>
                         <div class="row mg-t-20" style="margin-top:30px">

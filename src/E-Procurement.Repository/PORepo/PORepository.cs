@@ -128,7 +128,7 @@ namespace E_Procurement.Repository.PORepo
                     var user = _reportRepository.GetUser().Where(u => u.Email == RFQEntry.InitiatedBy).FirstOrDefault();
                     var message = "";
                     var subject = "PO NOTIFICATION";
-                    message = "</br><b> Dear </b>" + user.FullName;
+                    message = "</br><b> Dear </b>" + user.FullName + "</br>";
                     message += "<br> Please be informed that Purchase Order for your request with Reference: " + RFQEntry.Reference + " has been Approved";
                     
                     message += "<br>Regards";
@@ -192,7 +192,7 @@ namespace E_Procurement.Repository.PORepo
                     var user = _reportRepository.GetUser().Where(u => u.Email == RFQEntry.InitiatedBy).FirstOrDefault();
                     var message = "";
                     var subject = "PO NOTIFICATION";
-                    message = "</br><b> Dear </b>" + user.FullName;
+                    message = "</br><b> Dear </b>" + user.FullName + "</br>";
                     message += "<br> Please be informed that Purchase Order for your request with Reference: " + RFQEntry.Reference + " has been Approved";
 
                     message += "<br>Regards";
@@ -1048,7 +1048,7 @@ namespace E_Procurement.Repository.PORepo
                 var user = _reportRepository.GetUser().Where(u => u.Email == RFQ.InitiatedBy).FirstOrDefault();
                 var message = "";
                 var subject = "PO NOTIFICATION";
-                message = "</br><b> Dear </b>" + user.FullName;
+                message = "</br><b> Dear </b>" + user.FullName + "</br>";
                 message += "<br> Please be informed that Purchase Order for your request with Reference: " + RFQ.Reference + " has been Generated";
 
                 message += "<br>Regards";
