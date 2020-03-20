@@ -105,18 +105,18 @@
 
                     </tr>
                 </thead>
-               
-                    <tbody>
-                        @{
-                        int i = 0;
-                        }
-                        @{
-                            //var RFQDetails = Model.RFQDetails as List<E_Procurement.WebUI.Models.RfqApprovalModel.RFQDetailsViewModel>;
-                            var RFQDetails = Model.RFQDetails as List<E_Procurement.Repository.Dtos.RFQDetailsModel>;
-                            //var RFQGeneration = Model.RFQDetails as List<E_Procurement.Repository.Dtos.RFQDetailsModel>;
 
-                            }
-                        @foreach (var approvalConfig in RFQDetails)
+                <tbody>
+                    @{
+                        int i = 0;
+                    }
+                    @{
+                        //var RFQDetails = Model.RFQDetails as List<E_Procurement.WebUI.Models.RfqApprovalModel.RFQDetailsViewModel>;
+                        var RFQDetails = Model.RFQDetails as List<E_Procurement.Repository.Dtos.RFQDetailsModel>;
+                        //var RFQGeneration = Model.RFQDetails as List<E_Procurement.Repository.Dtos.RFQDetailsModel>;
+
+                    }
+                    @foreach (var approvalConfig in RFQDetails)
                     {
 
                         <tr>
@@ -143,10 +143,15 @@
                             </td>
 
                         </tr>
-                            i++;
-                        }
-                    </tbody>
+                        i++;
+                    }
+                </tbody>
             </table>
+            <div style="margin-top:10px">
+                <label for="RequisitionDocument">Upload Quote Document:</label>
+                <input type="file" id="QuoteDocument" name="QuoteDocument" class="form-control" accept=".jpg, .jpeg, .png, .pdf" required="required" style="width:230px; height:40px" />
+                @Html.ValidationMessageFor(model => model.QuoteDocument, "", new { @class = "text-danger" })
+            </div>
             <div asp-validation-summary="All" class="text-danger"></div>
             <div class="form-layout-footer mg-t-30">
                 <button class="btn btn-info mg-r-5" type="submit">Send Quote</button>

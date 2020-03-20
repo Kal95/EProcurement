@@ -8,6 +8,9 @@ using E_Procurement.Repository.AccountRepo;
 using E_Procurement.Repository.ApprovalRepo;
 using E_Procurement.Repository.Dtos;
 using E_Procurement.Repository.PORepo;
+using E_Procurement.Repository.RequisitionRepo;
+using E_Procurement.Repository.StateRepo;
+using E_Procurement.WebUI.Models.RequisitionModel;
 using E_Procurement.WebUI.Models.RfqApprovalModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -25,20 +28,22 @@ namespace E_Procurement.WebUI.Controllers
         private readonly IMapper _mapper;
         private readonly IAccountManager _accountManager;
         private readonly IRfqApprovalRepository _RfqApprovalRepository;
+        private readonly IRequisitionRepository _requisitionRepository;
 
-        public POController(IPORepository PORepository, IMapper mapper, IAccountManager accountManager, IRfqApprovalRepository RfqApprovalRepository)
+        public POController(IPORepository PORepository, IMapper mapper, IRequisitionRepository requisitionRepository, IAccountManager accountManager, IRfqApprovalRepository RfqApprovalRepository)
         {
             _PORepository = PORepository;
             _accountManager = accountManager;
             _mapper = mapper;
             _RfqApprovalRepository = RfqApprovalRepository;
-
+            _requisitionRepository = requisitionRepository;
         }
 
         public ActionResult ApprovedRFQ()
         {
             try
             {
+                var REQconfig = _requisitionRepository.GetRequisitions2().ToList();
                 var config = _PORepository.GetApprovedRFQ().ToList();
 
                 if (User.IsInRole("Initiator"))
@@ -82,7 +87,7 @@ namespace E_Procurement.WebUI.Controllers
                     PONumber = x.PONumber,
                     TotalAmount = x.QuotedAmount,
                     ExpectedDeliveryDate = x.ExpectedDeliveryDate,
-
+                    RequisitionDocumentPath = REQconfig.Where(a => a.Id == x.RequisitionId).Select(b => b.RequisitionDocument).FirstOrDefault(),
                     StartDate = x.StartDate,
                     EndDate = x.EndDate,
                     RFQStatus = x.RFQStatus,
@@ -108,15 +113,34 @@ namespace E_Procurement.WebUI.Controllers
                                          VendorId = v.Id,//vendList.Where(u => RfqApprovalList.Any(a => a.RFQId == u.RFQId)).Select(u => u.VendorId).FirstOrDefault(),
                                          QuotedPrice = rfqDetails.QuotedPrice,
                                          QuotedAmount = rfqDetails.QuotedAmount,
-                                         TotalAmount = rfqDetails.QuotedAmount
-
+                                         TotalAmount = rfqDetails.QuotedAmount,
+                                         QuoteDocumentPath = rfqDetails.QuoteDocument
 
                                      }).GroupBy(v => new { v.RFQId, v.VendorId }).Select(s => s.FirstOrDefault()).ToList();
                     poModel2.AddRange(listModel);
                 }
-                Model.RFQDetails = poModel;
+                Model.RFQDetails = poModel.OrderByDescending(a => a.RFQId).ToList();
                 Model.RFQDetails2 = poModel2;
                 Model.RFQTransaction = transac;
+                if (User.IsInRole("Initiator"))
+                {
+                    var requser = _PORepository.GetUser().Where(a => a.UserName == User.Identity.Name).FirstOrDefault();
+                    var req = _requisitionRepository.GetRequisitions().Where(a => a.Initiator == requser.Email).ToList();
+
+                    List<RequisitionModel> requisitions = new List<RequisitionModel>();
+                    var reqList = req.Select(x => new RequisitionModel
+                    {
+                        Id = x.Id,
+                        Initiator = x.Initiator,
+                        Description = x.Description,
+                        ExpectedDate = x.ExpectedDate,
+                        RequisitionDocumentPath = x.RequisitionDocument,
+                        DateCreated = x.DateCreated,
+                        IsActive = x.IsActive
+                    });
+                    requisitions.AddRange(reqList);
+                    Model.Requisition = requisitions;
+                }
                 return View(Model);
             }
             catch (Exception)
@@ -128,6 +152,7 @@ namespace E_Procurement.WebUI.Controllers
         {
             try
             {
+                var REQconfig = _requisitionRepository.GetRequisitions2().ToList();
                 var config = _PORepository.GetApprovedPO2().ToList();
 
                 if (User.IsInRole("Initiator"))
@@ -173,7 +198,7 @@ namespace E_Procurement.WebUI.Controllers
                     PONumber = x.PONumber,
                     TotalAmount = x.QuotedAmount,
                     ExpectedDeliveryDate = x.ExpectedDeliveryDate,
-
+                    RequisitionDocumentPath = REQconfig.Where(a => a.Id == x.RequisitionId).Select(b => b.RequisitionDocument).FirstOrDefault(),
                     StartDate = x.StartDate,
                     EndDate = x.EndDate,
                     RFQStatus = x.RFQStatus,
@@ -199,8 +224,8 @@ namespace E_Procurement.WebUI.Controllers
                                          VendorId = v.Id,//vendList.Where(u => RfqApprovalList.Any(a => a.RFQId == u.RFQId)).Select(u => u.VendorId).FirstOrDefault(),
                                          QuotedPrice = rfqDetails.QuotedPrice,
                                          QuotedAmount = rfqDetails.QuotedAmount,
-                                         TotalAmount = rfqDetails.QuotedAmount
-
+                                         TotalAmount = rfqDetails.QuotedAmount,
+                                         QuoteDocumentPath = rfqDetails.QuoteDocument
 
                                      }).GroupBy(v => new { v.RFQId, v.VendorId }).Select(s => s.FirstOrDefault()).ToList();
                     poModel2.AddRange(listModel);
@@ -220,7 +245,7 @@ namespace E_Procurement.WebUI.Controllers
         {
             try
             {
-                
+                var REQconfig = _requisitionRepository.GetRequisitions2().ToList();
                 var config= _PORepository.GetPoGen().ToList();
              
                 if (User.IsInRole("Procurement") && !User.IsInRole("Approval"))
@@ -273,7 +298,7 @@ namespace E_Procurement.WebUI.Controllers
                     PONumber = x.PONumber,
                     TotalAmount = x.QuotedAmount,
                     ExpectedDeliveryDate = x.ExpectedDeliveryDate,
-                    
+                    RequisitionDocumentPath = REQconfig.Where(a => a.Id == x.RequisitionId).Select(b => b.RequisitionDocument).FirstOrDefault(),
                     StartDate = x.StartDate,
                     EndDate = x.EndDate,
                     RFQStatus = x.RFQStatus,
@@ -299,8 +324,8 @@ namespace E_Procurement.WebUI.Controllers
                                          VendorId = v.Id,//vendList.Where(u => RfqApprovalList.Any(a => a.RFQId == u.RFQId)).Select(u => u.VendorId).FirstOrDefault(),
                                          QuotedPrice = rfqDetails.QuotedPrice,
                                          QuotedAmount = rfqDetails.QuotedAmount,
-                                         TotalAmount = rfqDetails.QuotedAmount
-
+                                         TotalAmount = rfqDetails.QuotedAmount,
+                                         QuoteDocumentPath = rfqDetails.QuoteDocument
 
                                      }).GroupBy(v => new { v.RFQId, v.VendorId }).Select(s => s.FirstOrDefault()).ToList();
                     poModel2.AddRange(listModel);

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Abp.Web.Mvc.Alerts;
@@ -7,11 +8,14 @@ using AutoMapper;
 using E_Procurement.Data.Entity;
 using E_Procurement.Repository.ApprovalRepo;
 using E_Procurement.Repository.Dtos;
+using E_Procurement.Repository.RequisitionRepo;
 using E_Procurement.Repository.RFQGenRepo;
 using E_Procurement.Repository.VendoRepo;
+using E_Procurement.WebUI.Models.RequisitionModel;
 using E_Procurement.WebUI.Models.RfqApprovalModel;
 using E_Procurement.WebUI.Models.RFQModel;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using static E_Procurement.WebUI.Enums.Enums;
@@ -25,13 +29,17 @@ namespace E_Procurement.WebUI.Controllers
         private readonly IMapper _mapper;
         private readonly IVendorRepository _vendorRepository;
         private readonly IRfqApprovalRepository _RfqApprovalRepository;
+        private readonly IRequisitionRepository _requisitionRepository;
+        private IHostingEnvironment _hostingEnv;
 
-        public RfqGenController(IRfqGenRepository rfqRepository, IRfqApprovalRepository RfqApprovalRepository, IMapper mapper,IVendorRepository vendorRepository)
+        public RfqGenController(IRfqGenRepository rfqRepository, IRequisitionRepository requisitionRepository, IRfqApprovalRepository RfqApprovalRepository, IMapper mapper,IVendorRepository vendorRepository, IHostingEnvironment hostingEnv)
         {
             _rfqGenRepository = rfqRepository;
             _mapper = mapper;
            _vendorRepository = vendorRepository;
             _RfqApprovalRepository = RfqApprovalRepository;
+            _requisitionRepository = requisitionRepository;
+            _hostingEnv = hostingEnv;
         }
         // GET: RfqGen
         public ActionResult Index()
@@ -41,8 +49,32 @@ namespace E_Procurement.WebUI.Controllers
                 var model = _rfqGenRepository.GetRfqGen().ToList();
                 
                 List<RfqGenModel> smodel = _mapper.Map<List<RfqGenModel>>(model);
+                //return View(smodel);
 
-                return View(smodel);
+
+                var config = _requisitionRepository.GetRequisitions2().ToList();
+
+                var tran = (//from req in config
+                            //join mode in model on req.Id equals mode.RequisitionId 
+                            from mode in model
+                            select new RfqGenModel()
+                            {
+                                ProjectId = mode.ProjectId,
+                                RequisitionId = mode.RequisitionId,
+                                Reference = mode.Reference,
+                                Item = mode.Item,
+                                VendorName = mode.VendorName,
+                                StartDate = mode.StartDate,
+                                EndDate = mode.EndDate,
+                                CreatedDate = mode.CreatedDate,
+                                RFQStatus = mode.RFQStatus,
+                                RequisitionDocumentPath = config.Where(a => a.Id == mode.RequisitionId).Select(b => b.RequisitionDocument).FirstOrDefault(),
+                                RFQId = mode.RFQId
+                            });
+
+                return View(tran);
+
+                
             }
             catch (Exception)
             {
@@ -95,14 +127,47 @@ namespace E_Procurement.WebUI.Controllers
             //Model.VendorList = Vendor;
 
         }
-        
+
+        private void LoadFilePath(RequisitionModel Model)
+        {
+
+            if (Model.RequisitionDocument != null)
+            {
+                var myReference = new Random();
+                //string referencecode; 
+
+                Model.RefCode = myReference.Next(23006).ToString();
+
+                string webRootPath = _hostingEnv.WebRootPath;
+
+                var allowedExtensions = new[] { ".pdf", ".jpg", ".jpeg", ".png" };
+
+                var checkextension1 = Path.GetExtension(Model.RequisitionDocument.FileName).ToLower();
+                if (!allowedExtensions.Contains(checkextension1))
+                {
+                    ModelState.AddModelError("", "Invalid file extention.");
+                }
+                var RequisitionFilePath = Model.RefCode + "_" + "Requisition" + Path.GetExtension(Model.RequisitionDocument.FileName);
+                var path1 = Path.Combine(webRootPath, "Uploads", "Requisitions", RequisitionFilePath);
+                if (System.IO.File.Exists(path1)) { System.IO.File.Delete(path1); }
+                using (Stream stream = new FileStream(path1, FileMode.Create)) { Model.RequisitionDocument.CopyTo(stream); }
+                Model.RequisitionDocumentPath = RequisitionFilePath;
+
+            }
+        }
+
         // GET: Rfq/Create
-        public ActionResult Create()
+        public ActionResult Create(string Initiator, int RequisitionId)
         {
 
             try
             {
                 RfqGenModel Model = new RfqGenModel();
+                if (Initiator != null)
+                {
+                    Model.InitiatedBy = Initiator;
+                    Model.RequisitionId = RequisitionId;
+                }
 
                 LoadPredefinedInfo(Model);
 
@@ -140,6 +205,36 @@ namespace E_Procurement.WebUI.Controllers
                 if (ModelState.IsValid)
                 {
                     Model.CreatedBy = UserId;
+                    if (Model.RequisitionId == 0)
+                    {
+                        RequisitionModel Model2 = new RequisitionModel();
+                        Model2.RequisitionDocument = Model.RequisitionDocument;
+
+                        //Get Attach Files
+                        LoadFilePath(Model2);
+
+                        Model2.Initiator = Model.InitiatedBy;
+                        Model2.Description = Model.RFQTitle;
+                        Model2.IsActive = false;
+                        Model2.UpdatedBy = UserId;
+                        Model2.DateUpdated = DateTime.Now;
+                        Model2.ExpectedDate = Model.EndDate;
+                        var status2 = _requisitionRepository.CreateRequisition(Model2, out message);
+
+                        var config = _requisitionRepository.GetRequisitions2().Where(a => a.RequisitionDocument == Model2.RequisitionDocumentPath && a.UpdatedBy == UserId).FirstOrDefault();
+                        Model.RequisitionId = config.Id;
+                    }
+                    else
+                    {
+                        RequisitionModel Model2 = new RequisitionModel();
+                        Model2.Id = Model.RequisitionId;
+                        Model2.Initiator = Model.InitiatedBy;
+                        Model2.Description = Model.RFQTitle;
+                        Model2.IsActive = false;
+                        Model2.UpdatedBy = UserId;
+                        Model2.ExpectedDate = Model.EndDate;
+                        var status2 = _requisitionRepository.UpdateRequisition(Model2, out message);
+                    }
 
                     var status = _rfqGenRepository.CreateRfqGen(Model, out message);
 

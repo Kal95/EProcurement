@@ -125,15 +125,18 @@ namespace E_Procurement.Repository.PORepo
                     _context.SaveChanges();
 
                     //Send Email to Initiator
-                    var user = _reportRepository.GetUser().Where(u => u.Email == RFQEntry.InitiatedBy).FirstOrDefault();
-                    var message = "";
-                    var subject = "PO NOTIFICATION";
-                    message = "</br><b> Dear </b>" + user.FullName + "</br>";
-                    message += "<br> Please be informed that Purchase Order for your request with Reference: " + RFQEntry.Reference + " has been Approved";
-                    
-                    message += "<br>Regards";
+                    if (RFQEntry.InitiatedBy != null)
+                    {
+                        var user = _reportRepository.GetUser().Where(u => u.Email == RFQEntry.InitiatedBy).FirstOrDefault();
+                        var message = "";
+                        var subject = "PO NOTIFICATION";
+                        message = "</br><b> Dear </b>" + user.FullName + "</br>";
+                        message += "<br> Please be informed that Purchase Order for your request with Reference: " + RFQEntry.Reference + " has been Approved";
 
-                    _emailSender.SendEmailAsync(user.Email, subject, message, "");
+                        message += "<br>Regards";
+
+                        _emailSender.SendEmailAsync(user.Email, subject, message, "");
+                    }
 
                 }
 

@@ -21,10 +21,11 @@
                         <th class="wd-5p">S/N</th>
                         <th class="wd-5p">RFQ No</th>
                         @*<th class="wd-5p">Proj. ID</th>
-                            <th class="wd-5p">Req. ID</th>*@
+        <th class="wd-5p">Req. ID</th>*@
                         <th class="wd-10p">Reference</th>
                         <th class="wd-30p">Item(s)</th>
                         <th class="wd-30p">Description(s)</th>
+                        <th class="wd-30p">Requisition Document</th>
                         <th class="wd-10p">StartDate</th>
                         <th class="wd-10p">EndDate</th>
                         <th class="wd-10p">RFQStatus</th>
@@ -48,27 +49,37 @@
                     }
                     @foreach (var approvalConfig in RFQDetails)
                     {
-                        <tr>
-                            <td>@(i = i + 1)</td>
-                            <td>@approvalConfig.RFQId</td>
-                            @*<td>@approvalConfig.ProjectId</td>
-                <td>@approvalConfig.RequisitionId</td>*@
-                            <td>@approvalConfig.Reference</td>
-                            <td style="width:150px">@approvalConfig.Item</td>
-                            <td style="width:150px">@approvalConfig.Description</td>
-                            <td style="width:50px">@approvalConfig.StartDate.ToString("dd MMM yyyy")</td>
-                            <td style="width:50px">@approvalConfig.EndDate.ToString("dd MMM yyyy")</td>
-                            <td style="width:50px">@approvalConfig.RFQStatus</td>
-                            <td>
-                                <a class="btn btn-primary" data-toggle="collapse" href="#collapseItem_@(i)" role="button" aria-expanded="false" aria-controls="collapseItem_@(i)">
-                                    View Vendor(s)
-                                </a>
-                            </td>
-                            @*<td style="width:50px"><a asp-controller="RfqApproval" asp-action="RfqVendorsDetails" asp-route-id="@approvalConfig.RFQId" alt="Edit" class="btn btn-primary btn-icon"> <div><i class="fa fa-pencil"></i></div></a> </td>
-                <td>
-                    <input type="checkbox" @Model value="@approvalConfig.VendorId" checked="checked" name="SelectedItems" id="myInput_@approvalConfig.VendorId" onclick="myFunction(@approvalConfig.VendorId)" />
-                </td>*@
-                        </tr>
+                    <tr>
+                        <td>@(i = i + 1)</td>
+                        <td>@approvalConfig.RFQId</td>
+                        @*<td>@approvalConfig.ProjectId</td>
+        <td>@approvalConfig.RequisitionId</td>*@
+                        <td>@approvalConfig.Reference</td>
+                        <td style="width:150px">@approvalConfig.Item</td>
+                        <td style="width:150px">@approvalConfig.Description</td>
+                        <td>
+                            @if (approvalConfig.RequisitionDocumentPath == null)
+                            {
+                                <label class="text-danger">No File</label>
+                            }
+                            else
+                            {
+                                <a class="btn btn-info mg-r-5" target="_blank" href="~/Uploads/Requisitions/@approvalConfig.RequisitionDocumentPath" style="height:50px; width:110px"><span class="fa fa-eye"></span> <br />Click to view</a>
+                            }
+                        </td>
+                        <td style="width:50px">@approvalConfig.StartDate.ToString("dd MMM yyyy")</td>
+                        <td style="width:50px">@approvalConfig.EndDate.ToString("dd MMM yyyy")</td>
+                        <td style="width:50px">@approvalConfig.RFQStatus</td>
+                        <td>
+                            <a class="btn btn-primary" data-toggle="collapse" href="#collapseItem_@(i)" role="button" aria-expanded="false" aria-controls="collapseItem_@(i)">
+                                View Vendor(s)
+                            </a>
+                        </td>
+                        @*<td style="width:50px"><a asp-controller="RfqApproval" asp-action="RfqVendorsDetails" asp-route-id="@approvalConfig.RFQId" alt="Edit" class="btn btn-primary btn-icon"> <div><i class="fa fa-pencil"></i></div></a> </td>
+        <td>
+            <input type="checkbox" @Model value="@approvalConfig.VendorId" checked="checked" name="SelectedItems" id="myInput_@approvalConfig.VendorId" onclick="myFunction(@approvalConfig.VendorId)" />
+        </td>*@
+                    </tr>
                         <tr class="collapse" id="collapseItem_@(i)">
                             <td colspan="13">
 
@@ -86,8 +97,8 @@
                                             @*<th class="wd-10p">Status</th>*@
                                             <th class="wd-5p">Contact</th>
                                             <th class="wd-5p">Amount</th>
-
-                                            <th class="wd-5p">Comments</th>
+                                            <th class="wd-10p-force">Quote Document</th>
+                                            <th class="wd-20p-force">Comments</th>
 
                                             <th class="wd-5p"></th>
                                             @if (Model.FinalApprover == true)
@@ -97,7 +108,7 @@
 
 
 
-                                            </tr>
+                                        </tr>
                                     </thead>
                                     <tbody>
                                         @{
@@ -120,8 +131,18 @@
                                             <td>@approvalConfig2.VendorName</td>
                                             @*<td>@approvalConfig.VendorStatus</td>*@
                                             <td>@approvalConfig2.ContactName</td>
-                                            <td>@approvalConfig2.TotalAmount</td>
-
+                                            
+                                            <td>&#8358;@approvalConfig2.TotalAmount.ToString("N2")</td>
+                                            <td>
+                                                @if (approvalConfig2.QuoteDocumentPath == null)
+                                                {
+                                                    <label class="text-danger">No File</label>
+                                                }
+                                                else
+                                                {
+                                                    <a class="btn btn-info mg-r-5" target="_blank" href="~/Uploads/Quotes/@approvalConfig2.QuoteDocumentPath" style="height:50px; width:110px"><span class="fa fa-eye"></span> <br />Click to view</a>
+                                                }
+                                            </td>
 
                                             @if (approvalConfig2.VendorId == approvalConfig.VendorId)
                                             {
@@ -188,7 +209,7 @@
                                             }
 
 
-                                            </tr>
+                                        </tr>
 
 
 

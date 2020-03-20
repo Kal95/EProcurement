@@ -8,6 +8,7 @@ using E_Procurement.Repository.Dtos;
 using Microsoft.EntityFrameworkCore;
 using E_Procurement.Data.Entity;
 using Microsoft.AspNetCore.Http;
+using E_Procurement.WebUI.Models.RequisitionModel;
 
 namespace E_Procurement.Repository.QuoteSendingRepo
 {
@@ -109,7 +110,7 @@ namespace E_Procurement.Repository.QuoteSendingRepo
             return _context.RfqDetails.OrderBy(x => x.Id).ToList();
         }
 
-        public bool UpdateQuote(int[] Id, decimal[] quotedPrice, decimal[] quotedAmount, out string Message)
+        public bool UpdateQuote(int[] Id, decimal[] quotedPrice, decimal[] quotedAmount, RequisitionModel model, out string Message)
         {
 
             for (int i = 0; i < quotedAmount.Length; i++)
@@ -125,6 +126,7 @@ namespace E_Procurement.Repository.QuoteSendingRepo
 
                     oldEntry.QuotedPrice = quotedPrice[i];
                     oldEntry.QuotedAmount = quotedAmount[i];
+                    oldEntry.QuoteDocument = model.QuoteDocumentPath;
 
 
                 //foreach (var item in AgreedAmount)

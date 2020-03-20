@@ -13,6 +13,7 @@ using E_Procurement.Repository.Dtos;
 using System.Collections.Generic;
 using E_Procurement.WebUI.Models.POAcceptanceModel;
 using E_Procurement.Repository.ReportRepo;
+using E_Procurement.WebUI.Models.RequisitionModel;
 
 namespace E_Procurement.WebUI.AutoMapperProfile
 {
@@ -60,6 +61,7 @@ namespace E_Procurement.WebUI.AutoMapperProfile
 
             CreateMap<ReportModel, EvaluationPeriodConfig>().ReverseMap();
 
+            CreateMap<RequisitionModel, Requisition>().ReverseMap();
 
         }
     }

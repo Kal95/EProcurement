@@ -58,5 +58,7 @@ namespace E_Procurement.Repository.Dtos
         public string PhoneNumber { get; set; }
      
         public bool IsActive { get; set; }
+        public string RequisitionDocumentPath { get; set; }
+        public string QuoteDocumentPath { get; set; }
     }
 }

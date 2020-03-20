@@ -13,8 +13,9 @@
         <div class="card pd-20 pd-sm-40 form-layout form-layout-4">
             <h6 class="card-body-title">Reguest For Quote</h6>
             <p class="mg-b-20 mg-sm-b-30">Initiate and send RFQ to selected Vendor(s)</p>
-            <form class="form-horizontal" action="@Url.Action("Create","RfqGen")" method="post">
+            <form class="form-horizontal" action="@Url.Action("Create","RfqGen")" method="post" enctype="multipart/form-data">
                 @Html.AntiForgeryToken()
+                @Html.HiddenFor(model => model.RequisitionId)
                 @*<h2 class="text-center">Basic forms Example</h2>*@
                 <div class="row mg-t-20" style="display:flex; justify-content:space-between">
                     <div class="col-md-8" style="margin-top:10px">
@@ -24,7 +25,7 @@
                                 @Html.DropDownListFor(model => model.CategoryId, Model.ItemCategoryList, "-- Select Category --", htmlAttributes: new { id = "ItemCategory", @class = "form-control", style = "width:500px; height:40px", onchange = "document.forms[1].submit();" })
                                 @Html.ValidationMessageFor(model => model.CategoryId, "", new { @class = "text-danger" })
                             </div>
-                            <div class="col-md-5" >
+                            <div class="col-md-5">
                                 <div class="row mg-t-0">
                                     <div class="col-md-6">
                                         <label for="StartDate">Start Date:</label>
@@ -43,9 +44,9 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="row mg-t-20">
-                            
+
                             <div class="col-md-7" style="margin-top:10px">
                                 <label for="ItemList">Item:</label>
                                 <table style="width:500px; height:40px" id="example" class="table table-hover table-striped table-bordered">
@@ -63,7 +64,7 @@
                                             @*int i = 0; i < @item; i++;*@
                                             <tr>
                                                 <td>
-                                                    <input type="checkbox" @Model.ItemList value="@item.Value" checked="checked" name="SelectedItems" id="myInput_@item.Value" onclick="myFunction(@item.Value)"/>
+                                                    <input type="checkbox" @Model.ItemList value="@item.Value" checked="checked" name="SelectedItems" id="myInput_@item.Value" onclick="myFunction(@item.Value)" />
                                                 </td>
                                                 <td>
                                                     <label for="@item.Value">@item.Text</label>
@@ -80,7 +81,7 @@
                                                 </td>
                                                 <td>
                                                     <div class="">
-                                                        @Html.TextBoxFor(model => model.Quantities, htmlAttributes: new { id = "Quantities_"+ @item.Value, @style = "width:60px; height:40px", @class = "form-control", @type = "text", required = "required" })
+                                                        @Html.TextBoxFor(model => model.Quantities, htmlAttributes: new { id = "Quantities_" + @item.Value, @style = "width:60px; height:40px", @class = "form-control", @type = "text", required = "required" })
                                                         @*@Html.ValidationMessageFor(model => model.Quantities, "", new { @class = "text-danger" })*@
                                                     </div>
                                                 </td>
@@ -118,11 +119,29 @@
                         </div>
                     </div>
                     <div class="col-md-4" style="margin-top:10px">
+                        @if (Model.RequisitionId == 0)
+                        {
                         <div class="row mg-t-20">
+                            <label for="RequisitionDocument">Upload Requisition:</label>
+                            <input type="file" id="Requisition" name="RequisitionDocument" class="form-control" accept=".jpg, .jpeg, .png, .pdf" required="required" style="width:450px; height:40px" />
+                            @Html.ValidationMessageFor(model => model.RequisitionDocument, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="row mg-t-20" style="margin-top:30px">
                             <label for="RFQTitle">RFQ Initiated By:</label>
                             @Html.TextBoxFor(model => model.InitiatedBy, htmlAttributes: new { id = "InitiatedBy", @style = "width:450px; height:40px", @class = "form-control", @type = "email", pattern = "[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,}+.[A-Z]{2,}", placeholder = "Enter Email", required = "required" })
 
+
                         </div>
+                        }
+                        else
+                        {
+                        <div class="row mg-t-20">
+                            <label for="RFQTitle">RFQ Initiated By:</label>
+                            @Html.TextBoxFor(model => model.InitiatedBy, htmlAttributes: new { id = "InitiatedBy", @style = "width:450px; height:40px", @class = "form-control", @type = "email", pattern = "[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,}+.[A-Z]{2,}", placeholder = "Enter Email", required = "required", @readonly = "readonly" })
+ 
+                        </div>
+                        }
                         <div class="row mg-t-20" style="margin-top:30px">
                             <label for="RFQTitle">RFQ Title:</label>
                             @Html.TextBoxFor(model => model.RFQTitle, htmlAttributes: new { id = "RFQTitle", @style = "width:450px; height:40px", @class = "form-control", @type = "text", required = "required" })
@@ -139,20 +158,20 @@
 
                         </div>
                     </div>
-                    </div>
-                    <!-- Button -->
-                    <div class="form-group">
-                        <label class="col-md-8 control-label"></label>
-                        <div class="col-md-4">
+                </div>
+                <!-- Button -->
+                <div class="form-group">
+                    <label class="col-md-8 control-label"></label>
+                    <div class="col-md-4">
 
-                            <button type="submit" class="btn btn-info mg-r-5"><span class="glyphicon glyphicon-send"></span>  Submit</button>
+                        <button type="submit" class="btn btn-info mg-r-5"><span class="glyphicon glyphicon-send"></span>  Submit</button>
 
-                            <a href="@Url.Action("Index","RfqGen")" class="btn btn-secondary"><span class="glyphicon glyphicon-remove"></span> Back</a>
-                        </div>
-
+                        <a href="@Url.Action("Index","RfqGen")" class="btn btn-secondary"><span class="glyphicon glyphicon-remove"></span> Back</a>
                     </div>
 
-</form>
+                </div>
+
+            </form>
         </div>
     </div>
 </div>

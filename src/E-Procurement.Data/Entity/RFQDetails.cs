@@ -20,5 +20,6 @@ namespace E_Procurement.Data.Entity
         public string RFQTitle { get; set; }
         public string RFQBody { get; set; }
         public string RFQCondition { get; set; }
+        public string QuoteDocument { get; set; }
     }
 }

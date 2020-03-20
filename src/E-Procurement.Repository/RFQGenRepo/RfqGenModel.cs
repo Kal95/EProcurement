@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using E_Procurement.Data.Entity;
 using E_Procurement.Repository.ReportRepo;
 using FluentNHibernate.Testing.Values;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace E_Procurement.WebUI.Models.RFQModel
@@ -93,7 +94,8 @@ namespace E_Procurement.WebUI.Models.RFQModel
         public IEnumerable<SelectListItem> CriteriaList { get; set; }
         public IEnumerable<SelectListItem> PeriodList { get; set; }
         public int PeriodId { get; set; }
-
+        public IFormFile RequisitionDocument { get; set; }
+        public string RequisitionDocumentPath { get; set; }
     }
 
 }

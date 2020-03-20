@@ -48,7 +48,7 @@ namespace E_Procurement.Data
         public DbSet<UserToCategoryConfig> UserToCategoryConfigs { get; set; }
         public DbSet<ApprovalType> ApprovalTypes { get; set; }
         public DbSet<Signature> Signatures { get; set; }
-
+        public DbSet<Requisition> Requisitions { get; set; }
         public DbSet<Permission> Permissions { get; set; }
         public DbSet<PermissionRole> PermissionRoles { get; set; }
         public DbSet<EmailSentLog> EmailSentLogs { get; set; }

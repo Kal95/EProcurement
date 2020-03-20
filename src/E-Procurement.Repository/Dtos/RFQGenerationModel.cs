@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using E_Procurement.WebUI.Models.RequisitionModel;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -26,6 +27,7 @@ namespace E_Procurement.Repository.Dtos
             public string VendorEmail { get; set; }
             public List<RFQDetailsModel> RFQDetails { get; set; }
             public List<RFQDetailsModel> RFQDetails2 { get; set; }
+            public List<RequisitionModel> Requisition { get; set; }
             public List<RFQDetailsModel> RFQTransaction { get; set; }
             public string ApprovedBy { get; set; }
             public string Comments { get; set; }
@@ -68,6 +70,6 @@ namespace E_Procurement.Repository.Dtos
             public string Signature2 { get; set; }
             public bool FinalApprover { get; set; }
             public string ApproverName { get; set; }
-
+            public IFormFile QuoteDocument { get; set; }
     }
 }

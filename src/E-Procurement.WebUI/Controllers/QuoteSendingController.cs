@@ -9,8 +9,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using static E_Procurement.WebUI.Enums.Enums;
+using E_Procurement.WebUI.Models.RequisitionModel;
+using E_Procurement.Repository.Dtos;
+using Microsoft.AspNetCore.Hosting;
+using System.IO;
 
 namespace E_Procurement.WebUI.Controllers
 {
@@ -20,12 +23,14 @@ namespace E_Procurement.WebUI.Controllers
         private readonly IQuoteSendingRepository _quoteSendingRepository;
         private readonly IMapper _mapper;
         private readonly IAccountManager _accountManager;
+        private IHostingEnvironment _hostingEnv;
 
-        public QuoteSendingController(IQuoteSendingRepository QuoteSendingRepository, IMapper mapper, IAccountManager accountManager)
+        public QuoteSendingController(IQuoteSendingRepository QuoteSendingRepository, IMapper mapper, IAccountManager accountManager, IHostingEnvironment hostingEnv)
         {
             _quoteSendingRepository = QuoteSendingRepository;
             _mapper = mapper;
             _accountManager = accountManager;
+            _hostingEnv = hostingEnv;
         }
 
         public async Task<IActionResult> Index()
@@ -67,8 +72,35 @@ namespace E_Procurement.WebUI.Controllers
 
             return View(QuoteDetails);
         }
-         
-        public IActionResult Update(int[] DetailsId, decimal[] quotedPrice, decimal[] quotedAmount)
+
+        private void LoadFilePath(RequisitionModel Model)
+        {
+
+            if (Model.QuoteDocument != null)
+            {
+                var myReference = new Random();
+                //string referencecode; 
+
+                Model.RefCode = myReference.Next(23006).ToString();
+
+                string webRootPath = _hostingEnv.WebRootPath;
+
+                var allowedExtensions = new[] { ".pdf", ".jpg", ".jpeg", ".png" };
+
+                var checkextension1 = Path.GetExtension(Model.QuoteDocument.FileName).ToLower();
+                if (!allowedExtensions.Contains(checkextension1))
+                {
+                    ModelState.AddModelError("", "Invalid file extention.");
+                }
+                var QuoteFilePath = Model.RefCode + "_" + "Quote" + Path.GetExtension(Model.QuoteDocument.FileName);
+                var path1 = Path.Combine(webRootPath, "Uploads", "Quotes", QuoteFilePath);
+                if (System.IO.File.Exists(path1)) { System.IO.File.Delete(path1); }
+                using (Stream stream = new FileStream(path1, FileMode.Create)) { Model.QuoteDocument.CopyTo(stream); }
+                Model.QuoteDocumentPath = QuoteFilePath;
+
+            }
+        }
+        public IActionResult Update(int[] DetailsId, decimal[] quotedPrice, decimal[] quotedAmount, RFQGenerationModel Model)
         {
             try
             {
@@ -84,7 +116,13 @@ namespace E_Procurement.WebUI.Controllers
                         return RedirectToAction("Index", "QuoteSending");
                     }
 
-                    var status = _quoteSendingRepository.UpdateQuote(DetailsId, quotedPrice, quotedAmount, out message);
+                    RequisitionModel Model2 = new RequisitionModel();
+                    Model2.QuoteDocument = Model.QuoteDocument;
+
+                    //Get Attach Files
+                    LoadFilePath(Model2);
+
+                    var status = _quoteSendingRepository.UpdateQuote(DetailsId, quotedPrice, quotedAmount, Model2, out message);
                     if(status)
                     {
                         Alert("Quote updated successfully.", NotificationType.success);

@@ -7,10 +7,69 @@
 <div class="card pd-20 pd-sm-40">
     @if (User.IsInRole("Initiator"))
     {
-        <h6 class="card-body-title"> Quote(s)</h6>
-    }
-    else
-    {
+        <h6 class="card-body-title"> Request(s)</h6>
+        <div class="" style="display:flex; justify-content:space-between">
+            <a class="btn btn-primary" pull-right" href="@Url.Action("RequisitionCreate", "Requisition")"><i class="fa fa-plus"> </i>  Make a request</a>
+
+            @*<input type="text" id="myInput" style="width:300px; height:40px" onkeyup="myFunction()" class="form-control" placeholder="Search..">*@
+
+        </div>
+        <BR />
+       @if (Model.Requisition.Count != 0)
+       {
+        <label class="col-sm-2 form-control-label"><b>Pending Requisitions</b></label>
+        <table id="myTable" class="table table-hover table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th class="wd-2p-force">S/N</th>
+                    @*<th class="wd-20p">Initiator</th>*@
+                    <th class="wd-60p-force">Description</th>
+                    <th class="wd-15p-force">Requisition Document</th>
+                    <th class="wd-15p-force">Expected Delivery Date</th>
+                    <th class="wd-10p-force">Status</th>
+                    @*<th>Action </th>*@
+
+                </tr>
+            </thead>
+            <tbody>
+
+                @{int rowNo = 0;}
+                @{
+                    //var RFQDetails = Model.RFQDetails as List<E_Procurement.WebUI.Models.RfqApprovalModel.RFQDetailsViewModel>;
+                    var Requisition = Model.Requisition as List<E_Procurement.WebUI.Models.RequisitionModel.RequisitionModel>;
+
+                }
+                @foreach (var item in Requisition)
+                {
+                    <tr>
+                        <td>@(rowNo += 1)</td>
+                        @*<td>@item.Initiator</td>*@
+                        <td>@item.Description</td>
+                        <td><a class="btn btn-info mg-r-5" target="_blank" href="~/Uploads/Requisitions/@item.RequisitionDocumentPath" style="height:50px; width:110px"><span class="fa fa-eye"></span> <br />Click to view</a></td>
+
+                        <td>@item.ExpectedDate.ToString("dd MMM yyyy")</td>
+                        <td>
+                            @if (item.IsActive == true)
+                            {
+                                <label class="text-success">Pending</label>
+                            }
+                        </td>
+
+                        @*<td style="width:50px">
+
+                            <a class="btn btn-orange" style="width:120px" data-toggle="modal" data-target="#modaldemo10" href="@Url.Action("Activate", "Sign", new { RequisitionId = item.Id })" onclick="myFunction10(@item.Id);"><span class="fa fa-pencil"></span><i class="pe-7s-edit btn-icon-wrapper"></i> Process</a>
+
+                        </td>*@
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+        <br />
+        }
+     }
+      else
+      {
         <h6 class="card-body-title"> Approved Quote(s)</h6>
     }
 
@@ -21,110 +80,144 @@
         </div>*@
     <div class="table-wrapper">
         <div id="accordion">
+            @if (User.IsInRole("Initiator"))
+            {
+                <label class="col-sm-2 form-control-label"><b>Generated Quotes</b></label>
+            }
+                <table id="datatable1" class="table table-striped display responsive nowrap">
 
-            <table id="datatable1" class="table table-striped display responsive nowrap">
-
-                <thead>
-                    <tr>
-                        <th class="wd-5p">S/N</th>
-                        <th class="wd-5p">RFQ No</th>
-                        @*<th class="wd-5p">Proj. ID</th>
-                            <th class="wd-5p">Req. ID</th>*@
-                        <th class="wd-10p">Reference</th>
-                        <th class="wd-30p">Item(s)</th>
-                        <th class="wd-30p">Description(s)</th>
-                        <th class="wd-10p">StartDate</th>
-                        <th class="wd-10p">EndDate</th>
-                        <th class="wd-10p">RFQStatus</th>
-                        <th class="wd-10p"></th>
-
-
-
-
-                    </tr>
-                </thead>
-                <tbody>
-                    @{
-                        int i = 0;
-
-                    }
-                    @{
-                        //var RFQDetails = Model.RFQDetails as List<E_Procurement.WebUI.Models.RfqApprovalModel.RFQDetailsViewModel>;
-                        var RFQDetails = Model.RFQDetails as List<E_Procurement.Repository.Dtos.RFQDetailsModel>;
-
-                    }
-                    @foreach (var approvalConfig in RFQDetails)
-                    {
+                    <thead>
                         <tr>
-                            <td>@(i = i + 1)</td>
-                            <td>@approvalConfig.RFQId</td>
-                            @*<td>@approvalConfig.ProjectId</td>
-                                <td>@approvalConfig.RequisitionId</td>*@
-                            <td>@approvalConfig.Reference</td>
-                            <td style="width:150px">@approvalConfig.Item</td>
-                            <td style="width:150px">@approvalConfig.Description</td>
-                            <td style="width:50px">@approvalConfig.StartDate.ToString("dd MMM yyyy")</td>
-                            <td style="width:50px">@approvalConfig.EndDate.ToString("dd MMM yyyy")</td>
-                            <td style="width:50px">@approvalConfig.RFQStatus</td>
-                            <td>
-                                <a class="btn btn-primary" data-toggle="collapse" href="#collapseItem_@(i)" role="button" aria-expanded="false" aria-controls="collapseItem_@(i)">
-                                    View Vendor(s)
-                                </a>
-                            </td>
-                            @*<td style="width:50px"><a asp-controller="RfqApproval" asp-action="RfqVendorsDetails" asp-route-id="@approvalConfig.RFQId" alt="Edit" class="btn btn-primary btn-icon"> <div><i class="fa fa-pencil"></i></div></a> </td>
-                                <td>
-                                    <input type="checkbox" @Model value="@approvalConfig.VendorId" checked="checked" name="SelectedItems" id="myInput_@approvalConfig.VendorId" onclick="myFunction(@approvalConfig.VendorId)" />
-                                </td>*@
+                            <th class="wd-5p">S/N</th>
+                            <th class="wd-5p">RFQ No</th>
+                            @*<th class="wd-5p">Proj. ID</th>
+                        <th class="wd-5p">Req. ID</th>*@
+                            <th class="wd-10p">Reference</th>
+                            <th class="wd-30p">Item(s)</th>
+                            <th class="wd-30p">Description(s)</th>
+                            <th class="wd-30p">Requisition Document</th>
+                            
+                            <th class="wd-10p">StartDate</th>
+                            <th class="wd-10p">EndDate</th>
+                            <th class="wd-10p">RFQStatus</th>
+                            <th class="wd-10p"></th>
+
+
+
+
                         </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int i = 0;
+
+                        }
+                        @{
+                            //var RFQDetails = Model.RFQDetails as List<E_Procurement.WebUI.Models.RfqApprovalModel.RFQDetailsViewModel>;
+                            var RFQDetails = Model.RFQDetails as List<E_Procurement.Repository.Dtos.RFQDetailsModel>;
+
+                        }
+                        @foreach (var approvalConfig in RFQDetails)
+                        {
+                            <tr>
+                                <td>@(i = i + 1)</td>
+                                <td>@approvalConfig.RFQId</td>
+                                @*<td>@approvalConfig.ProjectId</td>
+                            <td>@approvalConfig.RequisitionId</td>*@
+                                <td>@approvalConfig.Reference</td>
+                                <td style="width:150px">@approvalConfig.Item</td>
+                                <td style="width:150px">@approvalConfig.Description</td>
+                                <td>
+                                    @if (approvalConfig.RequisitionDocumentPath == null)
+                                    {
+                                        <label class="text-danger">No File</label>
+                                    }
+                                    else
+                                    {
+                                        <a class="btn btn-info mg-r-5" target="_blank" href="~/Uploads/Requisitions/@approvalConfig.RequisitionDocumentPath" style="height:50px; width:110px"><span class="fa fa-eye"></span> <br />Click to view @*<br /><br /> Memorandum <br />Of Association*@</a>
+                                    }
+                                    </td>
+                                
+                                <td style="width:50px">@approvalConfig.StartDate.ToString("dd MMM yyyy")</td>
+                                <td style="width:50px">@approvalConfig.EndDate.ToString("dd MMM yyyy")</td>
+                                <td style="width:50px">@approvalConfig.RFQStatus</td>
+                                <td>
+                                    <a class="btn btn-primary" data-toggle="collapse" href="#collapseItem_@(i)" role="button" aria-expanded="false" aria-controls="collapseItem_@(i)">
+                                        View Vendor(s)
+                                    </a>
+                                </td>
+                                @*<td style="width:50px"><a asp-controller="RfqApproval" asp-action="RfqVendorsDetails" asp-route-id="@approvalConfig.RFQId" alt="Edit" class="btn btn-primary btn-icon"> <div><i class="fa fa-pencil"></i></div></a> </td>
+                            <td>
+                                <input type="checkbox" @Model value="@approvalConfig.VendorId" checked="checked" name="SelectedItems" id="myInput_@approvalConfig.VendorId" onclick="myFunction(@approvalConfig.VendorId)" />
+                            </td>*@
+                            </tr>
 
 
-                        <tr class="collapse" id="collapseItem_@(i)">
-                            <td colspan="13">
+                            <tr class="collapse" id="collapseItem_@(i)">
+                                <td colspan="13">
 
-                                <table class="table align-items-center table-flush" id="tdItems">
+                                    <table class="table align-items-center table-flush" id="tdItems">
 
-                                    <thead>
-                                        <tr>
+                                        <thead>
+                                            <tr>
 
-                                            <th class="wd-5p">S/N</th>
-                                            @*<th class="wd-5p">RFQ No</th>*@
-                                            @*<th class="wd-5p">Proj. ID</th>
-                                                <th class="wd-5p">Req. ID</th>*@
-                                            @*<th class="wd-10p">RFQStatus</th>*@
-                                            <th class="wd-5p">Vendor Name</th>
-                                            @*<th class="wd-10p">Status</th>*@
-                                            <th class="wd-5p">Contact</th>
-                                            <th class="wd-5p">Amount</th>
-                                            <th class="wd-5p">Comments</th>
-                                            <th class="wd-5p">Status</th>
-                                            @*<th class="wd-10p"></th>*@
+                                                <th class="wd-5p">S/N</th>
+                                                @*<th class="wd-5p">RFQ No</th>*@
+                                                @*<th class="wd-5p">Proj. ID</th>
+        <th class="wd-5p">Req. ID</th>*@
+                                                @*<th class="wd-10p">RFQStatus</th>*@
+                                                <th class="wd-5p">Vendor Name</th>
+                                                @*<th class="wd-10p">Status</th>*@
+                                                <th class="wd-5p">Contact</th>
+                                                <th class="wd-5p">Amount</th>
+                                                @if (!User.IsInRole("Initiator"))
+                                                {
+                                                    <th class="wd-5p-force">Quote Document</th>
+                                                }
+                                                <th class="wd-20p-force">Comments</th>
+                                                <th class="wd-5p">Status</th>
+                                                @*<th class="wd-10p"></th>*@
 
 
 
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @{
-                                            int a = 0;
-                                        }
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @{
+                                                int a = 0;
+                                            }
 
-                                        @{
-                                            //var RFQDetails = Model.RFQDetails as List<E_Procurement.WebUI.Models.RfqApprovalModel.RFQDetailsViewModel>;
-                                            var RFQDetails2 = Model.RFQDetails2 as List<E_Procurement.Repository.Dtos.RFQDetailsModel>;
+                                            @{
+                                                //var RFQDetails = Model.RFQDetails as List<E_Procurement.WebUI.Models.RfqApprovalModel.RFQDetailsViewModel>;
+                                                var RFQDetails2 = Model.RFQDetails2 as List<E_Procurement.Repository.Dtos.RFQDetailsModel>;
 
-                                        }
-                                        @foreach (var approvalConfig2 in RFQDetails2.Where(u => u.RFQId == approvalConfig.RFQId))
-                                        {
+                                            }
+                                            @foreach (var approvalConfig2 in RFQDetails2.Where(u => u.RFQId == approvalConfig.RFQId))
+                                            {
                                             <tr id="Descriptions_" + @approvalConfig2.VendorId>
                                                 <td>@(a = a + 1)</td>
                                                 @*<td>@approvalConfig.RFQId</td>*@
                                                 @*<td>@approvalConfig.ProjectId</td>
-                                                    <td>@approvalConfig.RequisitionId</td>*@
+        <td>@approvalConfig.RequisitionId</td>*@
                                                 @*<td>@approvalConfig.RFQStatus</td>*@
                                                 <td>@approvalConfig2.VendorName</td>
                                                 @*<td>@approvalConfig.VendorStatus</td>*@
                                                 <td>@approvalConfig2.ContactName</td>
-                                                <td>@approvalConfig2.TotalAmount</td>
+                                                <td>&#8358;@approvalConfig2.TotalAmount.ToString("N2")</td>
+                                                <td>
+                                                    @if (!User.IsInRole("Initiator"))
+                                                    {
+                                                        @if (approvalConfig2.QuoteDocumentPath == null)
+                                                        {
+                                                            <label class="text-danger">No File</label>
+                                                        }
+                                                        else
+                                                        {
+                                                            <a class="btn btn-info mg-r-5" target="_blank" href="~/Uploads/Quotes/@approvalConfig2.QuoteDocumentPath" style="height:50px; width:110px"><span class="fa fa-eye"></span> <br />Click to view</a>
+                                                        }
+                                                    }
+                                                    </td>
+                                               
                                                 @if (@approvalConfig2.VendorId == @approvalConfig.VendorId)
                                                 {
                                                     <td>
@@ -146,28 +239,28 @@
                                                     <td>@approvalConfig.RFQStatus</td>
                                                 }
                                                 @*<td>
-                                                        <a class="btn btn-info mg-r-5" style="width:120px"
-                                                           href="@Url.Action("POApprovalDetails", "PO", new { RFQId = @approvalConfig2.RFQId, VendorId = @approvalConfig2.VendorId })"><span class="fa fa-pencil"></span><i class="pe-7s-edit btn-icon-wrapper"></i>Details</a>
-                                                    </td>*@
+            <a class="btn btn-info mg-r-5" style="width:120px"
+               href="@Url.Action("POApprovalDetails", "PO", new { RFQId = @approvalConfig2.RFQId, VendorId = @approvalConfig2.VendorId })"><span class="fa fa-pencil"></span><i class="pe-7s-edit btn-icon-wrapper"></i>Details</a>
+        </td>*@
 
 
                                             </tr>
 
 
 
-                                        }
+                                            }
 
-                                    </tbody>
-                                </table>
-                            </td>
-                        </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
 
-                    }
-                </tbody>
-            </table>
+                        }
+                    </tbody>
+                </table>
 
 
-        </div>
+            </div>
     </div><!-- table-wrapper -->
 </div><!-- card -->
 

@@ -1,0 +1,146 @@
+﻿@model E_Procurement.WebUI.Models.RequisitionModel.RequisitionModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "RFQ";
+    ViewBag.PageDesc = "Create RFQ";
+    ViewBag.FavIcon = "fa fa-street-view";
+}
+
+<!-- page section -->
+<div class="row row-sm mg-t-20">
+    <div class="col-xl-12">
+        <div class="card pd-20 pd-sm-40 form-layout form-layout-4">
+            <h6 class="card-body-title">Requisition</h6>
+            
+            <form class="form-horizontal" action="@Url.Action("RequisitionCreate","Requisition")" method="post" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+                @*<h2 class="text-center">Basic forms Example</h2>*@
+                <div class="row mg-t-20" style="display:flex; justify-content:space-between">
+                    <div class="col-md-8" >
+                        <div class="row mg-t-20">
+                            <div class="col-md-6" style="margin-top:1px">
+                                <label for="Description">Request Description:</label>
+                                @Html.TextAreaFor(model => model.Description, htmlAttributes: new { id = "Description", @style = "width:480px; height:100px", @class = "form-control", @type = "text", required = "required" })
+
+                            </div>
+
+                        </div>
+                        <div></div>
+                        <div class="row mg-t-20">
+
+                            <div class="col-md-4" style="margin-top:10px">
+                                <label for="RequisitionDocument">Upload Requisition:</label>
+                                <input type="file" id="Requisition" name="RequisitionDocument" class="form-control" accept=".jpg, .jpeg, .png, .pdf" required="required" style="width:230px; height:40px" />
+                                @Html.ValidationMessageFor(model => model.RequisitionDocument, "", new { @class = "text-danger" })
+                            </div>
+
+                            <div class="col-md-4" style="margin-top:10px">
+                                <label for="ExpectedDate">Expected Delivery Date:</label>
+                                @Html.TextBoxFor(model => model.ExpectedDate, new { @class = "form-control datepicker", @placeholder = "Start Date", @Id = "StartDate", required = "required", type = "date", style = "width:160px; height:40px" })
+                                @Html.ValidationMessageFor(model => model.ExpectedDate, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                <br />
+
+
+                        <!-- Button -->
+                        <div class="form-group">
+                            <label class="col-md-8 control-label"></label>
+                            <div class="col-md-4">
+
+                                <button type="submit" class="btn btn-info mg-r-5"><span class="glyphicon glyphicon-send"></span>  Submit</button>
+
+                                <a href="@Url.Action("RequisitionIndex","Requisition")" class="btn btn-secondary"><span class="glyphicon glyphicon-remove"></span> Back</a>
+                            </div>
+
+                        </div>
+
+</form>
+        </div>
+    </div>
+</div>
+
+
+
+@*@using (Html.BeginForm("Index", "Home", FormMethod.Post))
+    {
+        @Html.DropDownListFor(m => m.CategoryId, Model.ItemCategoryList, "Please select", new { onchange = "document.forms[0].submit();" })
+        <br />
+        <br />
+
+        @Html.DropDownListFor(m => m.ItemId, Model.ItemList, "Please select", new { onchange = "document.forms[0].submit();", disabled = "disabled" })
+        <br />
+        <br />
+
+        @Html.DropDownListFor(m => m.VendorId, Model.VendorList, "Please select", new { disabled = "disabled" })
+        <br />
+        <br />
+        <input type="submit" value="Submit" />
+    }*@
+<script type="text/javascript">
+
+    function DoPostBack() {
+        var select = document.getElementById("UserId1");
+        var option = select.options[select.selectedIndex];
+        if (option.value != "") {
+            var Table = document.getElementById("example");
+            Table.innerHTML = "";
+            document.forms[1].action = "/Sign/SignatureCreate";
+            document.forms[1].submit();
+        }
+        else {
+            var Table = document.getElementById("example");
+            Table.innerHTML = "";
+            document.forms[1].action = "/Sign/SignatureCreate";
+            document.forms[1].submit();
+        }
+    }
+
+
+    $(function () {
+
+        if ($("#ItemId option").length > 1) {
+            $("#ItemId").removeAttr("disabled");
+        }
+
+        if ($("#VendorId option").length > 1) {
+            $("#VendorId").removeAttr("disabled");
+        }
+
+        if ($("#CategoryId").val() != "" && $("#ItemId").val() != "" && $("#VendorId").val() != "") {
+            var message = "Category: " + $("#CategoryId option:selected").text();
+            message += "\nItem: " + $("#ItemId option:selected").text();
+            message += "\nVendor: " + $("#VendorId option:selected").text();
+            alert(message);
+        }
+
+    });
+
+    function myFunction(id) {
+
+        //alert(id);
+
+        if ($(`#myInput_${id}`).prop('checked')) {
+            $(`#Descriptions_${id}`).show();
+            $(`#Quantities_${id}`).show();
+            $(`#Descriptions_${id}`).attr("disabled", false);
+            $(`#Quantities_${id}`).attr("disabled", false);
+            $(`#Descriptions_${id}`).prop('required', true);
+            $(`#Quantities_${id}`).prop('required', true);
+        }
+        else {
+            $(`#Descriptions_${id}`).attr("disabled", "");
+            $(`#Quantities_${id}`).attr("disabled", "");
+            $(`#Descriptions_${id}`).prop('required', false);
+            $(`#Quantities_${id}`).prop('required', false);
+            $(`#Descriptions_${id}`).hide();
+            $(`#Quantities_${id}`).hide();
+        }
+
+    }
+
+</script>
+
+

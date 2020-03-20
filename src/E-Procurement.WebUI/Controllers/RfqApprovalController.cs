@@ -8,6 +8,7 @@ using E_Procurement.Repository.AccountRepo;
 using E_Procurement.Repository.ApprovalRepo;
 using E_Procurement.Repository.Dtos;
 using E_Procurement.Repository.PORepo;
+using E_Procurement.Repository.RequisitionRepo;
 using E_Procurement.WebUI.Models.RfqApprovalModel;
 using E_Procurement.WebUI.Models.RFQModel;
 using Microsoft.AspNetCore.Authorization;
@@ -25,18 +26,22 @@ namespace E_Procurement.WebUI.Controllers
         private readonly IPORepository _PORepository;
         private readonly IMapper _mapper;
         private readonly IAccountManager _accountManager;
+        private readonly IRequisitionRepository _requisitionRepository;
 
-        public RfqApprovalController(IRfqApprovalRepository RfqApprovalRepository, IPORepository PORepository, IMapper mapper, IAccountManager accountManager)
+        public RfqApprovalController(IRfqApprovalRepository RfqApprovalRepository, IRequisitionRepository requisitionRepository, IPORepository PORepository, IMapper mapper, IAccountManager accountManager)
         {
             _RfqApprovalRepository = RfqApprovalRepository;
             _PORepository = PORepository;
             _accountManager = accountManager;
             _mapper = mapper;
-          
+            _requisitionRepository = requisitionRepository;
+
         }
         
         public async Task<IActionResult> Index()
         {
+            var REQconfig = _requisitionRepository.GetRequisitions2().ToList();
+
             var RfqApprovalList = await _RfqApprovalRepository.GetRFQApprovalDueAsync();
             if (User.IsInRole("Procurement") && !User.IsInRole("Approval"))
             {
@@ -81,6 +86,7 @@ namespace E_Procurement.WebUI.Controllers
                 PONumber = x.PONumber,
                 TotalAmount = x.QuotedAmount,
                 ExpectedDeliveryDate = x.ExpectedDeliveryDate,
+                RequisitionDocumentPath = REQconfig.Where(a => a.Id == x.RequisitionId).Select(b => b.RequisitionDocument).FirstOrDefault(),
                 //VendorName = x.VendorName,
                 //ContactName = x.ContactName,
                 //VendorEmail = x.VendorEmail,
@@ -111,13 +117,13 @@ namespace E_Procurement.WebUI.Controllers
                     VendorId = v.Id,//vendList.Where(u => RfqApprovalList.Any(a => a.RFQId == u.RFQId)).Select(u => u.VendorId).FirstOrDefault(),
                     QuotedPrice = rfqDetails.QuotedPrice,
                     QuotedAmount = rfqDetails.QuotedAmount,
-                    TotalAmount = rfqDetails.QuotedAmount
-
+                    TotalAmount = rfqDetails.QuotedAmount,
+                    QuoteDocumentPath = rfqDetails.QuoteDocument
 
               }).GroupBy(v => new { v.RFQId, v.VendorId }).Select(s => s.FirstOrDefault()).ToList();
                 poModel2.AddRange(listModel);
             }
-            Model.RFQDetails = poModel;
+            Model.RFQDetails = poModel.OrderByDescending(a => a.RFQId).ToList();
             Model.RFQDetails2 = poModel2;
             Model.RFQTransaction = transac;
             return View(Model);

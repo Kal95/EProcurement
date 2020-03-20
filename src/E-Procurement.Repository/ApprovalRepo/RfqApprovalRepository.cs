@@ -269,15 +269,18 @@ namespace E_Procurement.Repository.RfqApprovalConfigRepository
                         // email 
 
                         //Send Email to Initiator
-                        var user = _reportRepository.GetUser().Where(u => u.Email == rfq.InitiatedBy).FirstOrDefault();
-                        var message = "";
-                        var subject = "PO NOTIFICATION";
-                        message = "</br><b> Dear </b>" + user.FullName + "</br>";
-                        message += "<br> Please be informed that Request For Quote for your request with Reference: " + rfq.Reference + " has been Approved";
+                        if (rfq.InitiatedBy != null)
+                        {
+                            var user = _reportRepository.GetUser().Where(u => u.Email == rfq.InitiatedBy).FirstOrDefault();
+                            var message = "";
+                            var subject = "PO NOTIFICATION";
+                            message = "</br><b> Dear </b>" + user.FullName + "</br>";
+                            message += "<br> Please be informed that Request For Quote for your request with Reference: " + rfq.Reference + " has been Approved";
 
-                        message += "<br>Regards";
+                            message += "<br>Regards";
 
-                        await _emailSender.SendEmailAsync(user.Email, subject, message, "");
+                            await _emailSender.SendEmailAsync(user.Email, subject, message, "");
+                        }
                     }
                     else
                     {
