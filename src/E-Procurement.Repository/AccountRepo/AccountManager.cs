@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Security.Claims;
@@ -195,7 +196,7 @@ namespace E_Procurement.Repository.AccountRepo
                 var subject = "SIGNUP NOTIFICATION";
                 var message = "</br><b> Dear </b>" + user.FullName + ",";
                 message += "<br><b> You have been successfully registered on Cyberspace E-procurement Portal.<br>";
-                message += "<br>Kindly, log in via <a href='" + requisitionURL + "' >"+ requisitionURL + " </a> to validate your details.<br>";
+                message += "<br>Kindly, log in via <a href=" + requisitionURL + " </a> to validate your details.<br>";
                 message += "<br><U>LOGIN DETAILS </U>";
                 message += "<br>Email :  " + user.Email;
                 message += "<br>Password :  " + password;
@@ -221,7 +222,65 @@ namespace E_Procurement.Repository.AccountRepo
 
             return (true);
         }
+        public async Task<bool> SendResetPasswordAsync(User user, string password, string Role)
+        {
+            user = await _userManager.FindByEmailAsync(user.Email);
+            var DefaultPassword = "Eprocurement1$";
+            var changpawd = await _userManager.RemovePasswordAsync(user);
+           
+            var result = await _userManager.AddPasswordAsync(user, DefaultPassword);
+           
+            try
+            {
 
+               
+
+
+            if (!changpawd.Succeeded)
+            {
+                    throw new Exception("No Password was removed");
+            }
+
+            if (result.Succeeded)
+            {
+                    var URL = "http://eprocurement.cyberspace.net.ng/Account/Login?ReturnUrl=%2F"; 
+                    var requisitionURL = _config.GetSection("ExternalAPI:RequisitionURL").Value;
+
+                var subject = "PASSWORD RESET";
+                var message = "</br><b> Dear </b>" + user.FullName + ",";
+                message += "<br><b> You must reset your password to access your E-Procurement account<br>";
+                    // message += "<br><b> Click the following link reset your password<br>";
+                message += "<br><U>LOGIN DETAILS </U>";
+                message += "<br>Email :  " + user.Email;
+                message += "<br>Password :  " + DefaultPassword;
+                message += "<br>Remember to change your password upon login.";
+                message += "<br>Kindly <a href=" + requisitionURL + " </a> to validate your details.<br>";
+                message += "<br>Regards.<br>";
+
+                await _emailSender.SendEmailAsync(user.Email, subject, message, "");
+
+                _context.SaveChanges();
+
+
+
+                return true;
+            }
+            else
+            {
+
+
+                return false;
+            }
+
+            }
+            catch
+            {
+               
+                throw;
+            }
+
+         
+        }
 
         public async Task<(bool Succeeded, string[] Error)> UpdateUserAsync(User user)
         {

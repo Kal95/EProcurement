@@ -35,6 +35,7 @@ namespace E_Procurement.Repository.AccountRepo
         Task<(bool Succeeded, string[] Error)> UpdateUserAsync(User user);
         Task<(bool Succeeded, string[] Error)> UpdateUserAsync(User user, IEnumerable<string> roles);
         Task<bool> AssignUserRoleAsync(string Id, List<string> roles);
+        Task<bool> SendResetPasswordAsync(User user, string password, string Role);
         //Task<List<(User User, string[] Roles)>> GetUsersAndRolesAsync(int page, int pageSize);
         //Task<List<UserViewModel>> GetUsersAndRolesAsync(int page, int pageSize, string sortOrder, string sortValue);
 

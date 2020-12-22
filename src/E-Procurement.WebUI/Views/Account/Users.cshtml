@@ -22,7 +22,7 @@
                         <th class="wd-20p">Department</th>
                         <th class="wd-15p">Unit</th>
                         <th class="wd-10p">Email</th>
-                        <th class="wd-10p"></th>
+                        <th class="wd-i5p-force"></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -38,7 +38,11 @@
                             <td>@user.Department</td>
                             <td>@user.Unit</td>
                             <td>@user.Email</td>
-                            <td><a asp-controller="Account" asp-action="EditUser" asp-route-id="@user.Id" alt="Edit" class="btn btn-primary btn-icon"> <div><i class="fa fa-pencil"></i></div></a>|<a asp-action="Delete" asp-route-id="@user.Id" class="btn btn-danger btn-icon"><div><i class="fa fa-trash-o"></i></div></a> </td>
+                            <td>
+                                <a asp-controller="Account" asp-action="EditUser" asp-route-id="@user.Id" alt="Edit" class="btn btn-primary btn-icon" style="width:90px"><span class="fa fa-pencil"></span><i class="pe-7s-edit btn-icon-wrapper"></i> Edit User</a>|
+                                <a asp-action="Delete" asp-route-id="@user.Id" class="btn btn-danger btn-icon" style="width:100px"><span class="fa fa-trash-o"></span><i class="pe-7s-edit btn-icon-wrapper"></i> Delete User</a>|
+                                <a asp-controller="Account" asp-action="SendResetPassword" asp-route-id="@user.Id" alt="Reset" class="btn btn-orange btn-icon" style="width:150px"><span class="fa fa-pencil"></span><i class="pe-7s-edit btn-icon-wrapper"></i> Reset Password</a>
+                            </td>
 
                         </tr>
                     }

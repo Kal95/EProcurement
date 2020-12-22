@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authentication;
 using E_Procurement.WebUI.Filters;
 using static E_Procurement.WebUI.Enums.Enums;
+using E_Procurement.Repository.ReportRepo;
 
 namespace E_Procurement.WebUI.Controllers
 {
@@ -32,6 +33,7 @@ namespace E_Procurement.WebUI.Controllers
         private readonly UserManager<User> _userManager;
         private readonly IPermissionRepository _permissionRepository;
         private readonly IHttpContextAccessor _contextAccessor;
+        private readonly IReportRepository _reportRepository;
 
         //[Route("Identity/Account/Login")]
         //public IActionResult LoginRedirect(string ReturnUrl)
@@ -44,8 +46,9 @@ namespace E_Procurement.WebUI.Controllers
                                 IAccountManager accountManager, 
                                 IMapper mapper,
                                 IHttpContextAccessor contextAccessor,
-                                IPermissionRepository permissionRepository)
+                                IPermissionRepository permissionRepository, IReportRepository reportRepository)
         {
+            _reportRepository = reportRepository;
             _accountManager = accountManager;
             _mapper = mapper;
             _signInManager = signInManager;
@@ -442,8 +445,38 @@ namespace E_Procurement.WebUI.Controllers
             }
             return RedirectToAction("Index", "Home");
         }
+        //[HttpPost]
+        [PermissionValidation("can_create_user")]
+        public async Task<IActionResult> SendResetPassword(RegisterViewModel user)
+        {
+            var getUser = _reportRepository.GetUser().Where(u => u.Id == user.Id).FirstOrDefault();
+            user.Email = getUser.Email;
+            user.Department = getUser.Department;
+            user.FirstName = getUser.FirstName;
+            user.LastName = getUser.LastName;
+            user.Unit = getUser.Unit;
+ 
+                // var mappedUser = _mapper.Map<User>(user);
+                getUser.SecurityStamp = Guid.NewGuid().ToString();
 
+                var mappedUser = _mapper.Map<User>(user);
+                mappedUser.UserName = user.Email;
+                var result = await _accountManager.SendResetPasswordAsync(mappedUser, user.Password, user.Role);
 
+                if (result)
+                {
+                    Alert("User's Password has been reset and default password sent sucsessfully.", NotificationType.success);
+                    //return RedirectToAction("Users");
+                }
+                else
+                {
+                    Alert("User account could not be reset. Please try again later.", NotificationType.error);
+
+                    return View(user);
+                }
+            return RedirectToAction("Users", "Account");
+        }
+       
 
         #endregion
 
