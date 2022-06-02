@@ -20,6 +20,11 @@ using E_Procurement.WebUI.Filters;
 using static E_Procurement.WebUI.Enums.Enums;
 using E_Procurement.Repository.ReportRepo;
 
+using System.IO;
+
+using Abp.Web.Mvc.Alerts;
+using Microsoft.AspNetCore.Hosting;
+
 namespace E_Procurement.WebUI.Controllers
 {
     [Authorize]
@@ -82,7 +87,7 @@ namespace E_Procurement.WebUI.Controllers
                     //var user = await _accountManager.GetUserByEmailAsync(loginViewModel.Email);
                     if (user == null)
                     {
-                        ModelState.AddModelError("", "Email/password not found");
+                        ModelState.AddModelError("", "User Account does not Exist");
                         //Alert("Invalid Email/password.", NotificationType.error);
                         return View(loginViewModel);
                     }
@@ -140,14 +145,14 @@ namespace E_Procurement.WebUI.Controllers
                     }
                     else
                     {
-                        ModelState.AddModelError("", "Email/password not found");
+                        ModelState.AddModelError("", "Incorrect Password");
                         View(loginViewModel);
                     }
 
 
 
                 }
-            ModelState.AddModelError("", "Email/password not found");
+            //ModelState.AddModelError("", "Email/password not found");
             return  View(loginViewModel);
         }
 
@@ -186,7 +191,8 @@ namespace E_Procurement.WebUI.Controllers
                 }).ToList();
                 ViewBag.roles = roleList;
 
-                if (await _accountManager.IsEmailExistAsync(user.Email))
+                var ExistingUser = _userManager.Users.Any(a => a.Email == user.Email);
+                if (await _accountManager.IsEmailExistAsync(user.Email) || ExistingUser)
                 {
                     Alert("User already exist with the supplied email.", NotificationType.error);
                     return View(user);
@@ -445,6 +451,56 @@ namespace E_Procurement.WebUI.Controllers
             }
             return RedirectToAction("Index", "Home");
         }
+
+        [AllowAnonymous]
+        public IActionResult ResetPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword(LoginModel loginViewModel)
+        {
+            var user = _userManager.Users.FirstOrDefault(m => m.Email.Trim() == loginViewModel.Email);
+            RegisterViewModel user2 = new RegisterViewModel();
+            string Role = Convert.ToString(user.Roles.FirstOrDefault());
+            //var user = await _accountManager.GetUserByEmailAsync(loginViewModel.Email);
+            if (user == null)
+            {
+                ModelState.AddModelError("", "User Account does not Exist");
+                //Alert("Invalid Email/password.", NotificationType.error);
+                return RedirectToAction("Login", "Account");
+            }
+
+            var getUser = _reportRepository.GetUser().Where(u => u.Id == user.Id).FirstOrDefault();
+            user.Email = getUser.Email;
+            user.Department = getUser.Department;
+            user.FirstName = getUser.FirstName;
+            user.LastName = getUser.LastName;
+            user.Unit = getUser.Unit;
+
+            // var mappedUser = _mapper.Map<User>(user);
+            getUser.SecurityStamp = Guid.NewGuid().ToString();
+
+            var mappedUser = _mapper.Map<User>(user);
+            mappedUser.UserName = user.Email;
+            var result = await _accountManager.SendResetPasswordAsync(mappedUser, loginViewModel.Password, Role);
+
+            if (result)
+            {
+                //ModelState.AddModelError("", "Your Password has been reset and default password sent to your email sucsessfully");
+                Alert("Your Password has been reset and default password sent to your email sucsessfully.", NotificationType.success);
+                //return RedirectToAction("Users");
+            }
+            else
+            {
+                Alert("User account could not be reset. Please try again later.", NotificationType.error);
+
+                return View(user);
+            }
+            return RedirectToAction("Login", "Account");
+        }
+
         //[HttpPost]
         [PermissionValidation("can_create_user")]
         public async Task<IActionResult> SendResetPassword(RegisterViewModel user)

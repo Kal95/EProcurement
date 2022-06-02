@@ -184,6 +184,7 @@ namespace E_Procurement.Repository.AccountRepo
                         //vendor.StateId = 2;
                         //vendor.BankId = 2;
                         _context.Vendors.Add(vendor);
+                        _context.SaveChanges();
                         //var commandText = "INSERT Vendors (UserId,Email) VALUES (@UserId,@Email)";
                         //var UserId = new SqlParameter("@UserId", user.Id);
                         //var Email = new SqlParameter("@Email", user.Email);
@@ -196,8 +197,9 @@ namespace E_Procurement.Repository.AccountRepo
                 var subject = "SIGNUP NOTIFICATION";
                 var message = "</br><b> Dear </b>" + user.FullName + ",";
                 message += "<br><b> You have been successfully registered on Cyberspace E-procurement Portal.<br>";
-                message += "<br>Kindly, log in via <a href=" + requisitionURL + " </a> to validate your details.<br>";
+                message += "<br>Kindly, Login to validate your details.<br>";
                 message += "<br><U>LOGIN DETAILS </U>";
+                message += "<br>URL :  " + requisitionURL;
                 message += "<br>Email :  " + user.Email;
                 message += "<br>Password :  " + password;
                 message += "<br>Remember to change your password upon login.";
@@ -251,10 +253,11 @@ namespace E_Procurement.Repository.AccountRepo
                 message += "<br><b> You must reset your password to access your E-Procurement account<br>";
                     // message += "<br><b> Click the following link reset your password<br>";
                 message += "<br><U>LOGIN DETAILS </U>";
+                message += "<br>URL :  " + requisitionURL;
                 message += "<br>Email :  " + user.Email;
                 message += "<br>Password :  " + DefaultPassword;
                 message += "<br>Remember to change your password upon login.";
-                message += "<br>Kindly <a href=" + requisitionURL + " </a> to validate your details.<br>";
+                message += "<br>Kindly Login to validate your details.<br>";
                 message += "<br>Regards.<br>";
 
                 await _emailSender.SendEmailAsync(user.Email, subject, message, "");
