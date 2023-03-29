@@ -562,6 +562,8 @@ namespace E_Procurement.Data.Migrations
 
                     b.Property<string>("AlteredBy");
 
+                    b.Property<string>("ComparisonDocumentPath");
+
                     b.Property<string>("CreatedBy");
 
                     b.Property<DateTime>("DateAltered");

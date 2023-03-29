@@ -150,17 +150,14 @@ namespace E_Procurement.Repository.RFQGenRepo
                 foreach (var entry in vendorList)
                 {
                     var requisitionURL = _config.GetSection("ExternalAPI:RequisitionURL").Value;
+                                     
 
                     message = "<b> Dear </b>" + entry.ContactName;
                     message += "<br><br><b> Your company: </b>" + entry.VendorName + ",";
-
                     message += "<br> has been chosen to provide quote for the following items: ";
-
-                    message +=  string.Join(", ", itemList.Select(u => u.ItemName)) + ",";
-
+                    message += string.Join(", ", itemList.Select(u => u.ItemName)) + ",";
                     message += "<br> in the following quantities: " + string.Join(", ", model.Quantities) + " respectively.";
-
-                    message += "<br>Kindly Login to our E-Procurement Platform via " +"<a>"+requisitionURL + "/QuoteSending </a>" + " to respond.";
+                    message += "<br>Kindly Login to our E-Procurement Platform via " + $"<a href=\"{requisitionURL}\">" + requisitionURL + "/QuoteSending </a>" + " to respond.";
                     message += "<br><br>Regards";
 
                     RFQGenerationModel model2 = new RFQGenerationModel();

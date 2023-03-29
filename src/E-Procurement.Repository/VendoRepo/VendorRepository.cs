@@ -3,9 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Security.Cryptography;
+using System.ServiceModel.Channels;
+using System.Text;
 using System.Threading.Tasks;
 using E_Procurement.Data;
 using E_Procurement.Data.Entity;
+using E_Procurement.Repository.AccountRepo;
 using E_Procurement.Repository.Interface;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -19,19 +23,154 @@ namespace E_Procurement.Repository.VendoRepo
         private readonly EProcurementContext _context;
         private readonly ISMTPService _emailSender;
         private readonly IHttpContextAccessor _contextAccessor;
+        private readonly IAccountManager _accountManager;
         private IConfiguration _config;
         private readonly UserManager<User> _userManager;
 
-        public VendorRepository(EProcurementContext context, UserManager<User> userManager, IConfiguration config, ISMTPService emailSender, IHttpContextAccessor contextAccessor)
+        public VendorRepository(EProcurementContext context, UserManager<User> userManager, IConfiguration config, ISMTPService emailSender, IHttpContextAccessor contextAccessor, IAccountManager accountManager)
         {
             _context = context;
             _emailSender = emailSender;
             _contextAccessor = contextAccessor;
+            _accountManager = accountManager;
             _config = config;
             _userManager = userManager;
         }
+
+
+        public static class PasswordGenerator
+        {
+            private const int DefaultPasswordLength = 12;
+
+            public static string GeneratePassword(int minLength = DefaultPasswordLength)
+            {
+                const string uppercaseChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+                const string lowercaseChars = "abcdefghijklmnopqrstuvwxyz";
+                const string digitChars = "0123456789";
+                const string specialChars = "!@#$%^&*+[]{}|;:,.<>/?";
+                const string allChars = uppercaseChars + lowercaseChars + digitChars + specialChars;
+
+                byte[] randomBytes = new byte[minLength];
+                using (var rng = RandomNumberGenerator.Create())
+                {
+                    rng.GetBytes(randomBytes);
+                }
+
+                StringBuilder sb = new StringBuilder(minLength);
+                bool hasUppercase = false;
+                bool hasLowercase = false;
+                bool hasDigit = false;
+                bool hasSpecialChar = false;
+
+                for (int i = 0; i < minLength; i++)
+                {
+                    int charIndex = randomBytes[i] % allChars.Length;
+                    char c = allChars[charIndex];
+
+                    if (char.IsUpper(c))
+                    {
+                        hasUppercase = true;
+                    }
+                    else if (char.IsLower(c))
+                    {
+                        hasLowercase = true;
+                    }
+                    else if (char.IsDigit(c))
+                    {
+                        hasDigit = true;
+                    }
+                    else
+                    {
+                        hasSpecialChar = true;
+                    }
+
+                    sb.Append(c);
+                }
+
+                // Ensure that the password meets the requirements
+                if (!hasUppercase)
+                {
+                    sb[randomBytes[0] % minLength] = uppercaseChars[randomBytes[1] % uppercaseChars.Length];
+                }
+                if (!hasLowercase)
+                {
+                    sb[randomBytes[2] % minLength] = lowercaseChars[randomBytes[3] % lowercaseChars.Length];
+                }
+                if (!hasDigit)
+                {
+                    sb[randomBytes[4] % minLength] = digitChars[randomBytes[5] % digitChars.Length];
+                }
+                if (!hasSpecialChar)
+                {
+                    sb[randomBytes[6] % minLength] = specialChars[randomBytes[7] % specialChars.Length];
+                }
+
+                return sb.ToString();
+
+
+                //const string validChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%&*";
+                //var randomBytes = new byte[length];
+                //using (var rng = RandomNumberGenerator.Create())
+                //{
+                //    rng.GetBytes(randomBytes);
+                //}
+
+                //var result = new char[length];
+                //for (int i = 0; i < length; i++)
+                //{
+                //    var index = randomBytes[i] % validChars.Length;
+                //    result[i] = validChars[index];
+                //}
+                //return new string(result);
+            }
+        }
+
+
+        private async Task<(bool success, string password)> UserAccountCreate(VendorModel model)
+        {
+            var user = new User
+            {
+                Email = model.Email,
+                UserName = model.Email,
+                FirstName = model.VendorName,
+                PhoneNumber = model.PhoneNumber,
+            };
+
+            var password = PasswordGenerator.GeneratePassword(8);
+
+            var result = await _accountManager.CreateUserAsync(user, password, "Vendor User");
+
+            if(result)
+            {
+                //Alert("Account created sucsessfully.", NotificationType.success);
+                return await Task.FromResult((true, password));
+            }
+
+            else
+            {
+                //Alert("User account could not be created. Please try again later.", NotificationType.error);
+
+                return await Task.FromResult((false, ""));
+            }
+
+        }
         public bool CreateVendor(VendorModel model, out string Message)
         {
+            var ExistingUser = _userManager.Users.Any(a => a.Email == model.Email);
+            if (ExistingUser)
+            {
+                Message = "Vendor already exist";
+
+                return false;
+            }
+            var creation =  UserAccountCreate(model).Result;
+            if(!creation.success)
+            {
+                Message = "Account could not be created";
+
+                return false;
+
+            }
             var confirm = _context.Vendors.Where(x => x.VendorName == model.VendorName).Count();
 
             Vendor vendor = new Vendor();
@@ -39,7 +178,8 @@ namespace E_Procurement.Repository.VendoRepo
 
             if (confirm == 0)
             {
-
+                var user = _context.Users.Where(x => x.Email == model.Email).FirstOrDefault();
+                vendor.UserId = user.Id;
                 vendor.VendorName = model.VendorName;
                 vendor.AatAmount = model.AatAmount;
                 vendor.AatCurrency = model.AatCurrency;
@@ -87,6 +227,9 @@ namespace E_Procurement.Repository.VendoRepo
                 var message = "</br><b> Dear </b>" + model.ContactName.ToString();
                 message += "</br><b> Your company: </b>" + model.VendorName;
                 message += "</br>has been registered successful on Cyberspace E-procurement Portal.</br>";
+                message += $"</br>Your username is: {model.Email}</br>";
+                message += $"</br>Your password is: {creation.password}</br>";
+                message += $"</br>You are advised to change your password upon login</br>";
                 message += "</br>Kindly, log in via " + requisitionURL +" and validate the required documents.";
                 message += "</br>Regards";
 

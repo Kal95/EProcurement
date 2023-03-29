@@ -75,7 +75,7 @@ namespace E_Procurement.Repository.PORepo
             if (oldEntry == null && oldEntry2.Count == 0)
             {
                 //Initiate PO
-              
+                //generation.POStatus = "Generated";
                 generation.RFQId = model.RFQId;
                 generation.Reference = model.Reference;
                 generation.Amount = model.QuotedAmount;
@@ -393,6 +393,10 @@ namespace E_Procurement.Repository.PORepo
             //{
             //    CurrentConfig = OthersConfig.Where(a => a.UserId == int.Parse(currentUser)).FirstOrDefault();
             //}
+            if (CurrentConfig != null)
+            {
+
+
                 if (CurrentConfig.ApprovalLevel == 1)
                 {
                     foreach (var c in Con2)
@@ -400,6 +404,7 @@ namespace E_Procurement.Repository.PORepo
                         if (CurrentConfig.ApprovalLevel == 1) { Approver.Add(new SelectListItem() { Text = c.RFQId.ToString(), Value = "1" }); }
                     }
                 }
+
                 else
                 {
                     //List<int> Approver = new List<int>();
@@ -412,8 +417,8 @@ namespace E_Procurement.Repository.PORepo
                         if (level.ApprovalLevel == 4 && CurrentConfig.ApprovalLevel == 5 && level.ApprovalLevel == CurrentConfig.ApprovalLevel - 1) { Approver.Add(new SelectListItem() { Text = level.RFQId.ToString(), Value = "5" }); }
                     }
                 }
-            
-            
+
+
                 var query = (from vend in _context.Vendors
                              join rfqDetails in _context.RfqDetails on vend.Id equals rfqDetails.VendorId
                              join po in _context.PoGenerations on rfqDetails.VendorId equals po.VendorId
@@ -453,7 +458,8 @@ namespace E_Procurement.Repository.PORepo
 
 
                 return query.ToList();
-
+            }
+            return new List<RFQGenerationModel>();
             
         }
         public List<RFQGenerationModel> GetRFQUpdate()
@@ -992,23 +998,101 @@ namespace E_Procurement.Repository.PORepo
         {
             var RFQ = _context.RfqGenerations.Where(a => a.Id == rfq.RFQId).FirstOrDefault();
             var oldEntry = _context.PoGenerations.Where(u => u.RFQId == rfq.RFQId).FirstOrDefault();
+
+
             if (rfq != null)
             {
-                var myReference = new Random();
 
-                oldEntry.PONumber = myReference.Next(23006).ToString();
-                oldEntry.POStatus = "Generated";
-                oldEntry.ExpectedDeliveryDate = rfq.ExpectedDeliveryDate;
-                oldEntry.POCost = rfq.POCost;
-                oldEntry.POPreamble = rfq.POPreamble;
-                oldEntry.POTerms = rfq.POTerms;
-                oldEntry.POTitle = rfq.POTitle;
-                oldEntry.POValidity = rfq.POValidity;
-                oldEntry.POWarranty = rfq.POWarranty;
-                oldEntry.Reference = RFQ.Reference;
+                if (oldEntry.PONumber == null) {
 
-                await _context.SaveChangesAsync();
+                    var myReference = new Random();
 
+                    oldEntry.PONumber = myReference.Next(23006).ToString();
+                    oldEntry.POStatus = "Generated";
+                    oldEntry.ExpectedDeliveryDate = rfq.ExpectedDeliveryDate;
+                    oldEntry.POCost = rfq.POCost;
+                    oldEntry.POPreamble = rfq.POPreamble;
+                    oldEntry.POTerms = rfq.POTerms;
+                    oldEntry.POTitle = rfq.POTitle;
+                    oldEntry.POValidity = rfq.POValidity;
+                    oldEntry.POWarranty = rfq.POWarranty;
+                    oldEntry.Reference = RFQ.Reference;
+
+                    await _context.SaveChangesAsync();
+
+
+                }
+
+                 
+                    //MAP TO RFQ
+                    var requisitionURL = _config.GetSection("ExternalAPI:RequisitionURL").Value;
+                    var signature = _context.Signatures.Where(a => a.IsActive == true).FirstOrDefault();
+
+                    rfq.Reference = RFQ.Reference;
+                    rfq.PONumber = oldEntry.PONumber;
+                    rfq.POTitle = rfq.POTitle.ToUpper();
+                    rfq.CreatedDate = DateTime.Now;
+                    //re gen the detials
+                    var Item = await _context.RfqDetails.Where(x => x.RFQId == rfq.RFQId && x.VendorId == rfq.VendorId).ToListAsync();
+                    var totalAmount = Item.Sum(x => x.QuotedAmount);
+                    rfq.TotalAmount = totalAmount;
+                    rfq.URL = requisitionURL;
+                    rfq.Signature1 = signature.Sign1;
+                    rfq.Signature2 = signature.Sign2;
+                    List<RFQDetailsModel> rFQDetails = new List<RFQDetailsModel>();
+
+                    var listModel = Item.Select(x => new RFQDetailsModel
+                    {
+                        RFQId = x.RFQId,
+                        VendorId = x.VendorId,
+                        ItemId = x.ItemId,
+                        ItemName = x.ItemName,
+                        Description = x.ItemDescription,
+                        QuotedQuantity = x.QuotedQuantity,
+                        AgreedQuantity = x.AgreedQuantity,
+                        QuotedAmount = x.QuotedAmount,
+                        AgreedAmount = x.AgreedAmount
+                    });
+
+                    rFQDetails.AddRange(listModel);
+
+
+                    rfq.RFQDetails = rFQDetails;
+
+                    //generate PDF and send mail
+                   // await _pdfConverter.CreatePOPDF(rfq);
+
+                    //Send Email to Initiator
+                    var user = _reportRepository.GetUser().Where(u => u.Email == RFQ.InitiatedBy).FirstOrDefault();
+                    var message = "";
+                    var subject = "PO NOTIFICATION";
+                    message = "</br><b> Dear </b>" + user.FullName + "</br>";
+                    message += "<br> Please be informed that Purchase Order for your request with Reference: " + RFQ.Reference + " has been Generated";
+
+                    message += "<br>Regards";
+
+                    await _emailSender.SendEmailAsync(user.Email, subject, message, "");
+
+                    return true;
+
+            }
+
+            else
+                {
+                    return false;
+                }
+            
+        }
+
+        public async Task<bool> GeneratePOAsync(RFQGenerationModel rfq)
+        {
+            var RFQ = _context.RfqGenerations.Where(a => a.Id == rfq.RFQId).FirstOrDefault();
+            var oldEntry = _context.PoGenerations.Where(u => u.RFQId == rfq.RFQId).FirstOrDefault();
+
+
+            if (rfq != null)
+            {
+                                
                 //MAP TO RFQ
                 var requisitionURL = _config.GetSection("ExternalAPI:RequisitionURL").Value;
                 var signature = _context.Signatures.Where(a => a.IsActive == true).FirstOrDefault();
@@ -1047,26 +1131,19 @@ namespace E_Procurement.Repository.PORepo
                 //generate PDF and send mail
                 await _pdfConverter.CreatePOPDF(rfq);
 
-                //Send Email to Initiator
-                var user = _reportRepository.GetUser().Where(u => u.Email == RFQ.InitiatedBy).FirstOrDefault();
-                var message = "";
-                var subject = "PO NOTIFICATION";
-                message = "</br><b> Dear </b>" + user.FullName + "</br>";
-                message += "<br> Please be informed that Purchase Order for your request with Reference: " + RFQ.Reference + " has been Generated";
-
-                message += "<br>Regards";
-
-                await _emailSender.SendEmailAsync(user.Email, subject, message, "");
-
+                
                 return true;
+
             }
+
             else
             {
                 return false;
             }
+
         }
 
-      
+
 
         public async Task<IEnumerable<RFQGenerationModel>> GetPOAsync()
         {
@@ -1127,6 +1204,91 @@ namespace E_Procurement.Repository.PORepo
                 l_retval += b * BigInteger.Pow(3, --i);
             }
             return l_retval;
+        }
+
+        public async Task<RFQGenerationModel> Testing(RFQGenerationModel rfq)//Remove this method
+        {
+            var RFQ = _context.RfqGenerations.Where(a => a.Id == rfq.RFQId).FirstOrDefault();
+            var oldEntry = _context.PoGenerations.Where(u => u.RFQId == rfq.RFQId).FirstOrDefault();
+            if (rfq != null)
+            {
+                var myReference = new Random();
+
+                oldEntry.PONumber = myReference.Next(23006).ToString();
+                oldEntry.POStatus = "Generated";
+                oldEntry.ExpectedDeliveryDate = rfq.ExpectedDeliveryDate;
+                oldEntry.POCost = rfq.POCost;
+                oldEntry.POPreamble = rfq.POPreamble;
+                oldEntry.POTerms = rfq.POTerms;
+                oldEntry.POTitle = rfq.POTitle;
+                oldEntry.POValidity = rfq.POValidity;
+                oldEntry.POWarranty = rfq.POWarranty;
+                oldEntry.Reference = RFQ.Reference;
+
+                //await _context.SaveChangesAsync();
+
+                //MAP TO RFQ
+                var requisitionURL = _config.GetSection("ExternalAPI:RequisitionURL").Value;
+                var signature = _context.Signatures.Where(a => a.IsActive == true).FirstOrDefault();
+
+                rfq.Reference = RFQ.Reference;
+                rfq.PONumber = oldEntry.PONumber;
+                //  rfq.POTitle = rfq.POTitle.ToUpper();
+                rfq.CreatedDate = DateTime.Now;
+                //re gen the detials
+                var Item = await _context.RfqDetails.Where(x => x.RFQId == rfq.RFQId && x.VendorId == rfq.VendorId).ToListAsync();
+                var totalAmount = Item.Sum(x => x.QuotedAmount);
+                rfq.TotalAmount = totalAmount;
+                rfq.URL = requisitionURL;
+                rfq.Signature1 = signature.Sign1;
+                rfq.Signature2 = signature.Sign2;
+                List<RFQDetailsModel> rFQDetails = new List<RFQDetailsModel>();
+
+                var listModel = Item.Select(x => new RFQDetailsModel
+                {
+                    RFQId = x.RFQId,
+                    VendorId = x.VendorId,
+                    ItemId = x.ItemId,
+                    ItemName = x.ItemName,
+                    Description = x.ItemDescription,
+                    QuotedQuantity = x.QuotedQuantity,
+                    AgreedQuantity = x.AgreedQuantity,
+                    QuotedAmount = x.QuotedAmount,
+                    AgreedAmount = x.AgreedAmount
+                });
+
+                rFQDetails.AddRange(listModel);
+
+
+                rfq.RFQDetails = rFQDetails;
+
+                //generate PDF and send mail
+                await _pdfConverter.CreatePOPDF(rfq);
+
+                //Send Email to Initiator
+                var user = _reportRepository.GetUser().Where(u => u.Email == RFQ.InitiatedBy).FirstOrDefault();
+                var message = "";
+                var subject = "PO NOTIFICATION";
+                message = "</br><b> Dear </b>" + user.FullName + "</br>";
+                message += "<br> Please be informed that Purchase Order for your request with Reference: " + RFQ.Reference + " has been Generated";
+
+                message += "<br>Regards";
+
+                await _emailSender.SendEmailAsync(user.Email, subject, message, "");
+
+                return rfq;
+            }
+            else
+            {
+                return rfq;
+            }
+        }
+
+        public POGeneration GetPOGen3(int VendorId, int RFQId)
+        { 
+            var PO = _context.PoGenerations.Where(u => u.RFQId == RFQId && u.VendorId == VendorId).FirstOrDefault();
+
+            return PO;
         }
     }
 }

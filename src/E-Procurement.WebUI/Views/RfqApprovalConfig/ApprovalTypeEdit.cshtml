@@ -13,7 +13,7 @@
         <div class="card pd-20 pd-sm-40 form-layout form-layout-4">
             <h6 class="card-body-title">Category</h6>
             <p class="mg-b-20 mg-sm-b-30">Edit</p>
-            <form class="form-horizontal" action="@Url.Action("ApprovalTypeCreate", "RfqApprovalConfig")" method="post">
+            <form class="form-horizontal" action="@Url.Action("ApprovalTypeEdit", "RfqApprovalConfig")" method="post">
                 @Html.AntiForgeryToken()
                 @Html.HiddenFor(model => model.ApprovalTypeId)
 

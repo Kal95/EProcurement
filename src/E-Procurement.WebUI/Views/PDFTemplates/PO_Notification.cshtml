@@ -10,6 +10,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <style>
+        .body{
+            color: red;
+        }
         .content {
             max-width: 1000px;
             margin: auto;
@@ -17,11 +20,14 @@
     </style>
 </head>
 
+
+
 <body>
     <div class="card pd-20 pd-sm-40">
         <div>
             <div align="center">
-                <img src="@Model.URL/img/cyb-logo.png" style="max-width:1200px; height:100px;">
+                @*<img src="@Model.URL/img/cyb-logo.png" style="max-width:1200px; height:100px;">*@
+                <img src="https://www.cyberspace.net.ng/wp-content/uploads/2019/04/cyberspace-white-2.png" style="max-width:600px; height:50px;">
             </div>
 
             <div class="content">
@@ -148,6 +154,7 @@
                     <div class=row>
                         <div class="col-sm-3">
                             <p><b>STANLEY ODUAH</b></p>
+                            @*<p><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Greg_Koch_%28signature%29.jpg/1200px-Greg_Koch_%28signature%29.jpg" style="max-width:100px; height:50px;"></p>*@
                             <p><img src="@Model.URL/Uploads/Signatures/@Model.Signature1" style="max-width:100px; height:50px;"></p>
                             <p>Authorized Signatory</p>
                         </div>
@@ -163,6 +170,7 @@
                         <div class="col-sm-3">
                             <p><b>JOE ONWUBUYA</b></p>
                             <p><img src="@Model.URL/Uploads/Signatures/@Model.Signature2" style="max-width:100px; height:50px;"></p>
+                            @*<p><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Greg_Koch_%28signature%29.jpg/1200px-Greg_Koch_%28signature%29.jpg" style="max-width:100px; height:50px;"></p>*@
                             <p>Authorized Signatory</p>
                         </div>
 

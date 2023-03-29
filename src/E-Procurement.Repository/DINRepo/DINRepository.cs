@@ -12,6 +12,7 @@ using E_Procurement.Repository.Interface;
 using E_Procurement.Repository.PORepo;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
+using System.Xml.Linq;
 
 namespace E_Procurement.Repository.DINRepo
 {
@@ -163,5 +164,51 @@ namespace E_Procurement.Repository.DINRepo
             }
             return l_retval;
         }
+
+        //public async Task<(IEnumerable<InvoiceGenerationModel> data, int totalCount, int totalPages)> GetInvoiceAsync(int page = 1, int pageSize = 10)
+        //{
+        //    //var polist = await _context.PoGenerations.Where(x => x.)
+        //    var query = await (from po in _context.PoGenerations
+        //                       join dnGeneration in _context.DnGenerations on po.Id equals dnGeneration.PoId
+        //                       join vend in _context.Vendors on po.VendorId equals vend.Id
+        //                       join rfqDetails in _context.RfqDetails on po.RFQId equals rfqDetails.RFQId   
+        //                       orderby dnGeneration.DateCreated descending
+        //                       select new InvoiceGenerationModel() {
+        //                           PONumber = po.PONumber,
+        //                           Description = rfqDetails.ItemDescription,
+        //                           VendorName =vend.VendorName,
+        //                           Amount= po.Amount,
+        //                           ExpectedDeliveryDate = po.ExpectedDeliveryDate,  
+        //                           CreatedDate=dnGeneration.DateCreated,
+        //                           DnFilePath =dnGeneration.DnFilePath
+        //                       }).Distinct().ToListAsync();
+        //    var totalCount = query.Count();
+        //    var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+        //    return (query.OrderByDescending(x => x.CreatedDate).Skip((page - 1) * pageSize).Take(pageSize), totalCount, totalPages);
+
+        // }
+
+        public async Task<IEnumerable<InvoiceGenerationModel>> GetInvoiceAsync()
+        {
+            //var polist = await _context.PoGenerations.Where(x => x.)
+            var query = await (from po in _context.PoGenerations
+                               join dnGeneration in _context.DnGenerations on po.Id equals dnGeneration.PoId
+                               join vend in _context.Vendors on po.VendorId equals vend.Id
+                               join rfqDetails in _context.RfqDetails on po.RFQId equals rfqDetails.RFQId
+                               orderby dnGeneration.DateCreated descending
+                               select new InvoiceGenerationModel()
+                               {
+                                   PONumber = po.PONumber,
+                                   Description = rfqDetails.ItemDescription,
+                                   VendorName = vend.VendorName,
+                                   Amount = po.Amount,
+                                   ExpectedDeliveryDate = po.ExpectedDeliveryDate,
+                                   CreatedDate = dnGeneration.DateCreated,
+                                   DnFilePath = dnGeneration.DnFilePath
+                               }).Distinct().ToListAsync();
+            return query.OrderByDescending(x => x.CreatedDate);
+
+        }
     }
+
 }

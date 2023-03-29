@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -9,9 +10,11 @@ using E_Procurement.Repository.ApprovalRepo;
 using E_Procurement.Repository.Dtos;
 using E_Procurement.Repository.PORepo;
 using E_Procurement.Repository.RequisitionRepo;
+using E_Procurement.WebUI.Models.RequisitionModel;
 using E_Procurement.WebUI.Models.RfqApprovalModel;
 using E_Procurement.WebUI.Models.RFQModel;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -27,14 +30,21 @@ namespace E_Procurement.WebUI.Controllers
         private readonly IMapper _mapper;
         private readonly IAccountManager _accountManager;
         private readonly IRequisitionRepository _requisitionRepository;
+        private IHostingEnvironment _hostingEnv;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        
 
-        public RfqApprovalController(IRfqApprovalRepository RfqApprovalRepository, IRequisitionRepository requisitionRepository, IPORepository PORepository, IMapper mapper, IAccountManager accountManager)
+        public RfqApprovalController(IRfqApprovalRepository RfqApprovalRepository, IRequisitionRepository 
+            requisitionRepository, IPORepository PORepository, IMapper mapper, IAccountManager accountManager, 
+            IHostingEnvironment hostingEnv, IHttpContextAccessor httpContextAccessor)
         {
             _RfqApprovalRepository = RfqApprovalRepository;
             _PORepository = PORepository;
             _accountManager = accountManager;
             _mapper = mapper;
             _requisitionRepository = requisitionRepository;
+            _hostingEnv = hostingEnv;
+            _httpContextAccessor = httpContextAccessor;
 
         }
         
@@ -42,7 +52,8 @@ namespace E_Procurement.WebUI.Controllers
         {
             var REQconfig = _requisitionRepository.GetRequisitions2().ToList();
 
-            var RfqApprovalList = await _RfqApprovalRepository.GetRFQApprovalDueAsync();
+            //var RfqApprovalList = await _RfqApprovalRepository.GetRFQApprovalDueAsync();
+            IEnumerable<RFQGenerationModel> RfqApprovalList = new List<RFQGenerationModel>();
             if (User.IsInRole("Procurement") && !User.IsInRole("Approval"))
             {
                RfqApprovalList = await _RfqApprovalRepository.GetRFQApprovalDueAsync();
@@ -107,7 +118,7 @@ namespace E_Procurement.WebUI.Controllers
                                  join rfqDetails in des on rfqs.Id equals rfqDetails.RFQId
                                  //join vend in _context.Vendors on rfqDetails.VendorId equals vend.Id
                                  join v in ven on rfqDetails.VendorId equals v.Id
-                                 where rfqDetails.RFQId == ved && rfqs.EndDate <= DateTime.Now /*&& rfqs.RFQStatus == null*/
+                                 where rfqDetails.RFQId == ved && rfqs.EndDate >= DateTime.Now /*&& rfqs.RFQStatus == null*/
                                  
               select new RFQDetailsModel()
                 {
@@ -171,14 +182,49 @@ namespace E_Procurement.WebUI.Controllers
         }
 
 
+        private string LoadFilePath(RFQGenerationModel Model)
+        {
+
+            if (Model.ComparisonDocument != null)
+            {
+                var myReference = new Random();
+                //string referencecode; 
+
+                Model.RefCode = myReference.Next(23006).ToString();
+
+                string webRootPath = _hostingEnv.WebRootPath;
+
+                var allowedExtensions = new[] { ".pdf", ".jpg", ".jpeg", ".png" };
+
+                var checkextension1 = Path.GetExtension(Model.ComparisonDocument.FileName).ToLower();
+                if (!allowedExtensions.Contains(checkextension1))
+                {
+                    ModelState.AddModelError("", "Invalid file extention.");
+                    return null;
+                }
+                var ComparisonFilePath = Model.RefCode + "_" + "Quote" + Path.GetExtension(Model.ComparisonDocument.FileName);
+                var path1 = Path.Combine(webRootPath, "Uploads", "ComparisonDocuments", ComparisonFilePath);
+                if (System.IO.File.Exists(path1)) { System.IO.File.Delete(path1); }
+                using (Stream stream = new FileStream(path1, FileMode.Create)) { Model.ComparisonDocument.CopyTo(stream); }
+
+                string url = string.Concat(_httpContextAccessor.HttpContext.Request.Scheme, "://", _httpContextAccessor.HttpContext.Request.Host, $"/Uploads/ComparisonDocuments/{ComparisonFilePath}");
+
+                Model.ComparisonDocumentPath = ComparisonFilePath;
+                return url;
+            }
+            return null;
+        }
+
         [HttpPost]
-        public async Task<IActionResult> RfqApprovalDetails(RFQGenerationModel rfqApproval)
+        public async Task<IActionResult> RfqApprovalDetails([FromForm]RFQGenerationModel rfqApproval)
         {
 
             try
             {
                 if (string.IsNullOrEmpty(rfqApproval.RFQStatus))
                 {
+                    var res = LoadFilePath(rfqApproval);
+                    rfqApproval.ComparisonDocumentPath = res;
                     var approval = await _RfqApprovalRepository.CreateRFQApprovalAsync(rfqApproval);
                     if (approval)
                     {

@@ -17,5 +17,9 @@ namespace E_Procurement.Data.Entity
         public string AlteredBy { get; set; }
         public string InitiatedBy { get; set; }
         public DateTime DateAltered { get; set; }
+
+        public string ComparisonDocumentPath { get; set; }
+
+
     }
 }

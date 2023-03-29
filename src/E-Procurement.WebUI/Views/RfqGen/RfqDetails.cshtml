@@ -116,15 +116,18 @@
                 }
             </tbody>
         </table>
-        <form role="form" method="post" asp-action="RfqApprovalDetails">
+       @* <form role="form" method="post" asp-action="RfqApprovalDetails" asp-controller="RfqApproval">
             <div asp-validation-summary="All" class="text-danger"></div>
             <input asp-for="RFQId" type="hidden" />
             <input asp-for="RFQStatus" type="hidden" />
             <input asp-for="VendorId" type="hidden" />
             <input asp-for="TotalAmount" type="hidden" />
+
+            <textarea asp-for="Comments"></textarea>
+            <input asp-for="a"
           
-            
-        </form>
+            <input type="submit" value="Initiate Approval Memo" />
+        </form>*@
 
     </div><!-- table-wrapper -->
 </div><!-- card -->

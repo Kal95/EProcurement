@@ -1,0 +1,95 @@
+﻿@model IEnumerable<E_Procurement.Repository.Dtos.InvoiceGenerationModel>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Procurement";
+    ViewBag.FavIcon = "fa fa-street-view";
+    ViewBag.PageDesc = "Submitted Invoice";
+}
+
+<div class="main-card mb-3 card">
+
+    <div class="card-body">
+
+        <div class="" style="display:flex; justify-content:space-between">
+            @*<a class="btn btn-primary" pull-right" href="@Url.Action("RequisitionCreate", "Requisition")"><i class="fa fa-plus"> </i>  Add Requisition</a>*@
+
+
+            <input type="text" id="myInput" style="width:300px; height:40px" onkeyup="myFunction()" class="form-control" placeholder="Search..">
+
+        </div>
+
+
+        <hr />
+
+        <table id="myTable" class="table table-hover table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>S/N</th>
+                    <th class="wd-20p">PO Number</th>
+                    <th class="wd-40p-force">Description</th>
+                    <th class="wd-15p-force">Vendor Name</th>
+                    <th class="wd-15p-force">Agreed Amount</th>
+                    <th class="wd-10p-force">Invoice Document</th>
+                   
+                </tr>
+            </thead>
+            <tbody>
+
+                @{
+                    int rowNo = 0;
+                }
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@(rowNo += 1)</td>
+                        <td>@item.PONumber </td>
+                        <td>@item.Description</td>
+                        <td>@item.VendorName</td>
+                        <td>@item.Amount</td>
+                        <td><a class="btn btn-info mg-r-5" target="_blank" href="~/Uploads/Invoice/@item.DnFilePath" style="height:50px; width:110px"><span class="fa fa-eye"></span> <br />Click to view</a></td>
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+        @*<partial name="Activate" />*@
+    </div>
+</div>
+
+
+
+<script>
+    function myFunction() {
+        // Declare variables
+        var input, filter, table, tr, td, i, txtValue;
+        input = document.getElementById("myInput");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("myTable");
+        tr = table.getElementsByTagName("tr");
+
+        // Loop through all table rows, and hide those who don't match the search query
+        for (i = 0; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[1];
+            if (td) {
+                txtValue = td.textContent || td.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+    }
+    function myFunction10(SignId) {
+
+        //alert(SignId);
+        //alert(RFQId);
+
+        //alert($("#RFQId2").val());
+
+
+        $("#SignId").val(SignId);
+
+    }
+</script>

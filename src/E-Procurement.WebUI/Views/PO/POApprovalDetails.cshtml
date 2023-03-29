@@ -122,6 +122,69 @@
             <input asp-for="RFQStatus" type="hidden" />
             <input asp-for="VendorId" type="hidden" />
             <input asp-for="QuotedAmount" type="hidden" />
+
+            <input asp-for="VendorName" type="hidden" />
+            <input asp-for="VendorAddress" type="hidden" />
+            <input asp-for="VendorEmail" type="hidden" />
+            <input asp-for="TotalAmount" type="hidden" />
+
+           @if (User.IsInRole("Approval")){
+            <input asp-for="POTitle" type="hidden" />
+            <input asp-for="ExpectedDeliveryDate" type="hidden" />
+            <input asp-for="POWarranty" type="hidden" />
+            <input asp-for="POTerms" type="hidden" />
+            <input asp-for="POValidity" type="hidden" />
+            <input asp-for="POCost" type="hidden" />
+           }
+                      
+
+            @if (User.IsInRole("Procurement"))
+            {
+                <div class="row row-sm mg-t-20">
+                    <div class="col-xl-12">
+                    <div class="row mg-t-20">
+                        <label class="col-sm-2 form-control-label"><b> Expected Delivery Date : </b></label>
+                        <div class="col-sm-2 mg-t-10 mg-sm-t-0">
+                            <input asp-for="ExpectedDeliveryDate" type="date" class="form-control fc-datepicker" value="null" placeholder="MM/DD/YYYY">
+                        </div>
+                    </div><!-- row -->
+                    <div class="row mg-t-20">
+                        <label class="col-sm-2 form-control-label"><b> PO Title : </b></label>
+                        <div class="col-sm-10 mg-t-10 mg-sm-t-0">
+                            <input asp-for="POTitle" type="text" class="form-control" placeholder="PO Title" required>
+                        </div>
+                    </div><!-- row -->
+
+                    <div class="row mg-t-20">
+                        <label class="col-sm-2 form-control-label"><b> PO Cost : </b></label>
+                        <div class="col-sm-10 mg-t-10 mg-sm-t-0">
+                            <textarea asp-for="POCost" type="text" class="form-control" placeholder="PO Cost" required></textarea>
+                        </div>
+                    </div><!-- row -->
+                    <div class="row mg-t-20">
+                        <label class="col-sm-2 form-control-label"><b> PO Warranty : </b></label>
+                        <div class="col-sm-10 mg-t-10 mg-sm-t-0">
+                            <textarea asp-for="POWarranty" type="text" class="form-control" placeholder="PO Warranty" required></textarea>
+                        </div>
+                    </div><!-- row -->
+                    <div class="row mg-t-20">
+                        <label class="col-sm-2 form-control-label"><b> PO Terms : </b></label>
+                        <div class="col-sm-10 mg-t-10 mg-sm-t-0">
+                            <textarea asp-for="POTerms" type="text" class="form-control" placeholder="PO Terms" required></textarea>
+                        </div>
+                    </div><!-- row -->
+                    <div class="row mg-t-20">
+                        <label class="col-sm-2 form-control-label"><b> PO Validity : </b></label>
+                        <div class="col-sm-10 mg-t-10 mg-sm-t-0">
+                            <textarea asp-for="POValidity" type="text" class="form-control" placeholder="PO Validity" required></textarea>
+                        </div>
+                    </div><!-- row -->
+
+                </div>
+            </div>
+            }
+
+
             <div class="row mg-t-20">
                 <label class="col-sm-1 form-control-label"><b> Comments : </b></label>
                 <div class="col-sm-11 mg-t-10 mg-sm-t-0">

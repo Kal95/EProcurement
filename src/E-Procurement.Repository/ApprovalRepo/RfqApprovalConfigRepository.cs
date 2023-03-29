@@ -133,6 +133,7 @@ namespace E_Procurement.Repository.RfqApprovalConfigRepository
 
                 oldEntry.LastDateUpdated = DateTime.Now;
 
+                _context.ApprovalTypes.Update(oldEntry);
                 _context.SaveChanges();
 
                 Message = "Aproval Type updated successfully";

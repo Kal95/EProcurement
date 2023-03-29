@@ -31,9 +31,9 @@ namespace E_Procurement.WebUI.Controllers
         private readonly IDINRepository _dinRepository;
         private IHostingEnvironment _hostingEnv;
 
-        public InvoiceController(IPORepository PORepository, 
-                                IMapper mapper, 
-                                IAccountManager accountManager, 
+        public InvoiceController(IPORepository PORepository,
+                                IMapper mapper,
+                                IAccountManager accountManager,
                                 IRfqApprovalRepository RfqApprovalRepository,
                                 IDINRepository dinRepository,
                                 IHostingEnvironment hostingEnv)
@@ -59,7 +59,7 @@ namespace E_Procurement.WebUI.Controllers
         {
             var RfqApprovalDetails = await _dinRepository.GetInvoiceDetailsAsync(id);
 
-           
+
             //RfqApproval.RFQDetails = rqfDetails;
             if (RfqApprovalDetails == null)
                 return View();
@@ -94,12 +94,12 @@ namespace E_Procurement.WebUI.Controllers
                             Alert("Invalid file extention.", NotificationType.error);
                             return View(RfqApprovalDetails);
                         }
-                   
+
 
                         //var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "upload", imageFilePath);
-                        var path = Path.Combine(webRootPath, "uploads","Invoice", InvoiceFilePath);
+                        var path = Path.Combine(webRootPath, "uploads", "Invoice", InvoiceFilePath);
 
-                        
+
                         if (System.IO.File.Exists(path))
                         {
                             System.IO.File.Delete(path);
@@ -108,7 +108,8 @@ namespace E_Procurement.WebUI.Controllers
                         {
                             await rfqApproval.InvoiceFilePath.CopyToAsync(stream);
                         }
-                        rfqApproval.DnFilePath = path;
+                        //rfqApproval.DnFilePath = path;
+                        rfqApproval.DnFilePath = InvoiceFilePath;
                         var uploadDN = await _dinRepository.DNGenerationAsync(rfqApproval);
                         if (uploadDN)
                         {
@@ -122,7 +123,7 @@ namespace E_Procurement.WebUI.Controllers
                         }
                     }
                 }
-               
+
                 Alert("Can not upload invoice at this time. Please try again later.", NotificationType.error);
                 return View(RfqApprovalDetails);
             }
@@ -134,6 +135,19 @@ namespace E_Procurement.WebUI.Controllers
 
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetInvoiceDetails()
+        {
+            var InvoiceDetails = await _dinRepository.GetInvoiceAsync();
 
+
+            //RfqApproval.RFQDetails = rqfDetails;
+            if (InvoiceDetails == null)
+                return View();
+
+            return View(InvoiceDetails);
+        }
+
+       
     }
 }

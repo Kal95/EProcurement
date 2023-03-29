@@ -71,5 +71,12 @@ namespace E_Procurement.Repository.Dtos
             public bool FinalApprover { get; set; }
             public string ApproverName { get; set; }
             public IFormFile QuoteDocument { get; set; }
+            public string QuoteDocumentPath { get; set; }
+
+            public string ComparisonDocumentPath { get; set; }
+            public IFormFile ComparisonDocument { get; set; }
+            public string RefCode { get; set; }
+
+
     }
 }

@@ -15,5 +15,8 @@ namespace E_Procurement.Repository.DINRepo
         Task<POGeneration> GetPOByIdAsync(int Id);
         Task<IEnumerable<RFQGenerationModel>> GetApprovedRFQAsync();
         Task<RFQGenerationModel> GetInvoiceDetailsAsync(int RFQId);
+        Task<IEnumerable<InvoiceGenerationModel>> GetInvoiceAsync();
+
+        //Task<(IEnumerable<InvoiceGenerationModel> data, int totalCount, int totalPages)> GetInvoiceAsync(int page, int pageSize);
     }
 }

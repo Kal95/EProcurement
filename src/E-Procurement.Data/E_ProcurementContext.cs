@@ -61,13 +61,18 @@ namespace E_Procurement.Data
             builder.Entity<Role>().HasMany(r => r.Claims).WithOne().HasForeignKey(c => c.RoleId).IsRequired().OnDelete(DeleteBehavior.Cascade);
             builder.Entity<Role>().HasMany(r => r.Users).WithOne().HasForeignKey(r => r.RoleId).IsRequired().OnDelete(DeleteBehavior.Cascade);
 
+            //builder.Entity<User>()
+            //    .Property(e => e.Id)
+            //    .ValueGeneratedOnAdd()
+            //    .UseSqlServerIdentityColumn();
+
             base.OnModelCreating(builder);
         }
 
         public async override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
             int saved = 0;
-            var currentUser = _contextAccessor.HttpContext.User.Identity.Name;
+            var currentUser = _contextAccessor.HttpContext?.User?.Identity?.Name == null ?  "Auto generated": _contextAccessor.HttpContext?.User?.Identity?.Name;
             var currentDate = DateTime.Now;
             try
             {

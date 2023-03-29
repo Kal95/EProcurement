@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace E_Procurement.Data.BaseEntity
 {
@@ -7,6 +8,7 @@ namespace E_Procurement.Data.BaseEntity
     /// </summary>
     public class Entity
     {
+        [Key]
         public int Id { get; set; }
         public bool IsActive { get; set; }
         public bool IsDeleted { get; set; }

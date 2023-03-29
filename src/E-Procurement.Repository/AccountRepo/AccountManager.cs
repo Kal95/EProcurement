@@ -194,19 +194,21 @@ namespace E_Procurement.Repository.AccountRepo
 
                 var requisitionURL = _config.GetSection("ExternalAPI:RequisitionURL").Value;
 
-                var subject = "SIGNUP NOTIFICATION";
-                var message = "</br><b> Dear </b>" + user.FullName + ",";
-                message += "<br><b> You have been successfully registered on Cyberspace E-procurement Portal.<br>";
-                message += "<br>Kindly, Login to validate your details.<br>";
-                message += "<br><U>LOGIN DETAILS </U>";
-                message += "<br>URL :  " + requisitionURL;
-                message += "<br>Email :  " + user.Email;
-                message += "<br>Password :  " + password;
-                message += "<br>Remember to change your password upon login.";
-                message += "<br>Regards";
+                if (!Role.Contains("Vendor"))
+                {
+                    var subject = "SIGNUP NOTIFICATION";
+                    var message = "</br><b> Dear </b>" + user.FullName + ",";
+                    message += "<br><b> You have been successfully registered on Cyberspace E-procurement Portal.<br>";
+                    message += "<br>Kindly, Login to validate your details.<br>";
+                    message += "<br><U>LOGIN DETAILS </U>";
+                    message += "<br>URL :  " + $"<a href=\"{requisitionURL}\" target=\"_blank\">{requisitionURL}</a>";
+                    message += "<br>Email :  " + user.Email;
+                    message += "<br>Password :  " + password;
+                    message += "<br>Remember to change your password upon login.";
+                    message += "<br>Regards";
 
-                await _emailSender.SendEmailAsync(user.Email, subject, message, "");
-
+                    await _emailSender.SendEmailAsync(user.Email, subject, message, "");
+                }
                 //_context.SaveChanges();
 
             }
@@ -227,7 +229,7 @@ namespace E_Procurement.Repository.AccountRepo
         public async Task<bool> SendResetPasswordAsync(User user, string password, string Role)
         {
             user = await _userManager.FindByEmailAsync(user.Email);
-            var DefaultPassword = "Eprocurement1$";
+            var DefaultPassword = password;//"Eprocurement1$";
             var changpawd = await _userManager.RemovePasswordAsync(user);
            
             var result = await _userManager.AddPasswordAsync(user, DefaultPassword);

@@ -24,6 +24,7 @@ using System.IO;
 
 using Abp.Web.Mvc.Alerts;
 using Microsoft.AspNetCore.Hosting;
+using static E_Procurement.Repository.VendoRepo.VendorRepository;
 
 namespace E_Procurement.WebUI.Controllers
 {
@@ -31,7 +32,7 @@ namespace E_Procurement.WebUI.Controllers
     public class AccountController : BaseController
     {
 
-        private readonly  IAccountManager _accountManager;
+        private readonly IAccountManager _accountManager;
         private readonly IMapper _mapper;
         private readonly SignInManager<User> _signInManager;
         private readonly RoleManager<Role> _roleManager;
@@ -47,8 +48,8 @@ namespace E_Procurement.WebUI.Controllers
         //}
         public AccountController(SignInManager<User> signInManager,
                                 RoleManager<Role> roleManager,
-                                UserManager<User> userManager, 
-                                IAccountManager accountManager, 
+                                UserManager<User> userManager,
+                                IAccountManager accountManager,
                                 IMapper mapper,
                                 IHttpContextAccessor contextAccessor,
                                 IPermissionRepository permissionRepository, IReportRepository reportRepository)
@@ -65,7 +66,7 @@ namespace E_Procurement.WebUI.Controllers
 
         public async Task<IActionResult> Index()
         {
-          
+
 
             return View();
         }
@@ -76,62 +77,62 @@ namespace E_Procurement.WebUI.Controllers
         }
         [HttpPost]
         [AllowAnonymous]
-       // [ValidateAntiForgeryToken]
+        // [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginModel loginViewModel)
         {
-      
-                if (ModelState.IsValid)
+
+            if (ModelState.IsValid)
+            {
+                var user = _userManager.Users.FirstOrDefault(m => m.Email.Trim() == loginViewModel.Email);
+
+                //var user = await _accountManager.GetUserByEmailAsync(loginViewModel.Email);
+                if (user == null)
                 {
-                    var user =  _userManager.Users.FirstOrDefault(m => m.Email.Trim() == loginViewModel.Email);
-                
-                    //var user = await _accountManager.GetUserByEmailAsync(loginViewModel.Email);
-                    if (user == null)
+                    ModelState.AddModelError("", "User Account does not Exist");
+                    //Alert("Invalid Email/password.", NotificationType.error);
+                    return View(loginViewModel);
+                }
+
+
+                //CookieValidatePrincipalContext cn = new CookieValidatePrincipalContext;
+                //cn.ReplacePrincipal(newPrincipal);
+                //cn.ShouldRenew = true;
+
+
+                var passwordIsCorrect = await _userManager.CheckPasswordAsync(user, loginViewModel.Password);
+                if (passwordIsCorrect)
+                {
+                    var roles = await _userManager.GetRolesAsync(user);
+
+                    List<int> rolesId = new List<int>();
+                    var claims = new List<Claim>();
+
+                    foreach (var r in roles)
                     {
-                        ModelState.AddModelError("", "User Account does not Exist");
-                        //Alert("Invalid Email/password.", NotificationType.error);
-                        return View(loginViewModel);
+                        var roleId = _roleManager.Roles.Where(x => x.Name == r).First();
+                        // claims.Add(new Claim("Roles", r));
+                        rolesId.Add(roleId.Id);
+                    }
+                    var permissionsForUser = await _permissionRepository.GetPermissionByRoleIdAsync(rolesId);
+
+
+
+                    foreach (var claim in permissionsForUser)
+                    {
+                        claims.Add(new Claim("Permissions", claim.PermissionName));
+                    }
+                    claims.Add(new Claim("Email", user.Email));
+
+                    var claimsPrincipal = await _signInManager.CreateUserPrincipalAsync(user);
+                    if (claimsPrincipal?.Identity is ClaimsIdentity claimsIdentity)
+                    {
+                        claimsIdentity.AddClaims(claims);
                     }
 
 
-                    //CookieValidatePrincipalContext cn = new CookieValidatePrincipalContext;
-                    //cn.ReplacePrincipal(newPrincipal);
-                    //cn.ShouldRenew = true;
-             
-
-                    var passwordIsCorrect = await _userManager.CheckPasswordAsync(user, loginViewModel.Password);
-                    if (passwordIsCorrect)
-                    {
-                        var roles = await _userManager.GetRolesAsync(user);
-
-                        List<int> rolesId = new List<int>();
-                        var claims = new List<Claim>();
-
-                        foreach (var r in roles)
-                        {
-                            var roleId = _roleManager.Roles.Where(x => x.Name == r).First();
-                            // claims.Add(new Claim("Roles", r));
-                            rolesId.Add(roleId.Id);
-                        }
-                        var permissionsForUser = await _permissionRepository.GetPermissionByRoleIdAsync(rolesId);
-
-
-
-                        foreach (var claim in permissionsForUser)
-                        {
-                            claims.Add(new Claim("Permissions", claim.PermissionName));
-                        }
-                        claims.Add(new Claim("Email", user.Email));
-
-                        var claimsPrincipal = await _signInManager.CreateUserPrincipalAsync(user);
-                        if ( claimsPrincipal?.Identity is ClaimsIdentity claimsIdentity)
-                        {
-                            claimsIdentity.AddClaims(claims);
-                        }
-
-
-                        //await _signInManager.Context.SignInAsync(IdentityConstants.ApplicationScheme,
-                        //    claimsPrincipal,
-                        //    new AuthenticationProperties { IsPersistent = true });
+                    //await _signInManager.Context.SignInAsync(IdentityConstants.ApplicationScheme,
+                    //    claimsPrincipal,
+                    //    new AuthenticationProperties { IsPersistent = true });
 
                     var props = new AuthenticationProperties();
                     props.IsPersistent = true;
@@ -142,18 +143,18 @@ namespace E_Procurement.WebUI.Controllers
                        claimsPrincipal, props);
 
                     return RedirectToAction("Index", "Home");
-                    }
-                    else
-                    {
-                        ModelState.AddModelError("", "Incorrect Password");
-                        View(loginViewModel);
-                    }
-
-
-
                 }
+                else
+                {
+                    ModelState.AddModelError("", "Incorrect Password");
+                    View(loginViewModel);
+                }
+
+
+
+            }
             //ModelState.AddModelError("", "Email/password not found");
-            return  View(loginViewModel);
+            return View(loginViewModel);
         }
 
 
@@ -177,6 +178,8 @@ namespace E_Procurement.WebUI.Controllers
             ViewBag.roles = roleList;
             return View();
         }
+
+
         [HttpPost]
         [PermissionValidation("can_create_user")]
         public async Task<IActionResult> CreateUser(RegisterViewModel user)
@@ -200,7 +203,8 @@ namespace E_Procurement.WebUI.Controllers
 
                 var mappedUser = _mapper.Map<User>(user);
                 mappedUser.UserName = user.Email;
-                    var result = await _accountManager.CreateUserAsync(mappedUser, user.Password, user.Role);
+                var password = PasswordGenerator.GeneratePassword(10);
+                var result = await _accountManager.CreateUserAsync(mappedUser, password, user.Role);
 
                 if (result)
                 {
@@ -210,7 +214,7 @@ namespace E_Procurement.WebUI.Controllers
                 else
                 {
                     Alert("User account could not be created. Please try again later.", NotificationType.error);
-                    
+
                     return View(user);
                 }
             }
@@ -220,14 +224,14 @@ namespace E_Procurement.WebUI.Controllers
 
         public async Task<IActionResult> Users()
         {
-           
-                var users = await _accountManager.GetUsers();
 
-                List<UserViewModel> userList = _mapper.Map<List<UserViewModel>>(users);
-                return View(userList);
-       
+            var users = await _accountManager.GetUsers();
+
+            List<UserViewModel> userList = _mapper.Map<List<UserViewModel>>(users);
+            return View(userList);
+
         }
-  
+
         public async Task<IActionResult> EditUser(int id)
         {
             try
@@ -237,16 +241,16 @@ namespace E_Procurement.WebUI.Controllers
                 RegisterViewModel user = _mapper.Map<RegisterViewModel>(users);
                 return View(user);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw ex;
             }
-            
+
         }
         [HttpPost]
         public async Task<IActionResult> EditUser(RegisterViewModel user)
         {
-            
+
             if (ModelState.IsValid)
             {
                 var getUser = await _accountManager.GetUserByIdAsync(user.Id);
@@ -257,10 +261,10 @@ namespace E_Procurement.WebUI.Controllers
                 getUser.Department = user.Department;
                 getUser.Unit = user.Unit;
 
-               // var mappedUser = _mapper.Map<User>(user);
+                // var mappedUser = _mapper.Map<User>(user);
                 getUser.SecurityStamp = Guid.NewGuid().ToString();
                 var result = await _accountManager.UpdateUserAsync(getUser);
-                
+
                 if (result.Succeeded)
                 {
                     Alert("Account updated sucsessfully.", NotificationType.success);
@@ -283,7 +287,7 @@ namespace E_Procurement.WebUI.Controllers
             {
                 var roles = await _accountManager.GetRoles();
                 var users = await _accountManager.GetUsers();
-                
+
                 var userList = users.Select(a => new SelectListItem()
                 {
                     Value = a.Id.ToString(),
@@ -298,7 +302,7 @@ namespace E_Procurement.WebUI.Controllers
 
                 ViewBag.roles = userRoleVM;
                 ViewBag.users = userList;
-                
+
                 return View();
             }
             catch (Exception ex)
@@ -311,7 +315,8 @@ namespace E_Procurement.WebUI.Controllers
         //[PermissionValidation("can_create_user", "can_assign_permission")]
         public async Task<IActionResult> AssignUserRole(string Id, List<UserRoleViewModel> UserRole)
         {
-            try { 
+            try
+            {
 
                 if (!string.IsNullOrEmpty(Id))
                 {
@@ -351,7 +356,7 @@ namespace E_Procurement.WebUI.Controllers
 
 
                 }
-        }
+            }
             catch (Exception ex)
             {
                 throw ex;
@@ -413,7 +418,7 @@ namespace E_Procurement.WebUI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ChangePassword([Bind]ChangePasswordModel changePassword)
+        public async Task<IActionResult> ChangePassword([Bind] ChangePasswordModel changePassword)
         {
             if (!ModelState.IsValid)
             {
@@ -425,7 +430,7 @@ namespace E_Procurement.WebUI.Controllers
             {
 
                 //var currentUser = _contextAccessor.HttpContext.User.Identity;
-                 var currentUser = _contextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                var currentUser = _contextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
 
                 var user = await _userManager.FindByIdAsync(currentUser.ToString());
                 if (user == null)
@@ -446,7 +451,7 @@ namespace E_Procurement.WebUI.Controllers
                 }
                 else
                 {
-                    Alert("Can not change password. Please try again later.", NotificationType.error);                  
+                    Alert("Can not change password. Please try again later.", NotificationType.error);
                 }
             }
             return RedirectToAction("Index", "Home");
@@ -511,28 +516,29 @@ namespace E_Procurement.WebUI.Controllers
             user.FirstName = getUser.FirstName;
             user.LastName = getUser.LastName;
             user.Unit = getUser.Unit;
- 
-                // var mappedUser = _mapper.Map<User>(user);
-                getUser.SecurityStamp = Guid.NewGuid().ToString();
 
-                var mappedUser = _mapper.Map<User>(user);
-                mappedUser.UserName = user.Email;
-                var result = await _accountManager.SendResetPasswordAsync(mappedUser, user.Password, user.Role);
+            // var mappedUser = _mapper.Map<User>(user);
+            getUser.SecurityStamp = Guid.NewGuid().ToString();
 
-                if (result)
-                {
-                    Alert("User's Password has been reset and default password sent sucsessfully.", NotificationType.success);
-                    //return RedirectToAction("Users");
-                }
-                else
-                {
-                    Alert("User account could not be reset. Please try again later.", NotificationType.error);
+            var mappedUser = _mapper.Map<User>(user);
+            mappedUser.UserName = user.Email;
+            var password = PasswordGenerator.GeneratePassword(10);
+            var result = await _accountManager.SendResetPasswordAsync(mappedUser, password, user.Role);
 
-                    return View(user);
-                }
+            if (result)
+            {
+                Alert("User's Password has been reset and default password sent sucsessfully.", NotificationType.success);
+                //return RedirectToAction("Users");
+            }
+            else
+            {
+                Alert("User account could not be reset. Please try again later.", NotificationType.error);
+
+                return View(user);
+            }
             return RedirectToAction("Users", "Account");
         }
-       
+
 
         #endregion
 
@@ -607,7 +613,7 @@ namespace E_Procurement.WebUI.Controllers
                 if (getRole == null)
                     return View(role);
                 getRole.Name = role.Name;
-                
+
                 var result = await _accountManager.UpdateRoleAsync(getRole);
 
                 if (result)

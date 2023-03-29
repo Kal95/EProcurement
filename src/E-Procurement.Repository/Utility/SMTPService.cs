@@ -13,6 +13,7 @@ using E_Procurement.Data.Entity;
 using Microsoft.Extensions.Configuration;
 using SendGrid;
 using SendGrid.Helpers.Mail;
+using System.IO;
 
 namespace E_Procurement.Repository.Utility
 {
@@ -33,7 +34,7 @@ namespace E_Procurement.Repository.Utility
 
 
 
-        public async Task SendEmailAsync(string email, string subject, string message, string attachedfiles)
+        public async Task SendEmailAsync(string email, string subject, string message, string attachedfiles, string fileName = null)
         {
             try
             {
@@ -159,6 +160,20 @@ namespace E_Procurement.Repository.Utility
                 //if you have multiple reciepents to send mail  
                 msg.AddTo(new EmailAddress(email));
                 //If you have attachment  
+                if (!string.IsNullOrWhiteSpace(attachedfiles))
+                {
+                    foreach (string attachm in attachedfiles.Split(';'))
+                    {
+                        if (!string.IsNullOrEmpty(attachm))
+                        {
+                            string path = attachm;
+
+                            byte[] bytes = File.ReadAllBytes(path);
+                            string base64Content = Convert.ToBase64String(bytes);
+                            msg.AddAttachment(fileName, base64Content);
+                        }
+                    }
+                }
                 var attach = new SendGrid.Helpers.Mail.Attachment();
                 //attach.Content = Convert.ToBase64String("rawValues");  
                 //attach.Type = "image/png";
@@ -171,6 +186,8 @@ namespace E_Procurement.Repository.Utility
                 //Tracking (Appends an invisible image to HTML emails to track emails that have been opened)  
                 //msgs.SetClickTracking(true, true);  
                 var responses = await client.SendEmailAsync(msg);
+
+                
 
             }
             catch (Exception ex)

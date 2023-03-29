@@ -1,0 +1,213 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+   
+    <style type="text/css">
+
+        .content {
+            max-width: 1000px;
+            margin: auto;
+        }
+
+
+
+        /* body {
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            line-height: 1.5;
+            color: #333333;
+        }
+
+        a {
+            color: #0077cc;
+            text-decoration: none;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #dddddd;
+        }*/
+
+        .sign {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .space {
+            padding-inline-start: 30px;
+        }
+    </style>
+
+</head>
+<body>
+    <div class="card pd-20 pd-sm-40">
+        <div>
+            <div align="center">
+                <!-- @*<img src="@Model.URL/img/cyb-logo.png" style="max-width:1200px; height:100px;">*@-->
+                <img src="https://www.cyberspace.net.ng/wp-content/uploads/2019/04/cyberspace-white-2.png" style="max-width:1200px; height:100px;">
+            </div>
+
+            <div class="content">
+                <div class="col-sm-10">
+                    <div class=row>
+                        <div class="col-sm-3">
+                            <br>
+                            <p>[createdDate]</p>
+                            <br>
+                            <p><b>The Managing Director</b></p>
+                            <p><b>[VendorName]</b></p>
+                            <p><b>[VendorAddress]</b></p>
+                        </div>
+                        <div class="col-sm">
+
+                        </div>
+                        <div class="col-sm-2">
+
+                        </div>
+                        <div class="col-sm-2">
+                        </div>
+
+                        <div class="col-sm-3">
+                            <br>
+                            <p><b>RFQ Ref: [Reference]</b></p>
+                            <p><b>PO Ref: [PONumber]</b></p>
+
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="col-sm-12">
+                    <p>Dear Sir,
+
+                    <p><b>[POTitle]</b></p>
+                    <p> Referencing your Quotation and our negotiation meeting with you, we are pleased to inform you that </p>
+                    <p> your company has been selected to carry out the above mentioned under the following terms and conditions:</p>
+                </div>
+
+
+
+                <div class="col-sm-10">
+                    <table style="border-collapse: collapse; width: 100%; text-align: center;">
+                        <thead>
+                            <tr style="background-color:#f2f2f2;">
+                                <th style="padding: 10px;">S/N </th>
+                                <th style="padding: 10px;"> Item</th>
+                                <th style="padding: 10px;">Description </th>
+                                <th style="padding: 10px;"> Qty</th>
+                                <th style="padding: 10px;">Unit Price ₦ </th>
+                                <th style="padding: 10px;">Amount ₦ </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- @{
+                                 int i = 0;
+                             }
+                             @{
+                                 //var RFQDetails = Model.RFQDetails as List<E_Procurement.WebUI.Models.RfqApprovalModel.RFQDetailsViewModel>;
+                                 var RFQDetails = Model.RFQDetails as List<E_Procurement.Repository.Dtos.RFQDetailsModel>;
+
+                             }-->
+                            <!-- @foreach (var approvalConfig in RFQDetails)
+                             {
+                                 <tr>
+                                     <td>@(i = i + 1)</td>
+                                     <td>@approvalConfig.ItemName</td>
+                                     <td>@approvalConfig.Description</td>
+                                     <td>@approvalConfig.QuotedQuantity</td>
+                                     <td align="right">@approvalConfig.QuotedPrice</td>
+                                     <td align="right">@approvalConfig.QuotedAmount</td>
+                                 </tr>
+                             }
+
+
+                            <tr>
+                                 <td>Total</td>
+                                 <td colspan=3 align="right">  Total</td>
+                                 <td align="right"> [TotalAmount]</td>
+                             </tr>-->
+                            [ApprovalConfig]
+
+
+                            <tr>
+                                <td style="padding: 10px; border: 1px solid #ddd;">Total</td>
+                                <td style="padding: 10px; border: 1px solid #ddd;">  Total</td>
+                                <td style="padding: 10px; text-align: right; direction: rtl; border: 1px solid #ddd;"> [TotalAmount]</td>
+                            </tr>
+
+
+                    </table>
+
+                </div>
+
+                <div>
+                </div>
+
+                <div class="col-sm-12">
+
+                    <p>
+                        <b>Cost:</b>      [POCost]
+                    </p>
+
+                    <p> Please Note that no Variation in price will be entertained after the acceptance of this offer Letter.</p>
+
+                    <p>
+                        <b> Delivery/Warranty:</b> [POWarranty]
+
+                    </p>
+                    <p>
+                        <b>Terms of Payments: </b> [POTerms]
+
+
+                    </p>
+
+                    <p>
+                        <b>Validity of Offer : </b> [POValidity]
+                    </p>
+                    <p>
+                        If the above terms and conditions are acceptable to you, kindly acknowledge this letter by signing the enclosed copy and returning same to us.
+
+                    <p>Thank You. </p>
+
+                    <p>Yours faithfully,</p>
+                    <p>For: <b>CYBERSPACE LIMITED</b></p>
+                </div>
+                <BR>
+
+                <div class='sign'>
+                    <div class="">
+                        <p><b>STANLEY ODUAH</b></p>
+                        <p><img src="[URL]/Uploads/Signatures/[Signature1]" style="max-width:100px; height:50px;"></p>
+                        <p>Authorized Signatory</p>
+                    </div>
+
+                    <div class="space">
+                        <p><b>JOE ONWUBUYA</b></p>
+                        <p>
+                            <img src="[URL]/Uploads/Signatures/[Signature2]" style="max-width:100px; height:50px;">
+                        </p>
+                        <p>Authorized Signatory</p>
+                    </div>
+                </div>
+
+
+                <div class="footer"></div>
+            </div>
+
+        </div>
+
+
+    </div>
+
+</body>
+</html>

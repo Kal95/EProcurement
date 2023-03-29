@@ -21,6 +21,7 @@
                     <th class="wd-5p">Req. ID</th>*@
                     <th class="wd-10p">Reference</th>
                     <th class="wd-15p">Description</th>
+                    <th class="wd-15p-force">Submitted Quote Document</th>
                     <th class="wd-15p">StartDate</th>
                     <th class="wd-15p">EndDate</th>
                     @*<th class="wd-10p">RFQStatus</th>*@
@@ -44,6 +45,7 @@
                     <td>@rfq.RequisitionId</td>*@
                     <td>@rfq.Reference</td>
                     <td>@rfq.Description</td>
+                        <td><a class="btn btn-info mg-r-5" target="_blank" href="~/Uploads/Quotes/@rfq.QuoteDocumentPath" style="height:50px; width:110px"><span class="fa fa-eye"></span> <br />Click to view</a></td>
                     <td>@rfq.StartDate.ToString("dd MMM yyyy")</td>
                     <td>@rfq.EndDate.ToString("dd MMM yyyy")</td>
                     @*<td>@rfq.RFQStatus</td>*@

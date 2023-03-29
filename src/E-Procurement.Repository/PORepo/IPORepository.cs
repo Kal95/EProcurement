@@ -30,5 +30,11 @@ namespace E_Procurement.Repository.PORepo
         List<RFQApprovalConfig> GetPOApprover();
         List<RFQGenerationModel> GetPOUpdate();
         List<RFQGenerationModel> GetRFQUpdate();
+
+        POGeneration GetPOGen3(int VendorId, int RFQId);
+
+        Task<bool> GeneratePOAsync(RFQGenerationModel rfq);
+        Task<RFQGenerationModel> Testing(RFQGenerationModel rfq); //Remove this
+
     }
 }

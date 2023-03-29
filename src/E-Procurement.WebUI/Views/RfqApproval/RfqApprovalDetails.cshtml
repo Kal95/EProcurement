@@ -67,6 +67,17 @@
                 <div class="col-sm-4 mg-t-10 mg-sm-t-0">
                     @Html.DisplayFor(model => model.VendorStatus)
                 </div>
+                <br>
+                <br>
+                <label class="col-sm-2 form-control-label"><b> Comparison Document : </b></label>
+
+               
+                <div class="col-sm-4 mg-t-10 mg-sm-t-0">
+                    @if (User.IsInRole("Approval"))
+                    {
+                        <a class="btn btn-info mg-r-5" target="_blank" href="@Model.ComparisonDocumentPath" style="height:50px; width:110px"><span class="fa fa-eye"></span> <br />Click to view</a>
+                    }
+                </div>
             </div><!-- row -->
         </div><!-- card -->
     </div><!-- col-6 -->
@@ -91,6 +102,7 @@
                     <th class="wd-5p">Quantity</th>
                     <th class="wd-5p">Price</th>
                     <th class="wd-5p">QuotedAmount</th>
+                   
 
                 </tr>
             </thead>
@@ -112,11 +124,12 @@
                     <td>@approvalConfig.QuotedQuantity</td>
                     <td>@approvalConfig.QuotedPrice</td>
                     <td>@approvalConfig.QuotedAmount</td>
+                    @*<td><a class="btn btn-info mg-r-5" target="_blank" href="~/Uploads/ComparisonDocuments/@approvalConfig.ComparisonDocumentPath" style="height:50px; width:110px"><span class="fa fa-eye"></span> <br />Click to view</a></td>*@
                 </tr>
                 }
             </tbody>
         </table>
-        <form role="form" method="post" asp-action="RfqApprovalDetails">
+        <form role="form" method="post" enctype="multipart/form-data" asp-action="RfqApprovalDetails">
             <div asp-validation-summary="All" class="text-danger"></div>
             <input asp-for="RFQId" type="hidden" />
             <input asp-for="RFQStatus" type="hidden" />
@@ -137,6 +150,13 @@
             }
             @if (User.IsInRole("Procurement") && !User.IsInRole("Approval"))
             {
+
+                <div class="col-md-4" style="margin-top:10px">
+                    <label for="ComparisonDocument">Upload RFQ Comparison Document:</label>
+                    <input type="file" id="Comparison" asp-for="ComparisonDocument" class="form-control" accept=".jpg, .jpeg, .png, .pdf" required="required" style="width:230px; height:40px" />
+                    @Html.ValidationMessageFor(model => model.ComparisonDocument, "", new { @class = "text-danger" })
+                </div>
+
                 <div class="form-layout-footer mg-t-30">
                     <button type="submit" class="btn btn-info mg-r-5">Send For Approval</button>
                     @*<button class="btn btn-secondary">Cancel</button>*@

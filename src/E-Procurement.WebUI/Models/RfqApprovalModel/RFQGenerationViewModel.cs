@@ -21,8 +21,9 @@ namespace E_Procurement.WebUI.Models.RfqApprovalModel
             public string ContactName { get; set; }
             public string PONumber { get; set; }
             public decimal TotalAmount { get; set; }
+            public string QuoteDocumentPath { get; set; }
 
-            public List<RFQDetailsViewModel> RFQDetails { get; set; }
+        public List<RFQDetailsViewModel> RFQDetails { get; set; }
 
     }
 }

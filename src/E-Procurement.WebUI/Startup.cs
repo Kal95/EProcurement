@@ -157,13 +157,14 @@ namespace E_Procurement.WebUI
             var user = new User() { Email = "admin@gmail.com", UserName = "admin" };
             var result = await UserManager.CreateAsync(user, "Pa$$word123");
 
-            //var roleCheck = await RoleManager.RoleExistsAsync("Admin");
-            //if (!roleCheck)
-            //{
-            //    //create the roles and seed them to the database  
-            //   await RoleManager.CreateAsync(new Role("Admin"));
-            //}
-            // await UserManager.AddToRoleAsync(user, "Admin");
+            var roleCheck = await RoleManager.RoleExistsAsync("Admin");
+            if (!roleCheck)
+            {
+                //create the roles and seed them to the database  
+                //await RoleManager.CreateAsync(new Role("Admin"));
+                await RoleManager.CreateAsync(new Role() { Name = "Admin"});
+            }
+            await UserManager.AddToRoleAsync(user, "Admin");
 
         }
     }

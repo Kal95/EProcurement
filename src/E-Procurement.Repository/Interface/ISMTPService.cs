@@ -8,7 +8,7 @@ namespace E_Procurement.Repository.Interface
 {
     public interface ISMTPService : IDependencyRegister
     {
-        Task SendEmailAsync(string email, string subject, string message, string attachedfiles);
+        Task SendEmailAsync(string email, string subject, string message, string attachedfiles, string fileName = null);
         Task SendEmailTransactionAsync(string email, string subject, string message, string attachedfiles);
     }
 }

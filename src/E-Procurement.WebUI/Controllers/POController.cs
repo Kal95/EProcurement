@@ -384,7 +384,16 @@ namespace E_Procurement.WebUI.Controllers
 
 
             model2.RFQDetails = poModel;
-
+            var poGen = _PORepository.GetPOGen3(Model.VendorId, Model.RFQId);
+            if(poGen != null)
+            {
+                model2.POTitle = poGen.POTitle;
+                model2.POCost = poGen.POCost;
+                model2.POWarranty = poGen.POWarranty;
+                model2.POTerms = poGen.POTerms;
+                model2.POValidity = poGen.POValidity;
+                model2.ExpectedDeliveryDate = poGen.ExpectedDeliveryDate;
+            }
             return View(model2);
         }
 
@@ -487,8 +496,8 @@ namespace E_Procurement.WebUI.Controllers
                 string message;
 
                var RFQ = _PORepository.GetRFQDetails().Where(u => u.RFQId == Model.RFQId && u.VendorId == Model.VendorId).FirstOrDefault();
-                //var vendor = _PORepository.GetVendors().Where(u => u.Id == RFQ.VendorId).FirstOrDefault();
-                //var RFQin = _PORepository.GetRFQs().Where(u => u.Id == Model.RFQId).FirstOrDefault();
+                var vendor = _PORepository.GetVendors().Where(u => u.Id == RFQ.VendorId).FirstOrDefault();
+                var RFQin = _PORepository.GetRFQs().Where(u => u.Id == Model.RFQId).FirstOrDefault();
 
                 var userId = _PORepository.GetUser().Where(u => u.UserName == User.Identity.Name).Select(u => u.Id).FirstOrDefault();
                
@@ -498,7 +507,28 @@ namespace E_Procurement.WebUI.Controllers
                 Model.QuotedAmount = RFQ.QuotedAmount;
 
                 var status = _PORepository.POApproval(Model, out message);
+                var rfq = new RFQGenerationModel()
+                {
+                    VendorId = Model.VendorId, 
+                   
+                   VendorAddress=Model.VendorAddress,
+                   VendorEmail=Model.VendorEmail,
+                   VendorName=Model.VendorName, 
+                   RFQStatus=Model.RFQStatus,
+                  // Reference=Model.Reference,
+                   RFQId=RFQ.Id,    
+                   StartDate=Model.StartDate,
+                   EndDate=Model.EndDate,   
+                   POTitle=Model.POTitle,
+                   POCost=Model.POCost,
+                   POWarranty=Model.POWarranty,
+                   POTerms=Model.POTerms,
+                   POValidity=Model.POValidity,
+                   ExpectedDeliveryDate=Model.ExpectedDeliveryDate
 
+
+                };
+                var status2 = _PORepository.GenerationPOAsync(rfq);
 
                 if (status == true)
                 {
@@ -602,6 +632,7 @@ namespace E_Procurement.WebUI.Controllers
                 Model.RFQDetails = poModel;
                 Model.RFQDetails2 = poModel2;
                 Model.RFQTransaction = transac;
+                
                 return View(Model);
             }
             catch (Exception)
@@ -651,8 +682,19 @@ namespace E_Procurement.WebUI.Controllers
             poModel.AddRange(listModel);
 
 
+
             model2.RFQDetails = poModel;
 
+            var poGen = _PORepository.GetPOGen3(Model.VendorId, Model.RFQId);
+            if (poGen != null)
+            {
+                model2.POTitle = poGen.POTitle;
+                model2.POCost = poGen.POCost;
+                model2.POWarranty = poGen.POWarranty;
+                model2.POTerms = poGen.POTerms;
+                model2.POValidity = poGen.POValidity;
+                model2.ExpectedDeliveryDate = poGen.ExpectedDeliveryDate;
+            }
             return View(model2);
         }
 
@@ -675,7 +717,7 @@ namespace E_Procurement.WebUI.Controllers
                 //    VendorId = rfqApproval.VendorId,
                 //    ExpectedDeliveryDate = rfqApproval.ExpectedDeliveryDate
                 //};
-                var generatePo = await _PORepository.GenerationPOAsync(rfqApproval);
+                var generatePo = await _PORepository.GeneratePOAsync(rfqApproval);
                 if (generatePo)
                 {
                     Alert("PO Generated Successfully", NotificationType.success);
@@ -758,7 +800,12 @@ namespace E_Procurement.WebUI.Controllers
             }
 
         }
-
+        [HttpPost]
+        public async Task<IActionResult> Testing(RFQGenerationModel rfqApproval)
+        {
+            var generatePo = await _PORepository.Testing(rfqApproval);
+            return View(generatePo);
+        }
 
     }
 }
